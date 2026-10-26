@@ -15,105 +15,113 @@
 <script src="../../maskot/devo.js"></script>
 <script src="../../sablon/kanal.js"></script>
 <script src="../../sablon/parcalar.js"></script>
+<script src="../../sablon/varliklar.js"></script>
 <script>
-// Hazır şablon: sahneler senaryo.json'dan çizilir, bu dosyaya dokunmadan video çıkar.
-// Her sahne: tip (kanca | ters-kose | aciklama | bonus | kapanis), vo, ekran ("satır 1 / satır 2"), ikon (emoji).
-// Özel çizim gerekirse ilgili sahne fonksiyonunu bu dosyada değiştirin (örnek: videolar/003-en-buyuk-penis).
-const { W, R, clamp, lerp, prog, E, pop, fade, devoAt, txt, esc } = K;
+const { W, R, clamp, lerp, prog, E, pop, fade, devoAt, txt } = K;
+const C = { wood: '#8A5A34', woodLo: '#6A4226', woodHi: '#A06C42', steel: '#D4D8E4', steelLo: '#A9AFC2', back: '#141B33', wicker: '#C99A5B', wickerLo: '#A57B42', wickerHi: '#DDB476' };
 
-// " / " ile ayrılan satırları ve uzun satırları ~18 karakterde böler
-function satirlar(s, max = 18) {
-  return (s || '').split(' / ').flatMap((p) => {
-    const out = []; let cur = '';
-    for (const k of p.trim().split(/\s+/)) {
-      if (cur && (cur + ' ' + k).length > max) { out.push(cur); cur = k; } else cur = cur ? cur + ' ' + k : k;
-    }
-    if (cur) out.push(cur);
-    return out;
-  });
+// Giyotin: (cx, by) taban ortası, s ölçek, bladeP 0 (yukarıda) → 1 (aşağıda)
+function guillotine(cx, by, s, bladeP) {
+  const by0 = -690;
+  let g = `<g transform="translate(${cx} ${by}) scale(${s})">`;
+  g += `<rect x="-130" y="${by0 + 40}" width="260" height="${-by0 - 70}" fill="${C.back}"/>`;
+  g += `<rect x="-166" y="${by0 + 30}" width="36" height="${-by0 - 40}" fill="${C.wood}"/><rect x="130" y="${by0 + 30}" width="36" height="${-by0 - 40}" fill="${C.wood}"/>`;
+  g += `<rect x="-166" y="${by0 + 30}" width="10" height="${-by0 - 40}" fill="${C.woodHi}"/><rect x="156" y="${by0 + 30}" width="10" height="${-by0 - 40}" fill="${C.woodLo}"/>`;
+  g += `<rect x="-196" y="${by0}" width="392" height="44" rx="6" fill="${C.wood}"/><rect x="-196" y="${by0 + 32}" width="392" height="12" fill="${C.woodLo}"/>`;
+  const yb = lerp(by0 + 60, -440, bladeP);
+  g += `<rect x="-6" y="${by0 + 44}" width="12" height="${yb - by0 - 44}" fill="${C.steelLo}" opacity=".5"/>`;
+  g += `<rect x="-128" y="${yb}" width="256" height="34" fill="${C.woodLo}"/>`;
+  g += `<path d="M-128 ${yb + 34} L128 ${yb + 34} L128 ${yb + 64} L-128 ${yb + 104} Z" fill="${C.steel}"/><path d="M-128 ${yb + 94} L128 ${yb + 54} L128 ${yb + 64} L-128 ${yb + 104} Z" fill="#FFF" opacity=".7"/>`;
+  g += `<rect x="-130" y="-290" width="260" height="80" fill="${C.wood}"/><rect x="-130" y="-252" width="260" height="6" fill="${C.woodLo}"/><circle cx="0" cy="-250" r="26" fill="${C.back}"/>`;
+  g += `<rect x="-230" y="-30" width="460" height="30" rx="6" fill="${C.wood}"/><rect x="-230" y="-10" width="460" height="10" fill="${C.woodLo}"/>`;
+  return g + `</g>`;
 }
-function ikon(sym, x, y, size, k, lt) {
-  if (!sym || k <= 0) return '';
-  const nefes = 1 + 0.02 * Math.sin(lt * 3);
-  return `<g transform="translate(${x} ${y}) scale(${(k * nefes).toFixed(3)})"><circle r="${size * 0.72}" fill="#FFF" opacity=".06"/>` +
-    `<text y="${size * 0.35}" text-anchor="middle" font-size="${size}" font-family="'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif">${esc(sym)}</text></g>`;
+// Sepet: (cx, cy) ağız ortası; front=false yalnızca arka kenarı çizer (gözler arada kalsın)
+function basket(cx, cy, s, front = true) {
+  if (!front) return `<g transform="translate(${cx} ${cy}) scale(${s})"><ellipse cx="0" cy="0" rx="110" ry="18" fill="${C.wickerLo}"/></g>`;
+  let b = `<g transform="translate(${cx} ${cy}) scale(${s})"><path d="M-110 0 L110 0 L86 100 L-86 100 Z" fill="${C.wicker}"/>`;
+  for (const y of [28, 56, 82]) b += `<path d="M${-110 + y * 0.24} ${y} L${110 - y * 0.24} ${y}" stroke="${C.wickerLo}" stroke-width="7"/>`;
+  b += `<rect x="-122" y="-10" width="244" height="22" rx="11" fill="${C.wickerHi}"/>`;
+  return b + `</g>`;
+}
+function eyesInBasket(cx, cy, s, k, lt) {
+  const blink = Math.max(0, 1 - Math.abs(((lt * 0.7) % 3) - 1.5) * 12);
+  return basket(cx, cy, s, false) + K.gozler(cx, cy - 18 * s, 20 * s, k, blink) + basket(cx, cy, s);
 }
 
-const TIP = {
-  kanca: (sc, i, n) => ({
-    ciz: (t, lt) => {
-      const L = satirlar(sc.ekran);
-      let s = K.title(L.map(esc), lt, -0.6, 380, L.length > 2 ? 78 : 88);
-      s += ikon(sc.ikon, 600, 920, 300, pop(lt, w(i, 1), 0.45), lt);
-      if (lt > w(i, Math.floor(n / 2))) s += K.badge(880, 720, 64 * pop(lt, w(i, Math.floor(n / 2)), 0.3), lt, w(i, n - 1));
-      s += devoAt({ pose: 'sand', mark: '?' }, 190, 1340, 440);
-      return s;
-    },
-    olay: (at) => [{ t: at(i, w(i, 1)), type: 'pop' }, { t: at(i, w(i, Math.floor(n / 2))), type: 'ding' }, { t: at(i, w(i, n - 1) + 0.15), type: 'buzz' }],
-  }),
-  'ters-kose': (sc, i, n) => ({
-    ciz: (t, lt) => {
-      const [bas, ...dogru] = (sc.ekran || '').split(' / ');
-      const tv = w(i, Math.floor(n / 2));
-      let s = K.title(satirlar(bas).map(esc), lt, 0.1, 400, 86, R.bang);
-      s += ikon(sc.ikon, 540, 900, 240, pop(lt, 0.2, 0.45), lt);
-      if (dogru.length) s += K.stamp(W / 2, 640, esc(dogru.join(' ')), 92, R.ok, lt, tv, -6);
-      s += devoAt({ pose: 'stand', face: lt < tv ? 'confused' : 'aha' }, 170, 1340, 380);
-      return s;
-    },
-    olay: (at) => [{ t: at(i, 0.1), type: 'pop' }, { t: at(i, w(i, Math.floor(n / 2)) + 0.12), type: 'thump' }, { t: at(i, w(i, Math.floor(n / 2)) + 0.3), type: 'ding' }],
-  }),
-  aciklama: (sc, i, n) => ({
-    ciz: (t, lt) => {
-      const [bas, ...dogru] = (sc.ekran || '').split(' / ');
-      const L = satirlar(bas, 20), D = satirlar(dogru.join(' '), 20);
-      let s = K.title(L.map(esc), lt, 0.1, 390, 76);
-      if (D.length) s += K.title(D.map(esc), lt, w(i, Math.floor(n / 2)), 390 + L.length * 82, 76, R.ok);
-      const kc = pop(lt, w(i, 2), 0.45);
-      s += K.card(W / 2 + 60, 900, 520, 520, kc, R.panel);
-      s += ikon(sc.ikon, W / 2 + 60, 900, 280, kc, lt);
-      s += K.ring(W / 2 + 60, 900, lt, w(i, 2), 200, 420, R.q);
-      s += devoAt({ pose: 'stand', face: lt < w(i, Math.max(2, n - 3)) ? 'neutral' : 'aha' }, 150, 1340, 360);
-      return s;
-    },
-    olay: (at) => [{ t: at(i, 0.1), type: 'pop' }, { t: at(i, w(i, 2)), type: 'pop' }, { t: at(i, w(i, Math.max(2, n - 3))), type: 'plink' }],
-  }),
-  bonus: (sc, i, n) => ({
-    ciz: (t, lt) => {
-      const [bas, ...vurgu] = (sc.ekran || 'Asıl ilginci…').split(' / ');
-      const tv = w(i, Math.floor(n / 2));
-      let s = K.title(satirlar(bas).map(esc), lt, 0.1, 400, 86, R.lav);
-      s += ikon(sc.ikon, 600, 920, 280, pop(lt, w(i, 2), 0.45), lt);
-      if (vurgu.length) s += K.stamp(W / 2, 640, esc(vurgu.join(' ')), 80, R.q, lt, tv, -8);
-      s += devoAt({ pose: lt < tv ? 'stand' : 'jump', face: lt < tv ? 'neutral' : 'aha', mark: lt < tv ? '?' : '!' }, 170, 1340, 380);
-      return s;
-    },
-    olay: (at) => [{ t: at(i, 0.1), type: 'swish' }, { t: at(i, w(i, 2)), type: 'pop' }, { t: at(i, w(i, Math.floor(n / 2)) + 0.12), type: 'thump' }, { t: at(i, w(i, Math.floor(n / 2)) + 0.2), type: 'boing' }],
-  }),
-  kapanis: (sc, i, n) => ({
-    ciz: (t, lt) => {
-      const L = satirlar(sc.ekran, 20);
-      const tb = w(i, Math.max(0, n - 4));
-      let s = K.title(L.map(esc), lt, 0.1, 400, 76);
-      s += ikon(sc.ikon, 820, 860, 200, pop(lt, 0.4, 0.45), lt);
-      s += K.followButton(lt, tb, 1150);
-      s += devoAt({ pose: lt > tb ? 'point' : 'stand', face: 'happy' }, 180, 1340, 440);
-      return s;
-    },
-    olay: (at) => [{ t: at(i, 0.1), type: 'pop' }, { t: at(i, w(i, Math.max(0, n - 4))), type: 'ding' }],
-  }),
+// --- sahneler ---
+const S0 = (t, lt) => {
+  let s = K.title(['Kesilen kafa'], lt, -0.6, 380, 88);
+  s += K.label(W / 2, 478, 'seni görebilir mi?', 84, R.q, pop(lt, w(0, 7), 0.4));
+  const bp = E.in(prog(lt, w(0, 1) - 0.05, 0.22));
+  const bounce = lt > w(0, 1) + 0.17 ? Math.sin(prog(lt, w(0, 1) + 0.17, 0.3) * Math.PI) * 0.03 : 0;
+  s += guillotine(600, 1210, 1, bp - bounce);
+  s += eyesInBasket(890, 1220, 0.9, pop(lt, w(0, 7), 0.4), lt);
+  s += devoAt({ pose: 'sand', mark: '?' }, 180, 1340, 440);
+  return s;
 };
-const BG = { kanca: R.navy, 'ters-kose': R.teal, aciklama: R.navy, bonus: R.purple, kapanis: R.purple };
+const S1 = (t, lt) => {
+  const tw = w(1, 4), t13 = w(1, 12);
+  let s = K.titleOut(['Bazı tanıklara göre'], lt, 0.1, 390, 72, R.ink, w(1, 3) - 0.1);
+  s += K.stamp(W / 2, 400, 'EVET?!', 96, R.q, lt, w(1, 3), -6);
+  const mv = E.inOut(prog(lt, tw - 0.15, 0.5));
+  s += eyesInBasket(lerp(540, 900, mv), lerp(930, 1240, mv), lerp(1.5, 0.8, mv), 1, lt);
+  const n = lt < tw ? 0 : Math.min(13, 1 + Math.floor(12 * prog(lt, tw, t13 - tw)));
+  s += K.stopwatch(W / 2, 840, 250, n, n / 13, pop(lt, tw, 0.4));
+  s += K.label(W / 2, 1180, '5–13 saniye', 64, R.ok, pop(lt, w(1, 8), 0.4));
+  s += devoAt({ pose: 'stand', face: lt < w(1, 3) ? 'confused' : 'aha' }, 150, 1340, 360);
+  return s;
+};
+const S2 = (t, lt) => {
+  let s = K.title(['Kim icat etti?'], lt, 0.1, 390, 88);
+  s += K.flagCard(320, 760, 'fr', 'Fransa?', pop(lt, w(2, 3), 0.4));
+  if (lt > w(2, 4)) s += `<g transform="translate(450 640) scale(${pop(lt, w(2, 4), 0.3).toFixed(3)}) translate(-450 -640)">${K.badge(450, 640, 42, lt, w(2, 6))}</g>`;
+  s += K.flagCard(760, 760, 'en', 'İngiltere', pop(lt, w(2, 7), 0.4));
+  s += K.pin(760, 1010, pop(lt, w(2, 8), 0.4));
+  s += K.label(760, 1100, 'Halifax · 1286', 54, R.q, pop(lt, w(2, 8) + 0.25, 0.4));
+  s += K.mark(890, 640, 42, true, pop(lt, w(2, 12), 0.35));
+  s += devoAt({ pose: 'stand', face: lt < w(2, 6) ? 'neutral' : lt < w(2, 12) ? 'confused' : 'aha' }, 150, 1340, 360);
+  return s;
+};
+const S3 = (t, lt) => {
+  let s = K.title(['Peki mucidi?'], lt, 0.1, 390, 88);
+  s += K.kisi(540, 800, 1.35, { hair: 'wig', coat: '#2A2440', smile: lt < w(3, 9) }, pop(lt, w(3, 0) + 0.15, 0.45));
+  s += K.label(540, 1100, 'Dr. Guillotin', 58, R.ink, pop(lt, w(3, 3), 0.35));
+  const gm = pop(lt, w(3, 5), 0.35) * (1 - fade(lt, w(3, 7), 0.25));
+  if (gm > 0) s += `<g opacity="${gm.toFixed(2)}">${guillotine(870, 640, 0.22 * gm, 1)}${K.mark(920, 520, 30, false, pop(lt, w(3, 6), 0.3))}</g>`;
+  if (lt > w(3, 9) - 0.05) {
+    const kx = pop(lt, w(3, 9) - 0.05, 0.3);
+    s += `<g transform="translate(690 1000) scale(${kx.toFixed(3)})"><path d="M-24 -24 L24 24 M24 -24 L-24 24" stroke="${R.bang}" stroke-width="14" stroke-linecap="round"/></g>`;
+    s += K.label(830, 1000, 'çıban!', 56, R.bang, pop(lt, w(3, 9) + 0.1, 0.35));
+  }
+  s += devoAt({ pose: 'stand', face: lt < w(3, 6) ? 'neutral' : 'aha', mark: lt < w(3, 6) ? '?' : '!' }, 150, 1340, 360);
+  return s;
+};
+const S4 = (t, lt) => {
+  let s = K.title(['Kısacası'], lt, 0.1, 390, 88);
+  s += K.row(W / 2, 620, 720, 'Fransız icadı', pop(lt, w(4, 2), 0.35), false, pop(lt, w(4, 3), 0.3));
+  s += K.row(W / 2, 790, 720, 'Mucidi kurban', pop(lt, w(4, 6), 0.35), false, pop(lt, w(4, 7), 0.3));
+  s += K.followButton(lt, w(4, 8), 1110);
+  s += devoAt({ pose: lt > w(4, 8) ? 'point' : 'stand', face: 'happy' }, 180, 1340, 440);
+  return s;
+};
 
-fetch('senaryo.json').then((r) => r.json()).then((sen) => {
-  const sz = sen.sahneler.map((sc, i) => (TIP[sc.tip] || TIP.aciklama)(sc, i, sc.vo.split(/\s+/).length));
-  K.video({
-    sahneler: sz.map((x) => x.ciz),
-    kelimeSayisi: sen.sahneler.map((sc) => sc.vo.split(/\s+/).length),
-    tail: sen.sahneler.map((sc, i) => (i === sen.sahneler.length - 1 ? 1.7 : 0.7)),
-    bg: sen.sahneler.map((sc) => BG[sc.tip] || R.navy),
-    olaylar: (w, at) => sz.flatMap((x) => x.olay(at)),
-  });
+K.video({
+  sahneler: [S0, S1, S2, S3, S4],
+  kelimeSayisi: [10, 14, 13, 12, 12],
+  tail: [0.7, 0.8, 0.7, 0.8, 1.7],
+  bg: [R.navy, R.purple, R.teal, R.navy, R.purple],
+  olaylar: (w, at) => {
+    const tw = w(1, 4), t13 = w(1, 12);
+    return [
+      { t: at(0, w(0, 1) - 0.05), type: 'swish' }, { t: at(0, w(0, 1) + 0.17), type: 'thump' }, { t: at(0, w(0, 7)), type: 'pop' },
+      { t: at(1, 0.1), type: 'pop' }, { t: at(1, w(1, 3) + 0.12), type: 'thump' }, { t: at(1, tw), type: 'pop' },
+      ...Array.from({ length: 12 }, (_, i) => ({ t: at(1, tw + (t13 - tw) * (i + 1) / 12), type: 'tick' })), { t: at(1, t13 + 0.05), type: 'ding' }, { t: at(1, w(1, 8)), type: 'plink' },
+      { t: at(2, w(2, 3)), type: 'pop' }, { t: at(2, w(2, 4)), type: 'ding' }, { t: at(2, w(2, 6)), type: 'buzz' }, { t: at(2, w(2, 7)), type: 'pop' }, { t: at(2, w(2, 8)), type: 'plink' }, { t: at(2, w(2, 12)), type: 'ding' },
+      { t: at(3, w(3, 0) + 0.15), type: 'pop' }, { t: at(3, w(3, 3)), type: 'pop' }, { t: at(3, w(3, 5)), type: 'pop' }, { t: at(3, w(3, 6)), type: 'buzz' }, { t: at(3, w(3, 9)), type: 'thump' },
+      { t: at(4, w(4, 2)), type: 'pop' }, { t: at(4, w(4, 3)), type: 'buzz' }, { t: at(4, w(4, 6)), type: 'pop' }, { t: at(4, w(4, 7)), type: 'buzz' }, { t: at(4, w(4, 8)), type: 'ding' },
+    ];
+  },
 });
 </script>
 </body>

@@ -2,13 +2,13 @@
   "id": "000-ornek",
   "kitap_no": 9,
   "saglayici": "elevenlabs",
-  "ses": "X5CGTTx85DmIuopBFHlz",
-  "ses_adi": "Nikole – Natural, Clear and Light",
+  "ses": "D2dHiTSPRx6l2bhKGmyJ",
+  "ses_adi": "Dilara – Warm, Natural, Conversational",
   "model": "eleven_multilingual_v2",
   "ses_ayari": {
-    "stability": 0.38,
-    "similarity_boost": 0.85,
-    "style": 0.4,
+    "stability": 0.5,
+    "similarity_boost": 0.8,
+    "style": 0.3,
     "use_speaker_boost": true
   },
   "sahneler": [

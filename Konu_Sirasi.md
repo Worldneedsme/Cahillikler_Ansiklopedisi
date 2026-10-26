@@ -44,4 +44,4 @@
 | Sayıları konuşur gibi söyle: "en az üç ay" | "minimum 3 aylık süre" |
 | Sonunda bir laf sokma, ardından "Takip et, cahil kalma!" | Uzun özet |
 
-Seslendirme: ElevenLabs, **Nikole – Natural, Clear and Light** (`X5CGTTx85DmIuopBFHlz`, kütüphane sesi), `eleven_multilingual_v2`, ayar: stability 0.38, similarity 0.85, style 0.4. Müzik seviyesi `mix.py` içinde `MUZIK = 0.5`.
+Seslendirme: ElevenLabs, **Dilara – Warm, Natural, Conversational** (`D2dHiTSPRx6l2bhKGmyJ`), `eleven_multilingual_v2`, ayar: stability 0.5, similarity 0.8, style 0.3. Önceki ses (Nikole/Auralis, `X5CGTTx85DmIuopBFHlz`) fazla nefesli bulunduğu için bırakıldı; nefesli/"breathy" etiketli seslerden kaçının. Müzik seviyesi `mix.py` içinde `MUZIK = 0.5`.
