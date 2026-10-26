@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="tr" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <title>Locca: dil seçimi</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      /* First slide of the 3-language Instagram carousel (2026-10-21): tells the viewer the film comes in TR, EN and RU
+         and to swipe. Same look as hf/fox-route. Everything that matters sits inside the 4:5 band (y 285-1635),
+         so a feed crop keeps it. Sound: the fox-route end card (chime, pop, bloop), the cards land on those hits. */
+      @font-face { font-family: "Manrope"; font-weight: 200 800; src: url(assets/fonts/manrope-latin-wght-normal.woff2) format("woff2");
+        unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2212; }
+      @font-face { font-family: "Manrope"; font-weight: 200 800; src: url(assets/fonts/manrope-latin-ext-wght-normal.woff2) format("woff2");
+        unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+1E00-1E9F, U+20A0-20C0, U+2C60-2C7F, U+A720-A7FF; }
+      @font-face { font-family: "Manrope"; font-weight: 200 800; src: url(assets/fonts/manrope-cyrillic-wght-normal.woff2) format("woff2");
+        unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { margin: 0; width: 1080px; height: 1920px; overflow: hidden; background: #f9efe6; }
+      #root { position: relative; width: 100%; height: 100%; overflow: hidden; font-family: "Manrope", sans-serif; color: #1c1b1a; }
+      .clip { position: absolute; inset: 0; }
+      .abs { position: absolute; }
+      .o { color: #d14800; }
+      .center { position: absolute; left: 0; width: 1080px; display: flex; justify-content: center; align-items: center; }
+      .ask { font-size: 36px; line-height: 48px; font-weight: 700; color: #5a524c; letter-spacing: -0.01em; }
+      .lang { position: absolute; left: 110px; width: 860px; height: 140px; background: #fff; border-radius: 40px; display: flex; align-items: center;
+        box-shadow: 0 0 0 1px rgba(60,34,18,.06), 0 2px 6px rgba(60,34,18,.08), 0 26px 52px rgba(60, 34, 18, 0.16); }
+      .code { margin-left: 34px; width: 104px; height: 68px; border-radius: 34px; background: #ff5b00; color: #fff; font-size: 34px; font-weight: 800;
+        letter-spacing: 0.06em; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 22px rgba(255, 91, 0, 0.28); }
+      .line { margin-left: 34px; font-size: 46px; font-weight: 800; letter-spacing: -0.025em; }
+      .swipe { font-size: 44px; font-weight: 800; letter-spacing: -0.015em; }
+      .sticker { position: absolute; filter: drop-shadow(0 30px 34px rgba(60, 34, 18, 0.26)) drop-shadow(0 8px 10px rgba(60, 34, 18, 0.18)); }
+      .contact { position: absolute; height: 40px; border-radius: 50%; background: radial-gradient(closest-side, rgba(60, 34, 18, 0.42), rgba(60, 34, 18, 0)); }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="4" data-width="1080" data-height="1920">
+
+      <section id="bg" class="clip" data-start="0" data-duration="4" data-track-index="0">
+        <svg class="abs" width="1080" height="1920" viewBox="0 0 1080 1920" data-layout-allow-overflow>
+          <defs>
+            <radialGradient id="warm" cx="0.3" cy="0.25" r="0.95"><stop offset="0" stop-color="#fffaf5" /><stop offset="0.55" stop-color="#f9efe6" /><stop offset="1" stop-color="#efdccb" /></radialGradient>
+            <linearGradient id="blob" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff8a3d" /><stop offset="1" stop-color="#e65000" /></linearGradient>
+          </defs>
+          <rect width="1080" height="1920" fill="url(#warm)" />
+          <path d="M1140 -60 L1140 300 C1060 310 990 280 950 220 C900 150 920 70 860 20 C830 -10 800 -40 790 -60 Z" fill="url(#blob)" />
+          <path d="M-60 1640 C40 1600 130 1640 170 1720 C210 1800 180 1880 230 1980 L-60 1980 Z" fill="url(#blob)" />
+          <g fill="#ff5b00">
+            <path d="M960 1180 L968 1208 L996 1216 L968 1224 L960 1252 L952 1224 L924 1216 L952 1208 Z" opacity="0.85" />
+            <path d="M150 1330 L156 1350 L176 1356 L156 1362 L150 1382 L144 1362 L124 1356 L144 1350 Z" opacity="0.7" />
+          </g>
+        </svg>
+      </section>
+
+      <section id="main-s" class="clip" data-start="0" data-duration="4" data-track-index="1">
+        <img id="logo" class="abs" src="assets/locca-logo.png" style="left:390px; top:330px; width:300px;" alt="" />
+        <div class="center" style="top:470px; height:48px;"><p id="ask" class="ask">Dilini seç · Choose your language · Выбери язык</p></div>
+
+        <div id="c1" class="lang" style="top:570px;"><div class="code">TR</div><div class="line">Ziyaret et. Tarat. <span class="o">Kazan.</span></div></div>
+        <div id="c2" class="lang" style="top:740px;"><div class="code">EN</div><div class="line">Visit. Scan. <span class="o">Earn.</span></div></div>
+        <div id="c3" class="lang" style="top:910px;"><div class="code">RU</div><div class="line">Заходи. Сканируй. <span class="o">Получай.</span></div></div>
+
+        <div id="swipe" class="center" style="top:1110px; height:80px; gap:22px;">
+          <p class="swipe">Kaydır · Swipe · Листай</p>
+          <svg id="arrow" width="92" height="56" viewBox="0 0 92 56"><path d="M6 28 L78 28 M56 8 L80 28 L56 48" stroke="#ff5b00" stroke-width="11" fill="none" stroke-linecap="round" stroke-linejoin="round" /></svg>
+        </div>
+
+        <div id="fox" class="abs" style="left:610px; top:1190px; width:360px; height:466px; transform-origin:50% 92%;">
+          <div class="contact" style="left:43px; top:426px; width:274px;"></div>
+          <img class="sticker" src="assets/fox/wave.png" style="left:0; top:0; width:360px; height:446px;" alt="" />
+        </div>
+      </section>
+
+      <audio id="score" src="assets/intro.wav" data-start="0" data-duration="4"></audio>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+      // hits in assets/intro.wav (the fox-route end card): chime 0.0, pop 0.2, bloop 0.6, pop 1.3, bloop 2.6
+      tl.fromTo("#logo", { opacity: 0, scale: 0.85 }, { opacity: 1, scale: 1, duration: 0.7, ease: "power3.out", immediateRender: false }, 0.0);
+      tl.fromTo("#ask", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.6, ease: "power3.out", immediateRender: false }, 0.1);
+      ["#c1", "#c2", "#c3"].forEach((c, i) => {
+        tl.set(c, { opacity: 0 }, 0);
+        tl.fromTo(c, { opacity: 0, x: 140 }, { opacity: 1, x: 0, duration: 0.55, ease: "power3.out", immediateRender: false }, [0.2, 0.6, 1.3][i]);
+      });
+      tl.set("#fox", { opacity: 0 }, 0);
+      tl.fromTo("#fox", { opacity: 0, scale: 0.7, rotation: -4 }, { opacity: 1, scale: 1, rotation: 0, duration: 0.6, ease: "back.out(1.6)", immediateRender: false }, 1.6);
+      tl.fromTo("#fox", { rotation: -2 }, { rotation: 2, duration: 0.5, ease: "sine.inOut", yoyo: true, repeat: 3, immediateRender: false }, 2.2);
+      tl.set("#swipe", { opacity: 0 }, 0);
+      tl.fromTo("#swipe", { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out", immediateRender: false }, 2.6);
+      // the arrow nudges right, toward the next slide
+      tl.fromTo("#arrow", { x: 0 }, { x: 22, duration: 0.3, ease: "power2.inOut", yoyo: true, repeat: 3, immediateRender: false }, 2.9);
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>

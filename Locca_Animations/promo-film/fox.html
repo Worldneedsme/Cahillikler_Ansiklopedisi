@@ -1,0 +1,526 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Locca fox: yüklendi</title>
+<style>
+  html, body { margin: 0; background: #FBF4F0; }
+  canvas { display: block; }
+  body.preview { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 12px; font: 13px system-ui, sans-serif; }
+  body.preview canvas { height: calc(100vh - 80px); width: auto; }
+</style>
+</head>
+<body>
+<canvas id="film"></canvas>
+<script>
+'use strict';
+// Follow-up to the "locca yükleniyor" loading post. Storyboard: docs/fox-loading-storyboard.md
+// ?f=story (1080x1920) | feed (1080x1350)   ?lang=tr | en | ru
+// Every frame is a pure function of t. 120 BPM: beat = 0.5 s, bar = 2 s, 16 s total.
+const Q = new URLSearchParams(location.search);
+const FMT = Q.get('f') === 'feed' ? 'feed' : 'story';
+const LANG = ['tr', 'en', 'ru'].includes(Q.get('lang')) ? Q.get('lang') : 'tr';
+const W = 1080, H = FMT === 'feed' ? 1350 : 1920;
+const DUR = 16;
+window.DURATION = DUR;
+
+const TEXT = {
+  tr: { word: 'yükleniyor', done: 'yüklendi', tag: 'Yerel bir şey geliyor...', end: 'Yereli keşfet, ödülleri kazan.' },
+  en: { word: 'loading', done: 'loaded', tag: 'Something local is coming...', end: 'Discover local. Get rewarded.' },
+  ru: { word: 'загрузка', done: 'загружено', tag: 'Скоро — что-то местное...', end: 'Открывай местное — получай награды.' },
+}[LANG];
+
+const C = { bg: '#FBF4F0', peach: '#F7E3D6', peachDot: '#EDBFA3', orange: '#FF5B00', ink: '#1C1B1A', cell: '#2B2827', ground: '#F6E7DD', paw: '#4A2F22', white: '#FFFFFF' };
+
+// Layout per format. The lockup and bar sit in the middle of the frame; the fox peeks from behind a tree on the right,
+// toward the place badge on the left. Story: text stays inside the Reels/TikTok safe area; only the tree goes under the side buttons.
+const L = FMT === 'feed'
+  ? { cx: 540, logoY: 500, logoW: 260, word: 54, barY: 660, barW: 600, tagY: 800, tag: 40, end: 46, ground: 1350, fox: 220, foxCy: 1130,
+      trunkX: 830, trunkW: 110, trunkTop: 1000, canopy: [[960, 880, 130], [1070, 830, 130], [890, 965, 90]], badgeX: 410, badgeY: 980, badgeR: 92, cupDy: 45 }
+  : { cx: 540, logoY: 760, logoW: 290, word: 60, barY: 930, barW: 660, tagY: 1075, tag: 44, end: 52, ground: 1600, fox: 250, foxCy: 1420,
+      trunkX: 880, trunkW: 125, trunkTop: 1330, canopy: [[1000, 1200, 150], [1110, 1150, 150], [920, 1280, 110]], badgeX: 300, badgeY: 1250, badgeR: 105, cupDy: 50 };
+
+const canvas = document.getElementById('film');
+canvas.width = W; canvas.height = H;
+const ctx = canvas.getContext('2d');
+
+// ---------- math ----------
+function spr(t, t0, f = 3, z = 1) {
+  const dt = t - t0;
+  if (dt <= 0) return 0;
+  const w = 2 * Math.PI * f;
+  let v, env;
+  if (z >= 1) { const e = Math.exp(-w * dt); v = 1 - e * (1 + w * dt); env = e * (1 + w * dt); }
+  else { const wd = w * Math.sqrt(1 - z * z), e = Math.exp(-z * w * dt), k = (z * w) / wd; v = 1 - e * (Math.cos(wd * dt) + k * Math.sin(wd * dt)); env = e * Math.sqrt(1 + k * k); }
+  return env < 4e-4 ? 1 : v;
+}
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+const lerp = (a, b, k) => a + (b - a) * k;
+const prog = (t, a, b) => clamp((t - a) / (b - a));
+const E = {
+  outExpo: (p) => (p >= 1 ? 1 : 1 - Math.pow(2, -10 * p)),
+  inExpo: (p) => (p <= 0 ? 0 : Math.pow(2, 10 * p - 10)),
+  inOutQuart: (p) => (p < 0.5 ? 8 * p ** 4 : 1 - Math.pow(-2 * p + 2, 4) / 2),
+  inCubic: (p) => p * p * p,
+  outCubic: (p) => 1 - Math.pow(1 - p, 3),
+};
+const TAU = Math.PI * 2;
+
+// ---------- assets ----------
+const IMG = {};
+const SRC = { logo: 'assets/brand/locca-logo.png', open: 'assets/brand/fox-open.png', half: 'assets/brand/fox-half.png', wink: 'assets/brand/fox-wink.png' };
+const FONT_FILES = [
+  ['latin', 'U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2212'],
+  ['latin-ext', 'U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+1E00-1E9F,U+20A0-20C0,U+2C60-2C7F,U+A720-A7FF'],
+  ['cyrillic', 'U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116'],
+  ['cyrillic-ext', 'U+0460-052F,U+1C80-1C8A,U+20B4,U+2DE0-2DFF,U+A640-A69F,U+FE2E-FE2F'],
+];
+const loadImage = (src) => new Promise((res, rej) => { const im = new Image(); im.onload = () => res(im); im.onerror = () => rej(new Error('image ' + src)); im.src = src; });
+const FONT = (px) => `700 ${px}px Comfortaa`;
+
+function missingGlyphs(str) {
+  const miss = [];
+  for (const ch of new Set([...str])) {
+    if (ch === ' ') continue;
+    const w = ['monospace', 'serif'].map((fb) => { ctx.font = `700 100px Comfortaa, ${fb}`; return ctx.measureText(ch).width; });
+    if (Math.abs(w[0] - w[1]) > 0.01) miss.push(ch);
+  }
+  return miss;
+}
+
+// The fox with the white sticker outline from the loading post.
+function sticker(img, r) {
+  const c = document.createElement('canvas'); c.width = img.width + 2 * r; c.height = img.height + 2 * r;
+  const x = c.getContext('2d');
+  for (let a = 0; a < 24; a++) x.drawImage(img, r + Math.cos(a / 24 * TAU) * r, r + Math.sin(a / 24 * TAU) * r);
+  x.globalCompositeOperation = 'source-in'; x.fillStyle = C.white; x.fillRect(0, 0, c.width, c.height);
+  x.globalCompositeOperation = 'source-over'; x.drawImage(img, r, r);
+  return c;
+}
+
+// ---------- drawing helpers ----------
+function rr(x, y, w, h, r) { ctx.beginPath(); ctx.roundRect(x, y, w, h, r); }
+// Closed or open smooth curve through points (Catmull-Rom).
+function curve(pts, closed) {
+  const n = pts.length;
+  const P = (i) => pts[closed ? (i + n) % n : clamp(i, 0, n - 1)];
+  ctx.beginPath(); ctx.moveTo(...pts[0]);
+  for (let i = 0; i < (closed ? n : n - 1); i++) {
+    const p0 = P(i - 1), p1 = P(i), p2 = P(i + 1), p3 = P(i + 2);
+    ctx.bezierCurveTo(p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6, p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6, p2[0], p2[1]);
+  }
+  if (closed) ctx.closePath();
+}
+const heartPath = (s) => { ctx.beginPath(); ctx.moveTo(0, s * 0.35); ctx.bezierCurveTo(-s * 1.1, -s * 0.35, -s * 0.45, -s * 1.05, 0, -s * 0.45); ctx.bezierCurveTo(s * 0.45, -s * 1.05, s * 1.1, -s * 0.35, 0, s * 0.35); ctx.closePath(); };
+
+// ---------- background (the loading post's composition) ----------
+function background(t) {
+  const d = Math.sin(TAU * t / DUR) * 6, e = Math.cos(TAU * t / DUR) * 5; // ambient drift, whole cycles over 16 s
+  const B = H;
+  ctx.fillStyle = C.bg; ctx.fillRect(0, 0, W, H);
+
+  ctx.fillStyle = C.peach; ctx.globalAlpha = 0.85;
+  curve([[-60, -60], [560 + d, -60], [520 + d, 130], [390, 270 + e], [300, 430], [130 + d, 530], [-60, 570]], true); ctx.fill();
+  ctx.globalAlpha = 1;
+  ctx.fillStyle = C.peachDot;
+  for (let i = 0; i < 6; i++) for (let j = 0; j < 10; j++) { ctx.beginPath(); ctx.arc(26 + i * 27, 42 + j * 27, 3.2, 0, TAU); ctx.fill(); }
+
+  ctx.fillStyle = '#1E1D1C';
+  curve([[700 + d, -60], [1140, -60], [1140, 330], [1010, 300 + e], [930, 215], [840, 125 + e], [760 + d, 45]], true); ctx.fill();
+  ctx.strokeStyle = C.orange; ctx.lineWidth = 3;
+  curve([[630 + d, -20], [715 + d, 60], [820, 155 + e], [920, 245], [1010, 335 + e], [1140, 365]], false); ctx.stroke();
+
+  // hatched circle on the right
+  const hy = L.barY - 70 + e;
+  ctx.save(); ctx.beginPath(); ctx.arc(1070, hy, 112, 0, TAU); ctx.clip();
+  ctx.strokeStyle = C.peachDot; ctx.lineWidth = 2.5;
+  for (let k = -240; k < 240; k += 15) { ctx.beginPath(); ctx.moveTo(1070 + k - 140, hy + 140); ctx.lineTo(1070 + k + 140, hy - 140); ctx.stroke(); }
+  ctx.restore();
+
+  if (FMT === 'story') { // the ground the tree stands on
+    ctx.fillStyle = C.ground; ctx.fillRect(0, L.ground, W, H - L.ground);
+    ctx.fillStyle = '#EBD6C8'; ctx.fillRect(0, L.ground, W, 3);
+  }
+
+  ctx.fillStyle = C.peach; ctx.globalAlpha = 0.85;
+  curve([[1140, B - 540], [985 + d, B - 445], [905, B - 310 + e], [825, B - 165], [760 + d, B + 60], [1140, B + 60]], true); ctx.fill();
+  ctx.globalAlpha = 1;
+  ctx.fillStyle = C.peachDot;
+  for (let i = 0; i < 5; i++) for (let j = 0; j < 4; j++) { ctx.beginPath(); ctx.arc(955 + i * 27, B - 150 + j * 27, 3.2, 0, TAU); ctx.fill(); }
+  ctx.fillStyle = '#F3CDB5'; ctx.beginPath(); ctx.arc(830 + d, B - 330 + e, 26, 0, TAU); ctx.fill();
+
+  ctx.fillStyle = C.orange;
+  curve([[-60, B - 560], [55, B - 525 + e], [165 + d, B - 405], [215, B - 265], [295 + d, B - 140], [385, B + 60], [-60, B + 60]], true); ctx.fill();
+  ctx.strokeStyle = C.ink; ctx.lineWidth = 3;
+  curve([[-20, B - 610], [92, B - 548 + e], [180 + d, B - 430], [212, B - 300], [272 + d, B - 180], [345, B - 60], [395, B + 40]], false); ctx.stroke();
+  canopy(t);
+}
+
+// ---------- the tree ----------
+const LEAF = ['#F2B084', '#F7C8A3', '#EFA06C'];
+function canopy(t) { // behind the fox; sways 1 % on a 4 s cycle (whole cycles over 16 s)
+  L.canopy.forEach(([x, y, r], i) => {
+    const sway = Math.sin(TAU * (t / 4 + i * 0.2)) * r * 0.012;
+    ctx.fillStyle = LEAF[i]; ctx.beginPath(); ctx.arc(x + sway, y, r, 0, TAU); ctx.fill();
+  });
+  ctx.fillStyle = 'rgba(255,91,0,0.18)'; // a few leaf flecks
+  for (let k = 0; k < 14; k++) {
+    const [x, y, r] = L.canopy[k % 3], a = hash(k) * TAU, d = Math.sqrt(hash(k + 40)) * r * 0.8;
+    ctx.beginPath(); ctx.ellipse(x + Math.cos(a) * d, y + Math.sin(a) * d, r * 0.07, r * 0.035, a, 0, TAU); ctx.fill();
+  }
+}
+const hash = (i) => { const x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
+function trunk() { // in front of the fox
+  const { trunkX: x, trunkW: w, trunkTop: top, ground: g } = L;
+  ctx.fillStyle = 'rgba(28,27,26,0.10)'; ctx.beginPath(); ctx.ellipse(x + w / 2, g, w * 0.9, w * 0.12, 0, 0, TAU); ctx.fill();
+  ctx.fillStyle = '#6B4430'; ctx.beginPath(); ctx.moveTo(x + w * 0.1, top); ctx.lineTo(x + w * 0.9, top);
+  ctx.quadraticCurveTo(x + w * 0.92, g - 60, x + w * 1.12, g + 2); ctx.lineTo(x - w * 0.12, g + 2); ctx.quadraticCurveTo(x + w * 0.08, g - 60, x + w * 0.1, top); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = '#86573D'; ctx.fillRect(x + w * 0.55, top, w * 0.18, g - top - 20); // light side
+  ctx.strokeStyle = '#4E3022'; ctx.lineWidth = 3; ctx.lineCap = 'round';
+  for (const [u, v, l] of [[0.3, 0.25, 0.12], [0.7, 0.5, 0.1], [0.35, 0.72, 0.09]]) { const yy = top + (g - top) * v; ctx.beginPath(); ctx.moveTo(x + w * u, yy); ctx.quadraticCurveTo(x + w * (u + 0.06), yy + (g - top) * l * 0.5, x + w * u, yy + (g - top) * l); ctx.stroke(); }
+  // a front clump of leaves hides where the trunk meets the canopy
+  const [cx, cy, r] = L.canopy[2];
+  ctx.fillStyle = LEAF[0]; ctx.beginPath(); ctx.arc(x + w * 0.6, top + 4, r * 0.62, Math.PI * 0.95, Math.PI * 2.05); ctx.fill();
+}
+
+// ---------- the bar / stamp card ----------
+const N = 12;
+const G = (() => {
+  const w = L.barW, h = 0.143 * w, cs = 0.0635 * w, gap = 0.0143 * w;
+  const x0 = L.cx - w / 2, y0 = L.barY - h / 2;
+  const first = L.cx - (N * cs + (N - 1) * gap) / 2 + cs / 2;
+  return { w, h, cs, gap, x0, y0, lw: 0.016 * w, r: 0.035 * w, cellX: (i) => first + i * (cs + gap) };
+})();
+
+// When each slot turns orange, and where its stamp flies from.
+const HOP = [{ from: 11, to: 1, t: 2.5 }, { from: 10, to: 0, t: 2.5 + 4 / 60 }]; // right one first
+const HOP_D = 0.42;
+const STAMPS = [4.5, 5.0, 5.5, 6.5, 7.0, 7.5, 8.5, 9.0, 9.5].map((t, k) => ({ slot: 2 + k, t }));
+const HERO = { slot: 11, t: 11.0 };
+const FLY = 0.36;
+function slotLand(i) {
+  const h = HOP.find((o) => o.to === i); if (h) return h.t + HOP_D;
+  const s = STAMPS.find((o) => o.slot === i); if (s) return s.t;
+  return HERO.t;
+}
+const badgeCenter = (t) => {
+  const inP = spr(t, 4.0, 2.2, 0.8), out = E.inExpo(prog(t, 10.0, 10.25));
+  return [lerp(-140, L.badgeX, inP) - out * 700, L.badgeY];
+};
+
+function cellRect(x, y, s, col, sx = 1, sy = 1, rot = 0) {
+  ctx.save(); ctx.translate(x, y); ctx.rotate(rot); ctx.scale(sx, sy);
+  ctx.fillStyle = col; rr(-s / 2, -s / 2, s, s, s * 0.17); ctx.fill(); ctx.restore();
+}
+
+function barSquash(t) {
+  let sx = 1, sy = 1;
+  const a = E.outCubic(prog(t, 2.0, 2.4)) * (1 - spr(t, 2.5, 3, 0.45)); // anticipation before the hop
+  sx += 0.03 * a; sy -= 0.03 * a;
+  const h = HERO.t, k = spr(t, h, 4, 0.35) - spr(t, h + 0.08, 4, 0.35);  // hero slam impulse
+  sx += 0.06 * k * 2.2; sy -= 0.08 * k * 2.2;
+  return [sx, sy];
+}
+
+// Bar → cup morph state, 0..1 over 12.0-12.6
+const MORPH = (t) => E.inOutQuart(prog(t, 12.0, 12.6));
+const CUP = { w: L.barW * 0.28, h: L.barW * 0.30, cy: L.barY + L.cupDy };
+
+function drawBar(t) {
+  const m = MORPH(t);
+  const [bsx, bsy] = barSquash(t);
+  // outline geometry, morphing into the cup body
+  const cupScale = (1 + 0.12 * (spr(t, 12.55, 3, 0.45) - spr(t, 12.7, 3, 0.45))) * lerp(1, 0.8, E.inOutQuart(prog(t, 13.6, 14.1)));
+  const cw = CUP.w * cupScale, ch = CUP.h * cupScale;
+  const w = lerp(G.w * bsx, cw, m), h = lerp(G.h * bsy, ch, m);
+  const cy = lerp(L.barY, CUP.cy, m) - 45 * E.inOutQuart(prog(t, 13.6, 14.1)); // makes room for the end line
+  const x = L.cx - w / 2, y = cy - h / 2;
+  const rTop = lerp(G.r, cw * 0.05, m), rBot = lerp(G.r, cw * 0.22, m);
+  ctx.lineJoin = 'round';
+  if (m > 0) { // handle grows out of the right side
+    const hp = E.outCubic(prog(t, 12.45, 12.8));
+    if (hp > 0) {
+      ctx.strokeStyle = C.ink; ctx.lineWidth = G.lw;
+      ctx.beginPath(); ctx.arc(x + w, cy + h * 0.02, h * 0.2, -Math.PI / 2, -Math.PI / 2 + Math.PI * hp); ctx.stroke();
+    }
+  }
+  ctx.fillStyle = m > 0 ? C.white : 'rgba(255,255,255,0)';
+  ctx.beginPath(); ctx.roundRect(x, y, w, h, [rTop, rTop, rBot, rBot]);
+  if (m > 0) ctx.fill();
+  ctx.strokeStyle = C.ink; ctx.lineWidth = G.lw; ctx.stroke();
+
+  if (m > 0) { // sleeve: the 12 orange cells become one band
+    const sw = lerp(0, w + 0.5, E.outCubic(prog(t, 12.25, 12.6))), sh = h * 0.3;
+    ctx.save(); ctx.beginPath(); ctx.roundRect(x, y, w, h, [rTop, rTop, rBot, rBot]); ctx.clip();
+    ctx.fillStyle = C.orange; ctx.fillRect(L.cx - sw / 2, cy - sh / 2 + h * 0.06, sw, sh);
+    const hs = spr(t, 12.6, 3, 0.5) * sh * 0.32;
+    if (hs > 0) { ctx.save(); ctx.translate(L.cx, cy + h * 0.06); ctx.fillStyle = C.white; heartPath(hs); ctx.fill(); ctx.restore(); }
+    ctx.restore();
+    ctx.beginPath(); ctx.roundRect(x, y, w, h, [rTop, rTop, rBot, rBot]); ctx.strokeStyle = C.ink; ctx.lineWidth = G.lw; ctx.stroke();
+    // steam: three curls drawn in, then swaying
+    const sp = E.outCubic(prog(t, 12.65, 13.05));
+    if (sp > 0) {
+      ctx.strokeStyle = C.ink; ctx.lineWidth = G.lw * 0.7; ctx.lineCap = 'round';
+      for (let k = -1; k <= 1; k++) {
+        const bx = L.cx + k * w * 0.26, top = y - h * 0.12, len = h * 0.38;
+        ctx.beginPath();
+        for (let s = 0; s <= 24 * sp; s++) {
+          const u = s / 24, sway = Math.sin(TAU * (u * 1.2 + t * 0.5 + k * 0.3)) * w * 0.045;
+          const px = bx + sway, py = top - u * len;
+          s === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+        }
+        ctx.stroke();
+      }
+    }
+  }
+
+  // cells
+  const cellsAlpha = 1 - E.inExpo(prog(t, 12.0, 12.4));
+  if (cellsAlpha <= 0) return;
+  for (let i = 0; i < N; i++) {
+    const px = lerp(G.cellX(i), L.cx, m), py = cy;
+    const sc = (1 - m) * (1 + (i === HERO.slot ? 0.035 * Math.sin(TAU * 2 * (t - 10)) * (t > 10 && t < HERO.t ? 1 : 0) : 0));
+    const land = slotLand(i);
+    const startsOrange = (i === 10 || i === 11) && t < HOP[i === 11 ? 0 : 1].t;
+    const orange = t >= land || startsOrange;
+    let sx = 1, sy = 1;
+    if (t >= land) { const k = 1 - spr(t, land, 5, 0.4); sx = 1 + 0.3 * k; sy = 1 - 0.3 * k; }
+    cellRect(px, py, G.cs * sc * bsx, orange ? C.orange : C.cell, sx, sy);
+  }
+}
+
+// cells in flight: the hop, the badge stamps and the hero stamp
+function drawFlights(t) {
+  const arc = (a, b, u, hgt) => [lerp(a[0], b[0], u), lerp(a[1], b[1], u) - hgt * 4 * u * (1 - u)];
+  for (const o of HOP) {
+    const u = prog(t, o.t, o.t + HOP_D);
+    if (u <= 0 || u >= 1) continue;
+    const [x, y] = arc([G.cellX(o.from), L.barY], [G.cellX(o.to), L.barY], E.inOutQuart(u), G.h * 1.6);
+    cellRect(x, y, G.cs, C.orange, 1, 1, -TAU * E.inOutQuart(u) * 0.5);
+  }
+  for (const s of STAMPS) {
+    const u = prog(t, s.t - FLY, s.t);
+    if (u <= 0 || u >= 1) continue;
+    const b = badgeCenter(s.t - FLY);
+    const [x, y] = arc([b[0], b[1] - 70], [G.cellX(s.slot), L.barY], u, 150);
+    const sc = lerp(0.55, 1, u);
+    cellRect(x, y, G.cs * sc, C.orange, 1 - 0.15 * Math.sin(Math.PI * u), 1 + 0.25 * Math.sin(Math.PI * u), -0.6 * (1 - u));
+  }
+  { // hero: falls from above the frame and slams the last slot
+    const u = prog(t, HERO.t - 0.45, HERO.t);
+    if (u > 0 && u < 1) {
+      // thrown in from the right edge on a low arc, so it never crosses the logo line
+      const tx = G.cellX(HERO.slot), e = E.inCubic(u);
+      const x = lerp(W + 80, tx, 1 - (1 - u) * (1 - u)), y = lerp(L.barY - 150, L.barY, e) - 60 * Math.sin(Math.PI * u); // low arc under the word
+      const sc = lerp(1.7, 1, u);
+      cellRect(x, y, G.cs * sc, C.orange, 1 - 0.2 * u, 1 + 0.35 * u, TAU * (1 - E.outCubic(u)));
+    }
+  }
+}
+
+// ---------- the badge of the local place ----------
+function icon(kind, r) {
+  ctx.lineWidth = r * 0.075; ctx.strokeStyle = C.ink; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  if (kind === 0) { // coffee cup
+    ctx.fillStyle = C.white; ctx.beginPath(); ctx.roundRect(-r * 0.36, -r * 0.18, r * 0.62, r * 0.55, [r * 0.04, r * 0.04, r * 0.18, r * 0.18]); ctx.fill(); ctx.stroke();
+    ctx.beginPath(); ctx.arc(r * 0.28, r * 0.06, r * 0.12, -Math.PI / 2, Math.PI / 2); ctx.stroke();
+    ctx.fillStyle = C.orange; ctx.fillRect(-r * 0.36 + ctx.lineWidth / 2, r * 0.0, r * 0.62 - ctx.lineWidth, r * 0.13);
+    for (const k of [-0.18, 0, 0.18]) { ctx.beginPath(); ctx.moveTo(k * r - r * 0.05, -r * 0.3); ctx.quadraticCurveTo(k * r + r * 0.06, -r * 0.4, k * r - r * 0.02, -r * 0.52); ctx.stroke(); }
+  } else if (kind === 1) { // simit
+    ctx.fillStyle = '#E39A55'; ctx.beginPath(); ctx.ellipse(0, r * 0.05, r * 0.46, r * 0.4, 0, 0, TAU); ctx.ellipse(0, r * 0.05, r * 0.17, r * 0.14, 0, 0, TAU); ctx.fill('evenodd'); ctx.stroke();
+    ctx.beginPath(); ctx.ellipse(0, r * 0.05, r * 0.17, r * 0.14, 0, 0, TAU); ctx.stroke();
+    ctx.fillStyle = '#FFF4E3';
+    for (let k = 0; k < 14; k++) { const a = k / 14 * TAU + 0.2, rad = r * (k % 2 ? 0.3 : 0.37); ctx.beginPath(); ctx.ellipse(Math.cos(a) * rad, r * 0.05 + Math.sin(a) * rad * 0.86, r * 0.035, r * 0.02, a, 0, TAU); ctx.fill(); }
+  } else { // ice cream
+    ctx.fillStyle = '#E8B57A'; ctx.beginPath(); ctx.moveTo(-r * 0.24, -r * 0.02); ctx.lineTo(r * 0.24, -r * 0.02); ctx.lineTo(0, r * 0.55); ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = C.white; ctx.beginPath(); ctx.arc(0, -r * 0.16, r * 0.27, Math.PI * 0.92, Math.PI * 2.08); ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = C.orange; ctx.beginPath(); ctx.arc(0, -r * 0.4, r * 0.08, 0, TAU); ctx.fill();
+  }
+}
+function drawBadge(t) {
+  if (t < 4.0 || t > 10.3) return;
+  const [x, y] = badgeCenter(t), r = L.badgeR;
+  const kind = t < 6.0 ? 0 : t < 8.0 ? 1 : 2;
+  // a squash on every stamp it gives and on every swap
+  let s = 1;
+  for (const st of STAMPS) { const k = spr(t, st.t - FLY, 6, 0.4) - spr(t, st.t - FLY + 0.06, 6, 0.4); s -= 0.1 * k; }
+  for (const sw of [6.0, 8.0]) { const k = spr(t, sw - 0.1, 4, 0.45) - spr(t, sw, 4, 0.45); s += 0.15 * k; }
+  ctx.save(); ctx.translate(x, y); ctx.scale(s, 2 - s);
+  ctx.fillStyle = 'rgba(28,27,26,0.10)'; ctx.beginPath(); ctx.ellipse(0, r * 1.1, r * 0.8, r * 0.14, 0, 0, TAU); ctx.fill();
+  ctx.fillStyle = C.white; ctx.beginPath(); ctx.arc(0, 0, r, 0, TAU); ctx.fill();
+  ctx.strokeStyle = C.orange; ctx.lineWidth = 7; ctx.stroke();
+  // icon swaps behind a short blur
+  const swapBlur = Math.max(...[6.0, 8.0].map((sw) => 1 - Math.abs(t - sw) / 0.1)), bl = clamp(swapBlur) * 12;
+  if (bl > 0) ctx.filter = `blur(${bl.toFixed(1)}px)`;
+  icon(kind, r);
+  ctx.filter = 'none';
+  ctx.restore();
+}
+
+// ---------- type ----------
+let LOGO = null; // measured once fonts are in
+function measure() {
+  ctx.font = FONT(L.word);
+  const lh = L.logoW * IMG.logo.height / IMG.logo.width, gap = L.word * 0.42;
+  const x0 = (word) => L.cx - (L.logoW + gap + ctx.measureText(word).width) / 2; // centred on the word on screen
+  LOGO = { x0a: x0(TEXT.word), x0b: x0(TEXT.done), gap, top: L.logoY - lh, lh, base: L.logoY - lh + lh * 161 / 168 };
+}
+// Split a line in two when it is wider than the safe area: at a dash first, else at the space nearest the middle.
+function wrap(str, maxW) {
+  if (ctx.measureText(str).width <= maxW) return [str];
+  const dash = str.indexOf(' — ');
+  if (dash > 0) return [str.slice(0, dash + 2).trim(), str.slice(dash + 3)];
+  const sp = [...str.matchAll(/ /g)].map((m) => m.index).sort((x, y) => Math.abs(x - str.length / 2) - Math.abs(y - str.length / 2))[0];
+  return [str.slice(0, sp), str.slice(sp + 1)];
+}
+function drawType(t) {
+  const x0 = lerp(LOGO.x0a, LOGO.x0b, spr(t, 14.0, 2.5, 1)); // re-centres for the new word, mostly hidden by the swap blur
+  ctx.drawImage(IMG.logo, x0, LOGO.top, L.logoW, LOGO.lh);
+  ctx.fillStyle = C.ink; ctx.textBaseline = 'alphabetic'; ctx.textAlign = 'left'; ctx.font = FONT(L.word);
+  // "yükleniyor" → "yüklendi", swapped behind a blur at 14.0
+  const sw = 14.0, b = clamp(1 - Math.abs(t - sw) / 0.12);
+  if (b > 0) ctx.filter = `blur(${(b * 10).toFixed(1)}px)`;
+  ctx.globalAlpha = 1 - 0.6 * b;
+  ctx.fillText(t < sw ? TEXT.word : TEXT.done, x0 + L.logoW + LOGO.gap, LOGO.base);
+  ctx.filter = 'none'; ctx.globalAlpha = 1;
+
+  ctx.textAlign = 'center';
+  // opening tagline: on screen at frame 0, exits ease-in at 3.0
+  const o = E.inExpo(prog(t, 3.0, 3.22));
+  if (o < 1) { ctx.globalAlpha = 1 - o; ctx.font = FONT(L.tag); ctx.fillText(TEXT.tag, L.cx, L.tagY + o * 26); ctx.globalAlpha = 1; }
+  // end tagline: masked rise, critically damped, from 14.3
+  const k = spr(t, 14.3, 2.2, 1);
+  if (k > 0) {
+    ctx.font = FONT(L.end);
+    const lines = wrap(TEXT.end, 860), hgt = L.end * 1.4;
+    lines.forEach((line, i) => { // each line rises behind its own mask, the second 4 frames later
+      const ki = spr(t, 14.3 + i * 4 / 60, 2.2, 1), y = L.tagY + 30 + (i - (lines.length - 1) * 0.25) * hgt;
+      ctx.save(); ctx.beginPath(); ctx.rect(0, y - hgt, W, hgt + L.end * 0.4); ctx.clip();
+      ctx.fillText(line, L.cx, y + (1 - ki) * hgt);
+      ctx.restore();
+    });
+  }
+}
+
+// ---------- the fox ----------
+const FOX = { sw: L.fox, sh: L.fox * 320 / 332 };
+function foxLevel(t) { // 0 = peeking with 30 % of the head behind the trunk; in head widths, positive = leaning out
+  const smooth = (a, b) => E.inOutQuart(prog(t, a, b));
+  return 0.07 * spr(t, 4.5, 2.4, 0.55)
+    - 0.12 * smooth(10.0, 10.6)
+    + 0.10 * (spr(t, 11.0, 3, 0.5) - spr(t, 11.22, 3, 0.5))
+    + 0.25 * spr(t, 12.4, 2.4, 0.55)
+    - 0.20 * smooth(13.6, 14.1);
+}
+const TILT = [[2.45, -7], [3.6, 0], ...STAMPS.map((s) => [s.t - FLY, ((G.cellX(s.slot) - L.cx) / (G.w / 2)) * 6]), [10.0, 0]];
+function foxTilt(t) {
+  let a = 0, prev = 0;
+  for (const [t0, v] of TILT) { a += (v - prev) * spr(t, t0, 2.5, 0.7); prev = v; }
+  return a * Math.PI / 180;
+}
+function foxFace(t) {
+  const blink = [1.0, 6.2, 15.0].some((b) => t >= b - 0.033 && t < b + 0.05);
+  const wink = (t >= 9.5 && t < 9.62) || (t >= 13.0 && t < 13.5);
+  return wink ? IMG.winkS : blink ? IMG.halfS : IMG.openS;
+}
+function drawFox(t) {
+  const lv = foxLevel(t), v = (lv - foxLevel(t - 1 / 120)) * 120;
+  const bob = (t > 4 && t < 10) ? 0.018 * Math.pow(1 - ((t * 2) % 1), 3) : 0;
+  const breathe = 1 + 0.012 * Math.sin(TAU * t);
+  const st = 1 + clamp(Math.abs(v) * 0.18, 0, 0.1); // stretch along the lean, volume kept
+  const hid = 0.44 - lv;                             // share of the head width behind the trunk (the art has transparent margins)
+  const hx = L.trunkX + hid * FOX.sw - FOX.sw / 2, bottom = L.foxCy + FOX.sh / 2 - bob * FOX.sh;
+  const img = foxFace(t), pad = (img.width - IMG.open.width) / 2;
+  const sc = FOX.sw / IMG.open.width;
+  ctx.save();
+  ctx.translate(hx, bottom); ctx.rotate(foxTilt(t) - 0.15); ctx.scale(breathe * st, breathe / st);
+  ctx.drawImage(img, -FOX.sw / 2 - pad * sc, -FOX.sh - pad * sc, img.width * sc, img.height * sc);
+  ctx.restore();
+
+  trunk();
+  const headTop = [hx, bottom - FOX.sh * breathe];
+  // "!" over the head at 3.0
+  const ex = spr(t, 3.0, 3.5, 0.45) * (1 - E.inExpo(prog(t, 3.7, 3.86)));
+  if (ex > 0) mark(headTop[0] - FOX.sw * 0.5, headTop[1] + FOX.sw * 0.02, ex);
+  // hearts with the wink at 13.0
+  for (const [side, d] of [[-1, 0], [1, 0.08]]) {
+    const u = prog(t, 13.0 + d, 13.9 + d);
+    if (u <= 0 || u >= 1) continue;
+    const s = spr(t, 13.0 + d, 3.5, 0.5) * (1 - E.inExpo(prog(t, 13.65 + d, 13.9 + d))) * FOX.sw * 0.13;
+    ctx.save(); ctx.translate(headTop[0] + side * FOX.sw * (0.42 + 0.1 * u), headTop[1] + FOX.sw * 0.1 - u * FOX.sw * 0.35); ctx.rotate(side * 0.2);
+    ctx.lineWidth = s * 0.35; ctx.strokeStyle = C.white; heartPath(s); ctx.stroke(); ctx.fillStyle = C.orange; ctx.fill();
+    ctx.restore();
+  }
+}
+function mark(x, y, k) { // the painted "!"
+  ctx.save(); ctx.translate(x, y); ctx.scale(k, k); ctx.rotate(0.12);
+  const s = FOX.sw * 0.3;
+  ctx.lineCap = 'round';
+  ctx.strokeStyle = C.white; ctx.lineWidth = s * 0.32;
+  ctx.beginPath(); ctx.moveTo(0, -s * 0.5); ctx.lineTo(0, s * 0.12); ctx.stroke(); ctx.beginPath(); ctx.arc(0, s * 0.42, s * 0.12, 0, TAU); ctx.fillStyle = C.white; ctx.fill();
+  ctx.strokeStyle = C.orange; ctx.lineWidth = s * 0.17;
+  ctx.beginPath(); ctx.moveTo(0, -s * 0.5); ctx.lineTo(0, s * 0.12); ctx.stroke(); ctx.beginPath(); ctx.arc(0, s * 0.42, s * 0.09, 0, TAU); ctx.fillStyle = C.orange; ctx.fill();
+  ctx.restore();
+}
+
+// ---------- frame ----------
+function draw(t) {
+  ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = 1; ctx.filter = 'none';
+  // camera: 2 % creep in the first bar, still afterwards; the hero slam gets a 1.5 % punch
+  const z = 1 + 0.02 * E.inOutQuart(prog(t, 0, 2.0)) - 0.02 * E.inOutQuart(prog(t, 2.0, 3.0)) + 0.015 * (spr(t, HERO.t, 3, 0.6) - spr(t, HERO.t + 0.2, 3, 0.6));
+  const fy = L.barY;
+  ctx.setTransform(z, 0, 0, z, L.cx * (1 - z), fy * (1 - z));
+  background(t);
+  drawType(t);
+  drawBar(t);
+  drawBadge(t);
+  drawFox(t);
+  drawFlights(t);
+}
+
+// ---------- sub-frame motion blur + entry points ----------
+const acc = document.createElement('canvas'); acc.width = W; acc.height = H;
+const actx = acc.getContext('2d');
+function renderAt(t, sub = 2, fps = 60) {
+  t = clamp(t, 0, DUR - 1e-6);
+  if (sub <= 1) { draw(t); return canvas.toDataURL('image/png'); }
+  const shutter = 0.5 / fps;
+  for (let k = 0; k < sub; k++) {
+    draw(Math.max(0, t - shutter * (1 - k / (sub - 1))));
+    actx.globalAlpha = 1 / (k + 1);
+    actx.drawImage(canvas, 0, 0);
+  }
+  ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = 1; ctx.drawImage(acc, 0, 0);
+  return canvas.toDataURL('image/png');
+}
+window.renderAt = renderAt;
+window.seek = (t) => draw(t);
+
+window.ready = (async () => {
+  await Promise.all(FONT_FILES.map(async ([s, range]) => {
+    const f = new FontFace('Comfortaa', `url(assets/fonts/comfortaa-${s}-700-normal.woff2)`, { weight: '700', unicodeRange: range });
+    await f.load(); document.fonts.add(f);
+  }));
+  await document.fonts.ready;
+  // make sure every script's glyphs are actually loaded
+  for (const str of Object.values(TEXT)) await document.fonts.load(FONT(40), str);
+  await Promise.all(Object.entries(SRC).map(async ([k, v]) => { IMG[k] = await loadImage(v); }));
+  for (const k of ['open', 'half', 'wink']) IMG[k + 'S'] = sticker(IMG[k], 7);
+  measure();
+  const miss = missingGlyphs(Object.values(TEXT).join(''));
+  draw(0);
+  return { missingGlyphs: miss, fmt: FMT, lang: LANG, size: [W, H] };
+})();
+
+if (Q.has('preview')) {
+  document.body.classList.add('preview');
+  const r = document.createElement('input'); r.type = 'range'; r.min = 0; r.max = DUR; r.step = 1 / 60; r.value = Q.get('t') || 0;
+  document.body.appendChild(r);
+  window.ready.then(() => { const go = () => draw(+r.value); r.oninput = go; go(); });
+} else if (Q.has('t')) {
+  window.ready.then(() => draw(+Q.get('t')));
+}
+</script>
+</body>
+</html>

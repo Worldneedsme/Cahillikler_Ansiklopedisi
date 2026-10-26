@@ -1,0 +1,46 @@
+{
+  "id": "001-japon-baligi",
+  "kitap_no": 9,
+  "saglayici": "elevenlabs",
+  "ses": "X5CGTTx85DmIuopBFHlz",
+  "ses_adi": "Nikole – Natural, Clear and Light",
+  "model": "eleven_multilingual_v2",
+  "ses_ayari": {
+    "stability": 0.38,
+    "similarity_boost": 0.85,
+    "style": 0.4,
+    "use_speaker_boost": true
+  },
+  "sahneler": [
+    {
+      "id": "s0",
+      "tip": "kanca",
+      "vo": "Japon balığının hafızası üç saniyeymiş, öyle mi?",
+      "ekran": "Japon balığının hafızası 3 saniye mi?"
+    },
+    {
+      "id": "s1",
+      "tip": "ters-kose",
+      "vo": "Yok öyle bir şey. Bu balıklar en az üç ay hatırlıyor.",
+      "ekran": "Yok öyle bir şey! / EN AZ 3 AY"
+    },
+    {
+      "id": "s2",
+      "tip": "aciklama",
+      "vo": "Plymouth Üniversitesi'nde balıklara bir kolu itince yem geldiğini öğretmişler. Aylar geçmiş, balıklar hâlâ unutmamış.",
+      "ekran": "Deney: kolu it, yem gelsin"
+    },
+    {
+      "id": "s3",
+      "tip": "bonus",
+      "vo": "Asıl ilginci şu: yemin hangi saatte geldiğini de çözmüşler. Saati gelince kolun başına gidip bekliyorlarmış.",
+      "ekran": "Asıl ilginci…"
+    },
+    {
+      "id": "s4",
+      "tip": "kapanis",
+      "vo": "Yani üç saniyelik hafıza balıkta değil, bu lafı yayanlarda. Takip et, cahil kalma!",
+      "ekran": "3 saniyelik hafıza: balıkta değil, efsanede"
+    }
+  ]
+}

@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>003 En büyük penis</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; }
+  html, body { width: 1080px; height: 1920px; overflow: hidden; background: #14213D; }
+  #stage { width: 1080px; height: 1920px; display: block; }
+</style>
+</head>
+<body>
+<svg id="stage" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1920"></svg>
+<script src="../../maskot/devo.js"></script>
+<script src="../../sablon/kanal.js"></script>
+<script src="../../sablon/parcalar.js"></script>
+<script>
+const { W, R, clamp, lerp, prog, E, drop, pop, fade, devoAt, txt } = K;
+const C = { whale: '#3D7DD8', whaleLo: '#2C5FAA', belly: '#BFD8F6', shell: '#E9DCC0', shellLo: '#C9B898', rock: '#5A577F', rockLo: '#45426A', pink: '#FF8FA3' };
+
+function whale(cx, cy, s, t) {
+  const tail = Math.sin(t * 3) * 10;
+  return `<g transform="translate(${cx} ${cy}) scale(${s})">` +
+    `<path d="M-260 0 Q-250 -90 -80 -95 Q120 -100 230 -30 Q262 -12 300 ${-60 + tail} L330 ${-70 + tail} Q312 -10 330 ${50 + tail} L300 ${40 + tail} Q260 10 230 30 Q100 90 -100 80 Q-250 75 -260 0 Z" fill="${C.whale}"/>` +
+    `<path d="M-240 20 Q-150 75 0 70 Q100 65 180 35 Q60 30 -60 30 Q-170 28 -240 20 Z" fill="${C.belly}"/>` +
+    `<path d="M-20 45 Q30 110 90 105 Q60 75 50 45 Z" fill="${C.whaleLo}"/>` +
+    `<circle cx="-185" cy="-18" r="10" fill="#FFF"/><circle cx="-188" cy="-18" r="5" fill="${R.navy}"/>` +
+    `<path d="M-240 14 Q-200 22 -150 14" stroke="${C.whaleLo}" stroke-width="5" fill="none" stroke-linecap="round"/></g>`;
+}
+function rock(cx, cy, w) {
+  return `<ellipse cx="${cx}" cy="${cy + 40}" rx="${w / 2 + 20}" ry="22" fill="#000" opacity=".2"/>` +
+    `<path d="M${cx - w / 2} ${cy + 40} Q${cx - w / 2 + 40} ${cy - 30} ${cx - w / 4} ${cy - 40} Q${cx} ${cy - 55} ${cx + w / 4} ${cy - 38} Q${cx + w / 2 - 30} ${cy - 25} ${cx + w / 2} ${cy + 40} Z" fill="${C.rock}"/>` +
+    `<path d="M${cx - w / 2 + 30} ${cy + 20} Q${cx} ${cy + 5} ${cx + w / 2 - 30} ${cy + 22}" stroke="${C.rockLo}" stroke-width="16" fill="none" stroke-linecap="round"/>`;
+}
+// Kaya midyesi: (x,y) taban ortası
+function barnacle(x, y, s, t, face = 'normal') {
+  const br = Math.sin(t * 2) * 2;
+  let b = `<g transform="translate(${x} ${y}) scale(${s})">`;
+  b += `<path d="M-62 0 L-36 -82 L36 -82 L62 0 Z" fill="${C.shell}"/>`;
+  b += `<path d="M-36 -82 L-48 0 M0 -82 L0 0 M36 -82 L48 0" stroke="${C.shellLo}" stroke-width="5"/>`;
+  b += `<path d="M-62 0 L-36 -82 L-20 -82 L-40 0 Z" fill="#FFF" opacity=".25"/>`;
+  b += `<ellipse cx="0" cy="-82" rx="36" ry="10" fill="#6B5A3E"/><ellipse cx="0" cy="${-84 + br}" rx="22" ry="5" fill="#3A2E1E"/>`;
+  b += `<circle cx="-16" cy="-44" r="9" fill="#FFF"/><circle cx="16" cy="-44" r="9" fill="#FFF"/>`;
+  const py = face === 'up' ? -48 : -44;
+  b += `<circle cx="-14" cy="${py}" r="4.5" fill="${R.navy}"/><circle cx="18" cy="${py}" r="4.5" fill="${R.navy}"/>`;
+  b += face === 'happy' ? `<path d="M-12 -24 Q0 -14 12 -24" stroke="${R.navy}" stroke-width="4" fill="none" stroke-linecap="round"/>` : `<ellipse cx="0" cy="-24" rx="6" ry="4" fill="${R.navy}"/>`;
+  return b + `</g>`;
+}
+// Uzayan boru: dash ile p oranında çizilir
+function tube(d, p, len, wdt = 18) {
+  if (p <= 0) return '';
+  return `<path d="${d}" stroke="${C.pink}" stroke-width="${wdt}" fill="none" stroke-linecap="round" stroke-dasharray="${(len * p).toFixed(1)} ${len}"/>`;
+}
+function lock(cx, cy, k, shake) {
+  return `<g transform="translate(${cx} ${cy}) rotate(${shake}) scale(${k.toFixed(3)})"><path d="M-30 -10 L-30 -40 Q-30 -70 0 -70 Q30 -70 30 -40 L30 -10" stroke="#C9CCD8" stroke-width="14" fill="none"/>` +
+    `<rect x="-46" y="-14" width="92" height="76" rx="16" fill="${R.q}"/><circle cx="0" cy="18" r="10" fill="${R.navy}"/><rect x="-4" y="18" width="8" height="22" fill="${R.navy}"/></g>`;
+}
+function heart(x, y, k) {
+  return `<g transform="translate(${x} ${y}) scale(${k.toFixed(3)})"><path d="M0 26 C-50 -6 -40 -50 0 -26 C40 -50 50 -6 0 26 Z" fill="${R.bang}"/></g>`;
+}
+
+// --- sahneler ---
+const S0 = (t, lt) => {
+  let s = K.title(['Vücuduna göre'], lt, -0.6, 380, 90);
+  s += K.label(W / 2, 490, 'en büyük pen*s kimde?', 86, R.q, pop(lt, w(0, 3), 0.4));
+  const q = 1 - fade(lt, w(0, 6) - 0.35, 0.25);
+  if (q > 0) s += `<g opacity="${q.toFixed(2)}" transform="translate(600 880) scale(${(1 + 0.05 * Math.sin(lt * 5)).toFixed(3)})">${txt(0, 90, '?', 300, R.lav, { stroke: '#0B1428', sw: 20 })}</g>`;
+  const sw = E.out(prog(lt, w(0, 6) - 0.3, 0.8));
+  if (sw > 0) s += whale(lerp(1500, 600, sw), 880 + Math.sin(lt * 2) * 10, 1.2, lt);
+  if (lt > w(0, 6) + 0.2) s += K.badge(880, 720, 64 * pop(lt, w(0, 6) + 0.2, 0.3), lt, w(0, 8));
+  s += devoAt({ pose: 'sand', mark: '?' }, 190, 1340, 440);
+  return s;
+};
+const S1 = (t, lt) => {
+  let s = K.title(['Kazanan:'], lt, 0.1, 390, 90);
+  s += '<g transform="translate(90 -110)">';
+  s += rock(600, 1170, 860);
+  const kb = pop(lt, w(1, 4) - 0.2, 0.45);
+  s += `<g transform="translate(330 1140) scale(${kb.toFixed(3)}) translate(-330 -1140)">${barnacle(330, 1140, 1.5, lt, lt > w(1, 12) ? 'happy' : 'normal')}</g>`;
+  s += K.label(330, 1260, 'kaya midyesi', 52, R.ink, pop(lt, w(1, 6), 0.35));
+  // boru 7 birim boyunca uzar, her birim bir sayı
+  const pts = [[330, 1010], [400, 900], [500, 830], [620, 800], [740, 820], [840, 880], [900, 970]];
+  const d = 'M330 1010 C360 880 470 810 600 800 C760 790 880 860 900 970';
+  const gp = E.inOut(prog(lt, w(1, 8), Math.max(0.8, w(1, 12) - w(1, 8) + 0.2)));
+  s += tube(d, gp, 760);
+  pts.forEach(([x, y], i) => {
+    const tt = w(1, 8) + (w(1, 12) - w(1, 8) + 0.2) * ((i + 1) / 7);
+    if (lt > tt - 0.05) s += `<g transform="translate(${x} ${y - 46}) scale(${pop(lt, tt - 0.05, 0.3).toFixed(3)})"><circle r="26" fill="${R.ink}"/>${txt(0, 11, String(i + 1), 34, R.navy)}</g>`;
+  });
+  s += '</g>';
+  s += K.label(W / 2, 560, 'boyunun 7 katı!', 92, R.ok, pop(lt, w(1, 12), 0.45));
+  s += devoAt({ pose: 'stand', face: lt < w(1, 12) ? 'confused' : 'aha' }, 140, 1340, 360);
+  return s;
+};
+const S2 = (t, lt) => {
+  let s = K.title(['Neden mi?'], lt, 0.1, 390, 90);
+  s += '<g transform="translate(70 -100)">';
+  s += rock(560, 1120, 900);
+  const shake = lt > w(2, 2) && lt < w(2, 4) + 0.6 ? Math.sin(lt * 50) * 6 : 0;
+  s += `<g transform="rotate(${shake * 0.3} 300 1090)">${barnacle(300, 1090, 1.4, lt, lt > w(2, 9) + 0.4 ? 'happy' : 'normal')}</g>`;
+  s += lock(300, 860, pop(lt, w(2, 2), 0.35) * (1 - fade(lt, w(2, 5), 0.25)), shake);
+  s += K.label(300, 760, 'kıpırdayamıyor', 54, R.q, pop(lt, w(2, 4), 0.35) * (1 - fade(lt, w(2, 5), 0.25)));
+  s += barnacle(820, 1090, 1.4, lt, lt > w(2, 9) + 0.4 ? 'happy' : 'up');
+  s += K.label(820, 1210, 'komşu', 50, R.ink, pop(lt, w(2, 5), 0.35));
+  const gp = E.inOut(prog(lt, w(2, 8) - 0.1, 0.9));
+  s += tube('M300 975 C380 820 700 820 800 960', gp, 640);
+  if (lt > w(2, 8) + 0.8) s += heart(560, 790 - (lt - w(2, 8) - 0.8) * 40, pop(lt, w(2, 8) + 0.8, 0.35));
+  s += '</g>';
+  s += devoAt({ pose: 'stand', face: lt < w(2, 8) ? 'neutral' : 'smug', mark: lt < w(2, 8) ? '?' : '' }, 140, 1340, 360);
+  return s;
+};
+const S3 = (t, lt) => {
+  let s = K.titleOut(['Mavi balina?'], lt, 0.1, 390, 86, R.ink, w(3, 8));
+  const wh = E.out(prog(lt, 0, 0.7)) * (1 - fade(lt, w(3, 8) - 0.1, 0.3));
+  if (wh > 0) s += `<g opacity="${wh.toFixed(2)}">${whale(560, 760, 1.15, lt)}${K.label(560, 960, '≈ 3 metre', 76, R.ink, pop(lt, w(3, 5), 0.4))}</g>`;
+  // oran grafiği
+  const kc = pop(lt, w(3, 9), 0.4);
+  if (kc > 0) {
+    const base = 1180, maxH = 560;
+    const hW = Math.max(6, maxH * (0.12 / 7)) * E.out(prog(lt, w(3, 9) + 0.2, 0.5));
+    const hB = maxH * E.out(prog(lt, w(3, 11), 0.8));
+    s += `<g transform="translate(540 ${base}) scale(${kc.toFixed(3)}) translate(-540 -${base})">`;
+    s += `<rect x="300" y="${base - hW}" width="160" height="${hW}" rx="12" fill="${C.whale}"/>` + txt(380, base + 60, 'balina', 50, C.belly, { stroke: '#0B1428', sw: 8 }) + txt(380, base - hW - 24, '1/8', 54, R.ink, { stroke: '#0B1428', sw: 8 });
+    s += `<rect x="620" y="${base - hB}" width="160" height="${hB}" rx="12" fill="${C.pink}"/>` + txt(700, base + 60, 'midye', 50, C.pink, { stroke: '#0B1428', sw: 8 });
+    if (hB > 40) s += txt(700, base - hB - 24, '7×', 64, R.ok, { stroke: '#0B1428', sw: 10 });
+    s += `<rect x="260" y="${base}" width="560" height="8" rx="4" fill="${R.muted}"/></g>`;
+    s += K.label(W / 2, 520, 'vücuduna oranla', 64, R.muted, kc);
+  }
+  s += K.stamp(380, 860, 'DEVEDE KULAK', 58, R.bang, lt, w(3, 13), -10);
+  s += devoAt({ pose: 'stand', face: lt < w(3, 11) ? 'neutral' : 'aha', mark: lt < w(3, 11) ? '?' : '!' }, 140, 1340, 360);
+  return s;
+};
+const S4 = (t, lt) => {
+  let s = K.title(['Mesele boyut değil,'], lt, 0.1, 400, 80);
+  s += K.stamp(W / 2, 640, 'ORAN!', 150, R.ok, lt, w(4, 4) - 0.05, -6);
+  s += barnacle(850, 930, 1.3 * pop(lt, w(4, 4) + 0.2, 0.4), lt, 'happy');
+  s += K.followButton(lt, w(4, 5), 1150);
+  s += devoAt({ pose: lt > w(4, 5) ? 'point' : 'stand', face: 'happy' }, 180, 1340, 440);
+  return s;
+};
+
+K.video({
+  sahneler: [S0, S1, S2, S3, S4],
+  kelimeSayisi: [9, 14, 10, 15, 9],
+  tail: [0.7, 0.8, 0.7, 0.9, 1.7],
+  bg: [R.navy, R.teal, R.teal, R.navy, R.purple],
+  olaylar: (w, at) => [
+    { t: at(0, w(0, 3)), type: 'pop' }, { t: at(0, w(0, 6) - 0.3), type: 'swish' }, { t: at(0, w(0, 6) + 0.2), type: 'ding' }, { t: at(0, w(0, 8) + 0.1), type: 'buzz' },
+    { t: at(1, 0.1), type: 'pop' }, { t: at(1, w(1, 4) - 0.2), type: 'pop' }, { t: at(1, w(1, 6)), type: 'pop' },
+    ...[1, 2, 3, 4, 5, 6, 7].map((i) => ({ t: at(1, w(1, 8) + (w(1, 12) - w(1, 8) + 0.2) * (i / 7) - 0.05), type: 'plink' })), { t: at(1, w(1, 12)), type: 'ding' },
+    { t: at(2, 0.1), type: 'pop' }, { t: at(2, w(2, 2)), type: 'click' }, { t: at(2, w(2, 4)), type: 'buzz' }, { t: at(2, w(2, 8) - 0.1), type: 'swish' }, { t: at(2, w(2, 8) + 0.8), type: 'boing' },
+    { t: at(3, 0.1), type: 'pop' }, { t: at(3, w(3, 5)), type: 'pop' }, { t: at(3, w(3, 9)), type: 'pop' }, { t: at(3, w(3, 11)), type: 'swish' }, { t: at(3, w(3, 13) + 0.12), type: 'thump' },
+    { t: at(4, w(4, 4) + 0.1), type: 'thump' }, { t: at(4, w(4, 5)), type: 'ding' },
+  ],
+});
+</script>
+</body>
+</html>

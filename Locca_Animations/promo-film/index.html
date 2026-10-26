@@ -1,0 +1,807 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Locca film</title>
+<style>
+  html, body { margin: 0; background: #F7F1E8; }
+  canvas { display: block; }
+  body.preview { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 12px; font: 13px system-ui, sans-serif; color: #111; }
+  body.preview canvas { height: calc(100vh - 80px); width: auto; }
+  body.preview input[type=range] { width: min(540px, 90vw); }
+</style>
+</head>
+<body>
+<canvas id="film" width="1080" height="1920"></canvas>
+
+<!-- Sound cues on the 120 BPM grid (beat = 0.5 s). tools/audio.mjs reads this block. -->
+<script type="application/json" id="cues">
+[
+  { "t": 0.00,  "sfx": "pop" },
+  { "t": 1.42,  "sfx": "swish", "pan": 0.7 },
+  { "t": 1.50,  "sfx": "swishBack", "pan": 0.4 },
+  { "t": 2.00,  "sfx": "whooshUp" },
+  { "t": 2.50,  "sfx": "thud" },
+  { "t": 3.00,  "sfx": "open" },
+  { "t": 3.50,  "sfx": "tick" },
+  { "t": 4.00,  "sfx": "whoosh" },
+  { "t": 4.50,  "sfx": "lock" },
+  { "t": 5.00,  "sfx": "scan" },
+  { "t": 5.50,  "sfx": "confirm" },
+  { "t": 6.00,  "sfx": "whoosh" },
+  { "t": 6.50,  "sfx": "tick" },
+  { "t": 7.00,  "sfx": "count" },
+  { "t": 7.50,  "sfx": "coin" },
+  { "t": 8.00,  "sfx": "softClick" },
+  { "t": 8.50,  "sfx": "tick" },
+  { "t": 9.00,  "sfx": "whooshDown" },
+  { "t": 9.50,  "sfx": "hop", "note": 86 },
+  { "t": 10.00, "sfx": "hop", "note": 90 },
+  { "t": 10.50, "sfx": "hop", "note": 93 },
+  { "t": 11.00, "sfx": "lowWhoosh" },
+  { "t": 11.50, "sfx": "stamp" },
+  { "t": 12.00, "sfx": "stamp" },
+  { "t": 12.50, "sfx": "stamp" },
+  { "t": 13.00, "sfx": "stamp" },
+  { "t": 13.25, "sfx": "stamp" },
+  { "t": 13.50, "sfx": "stamp" },
+  { "t": 13.75, "sfx": "stamp" },
+  { "t": 14.00, "sfx": "stamp", "big": true },
+  { "t": 14.10, "sfx": "swap" },
+  { "t": 14.50, "sfx": "chime" },
+  { "t": 15.00, "sfx": "reverseWhoosh" },
+  { "t": 15.50, "sfx": "pluck", "note": 74 },
+  { "t": 16.00, "sfx": "pluck", "note": 78 },
+  { "t": 16.06, "sfx": "pluck", "note": 81 },
+  { "t": 16.50, "sfx": "pluck", "note": 86 },
+  { "t": 17.00, "sfx": "softWhoosh" },
+  { "t": 17.50, "sfx": "wink" },
+  { "t": 18.50, "sfx": "badge" },
+  { "t": 18.56, "sfx": "badge" },
+  { "t": 19.00, "sfx": "tick" },
+  { "t": 19.50, "sfx": "suck" }
+]
+</script>
+
+<script>
+'use strict';
+
+// ---------- constants ----------
+const W = 1080, H = 1920, FPS = 60, DUR = 20;
+const COL = { orange: '#FF5B00', ink: '#111111', cream: '#F7F1E8', stamp: '#F3EADB', white: '#FFFFFF' };
+const ORANGE = [255, 91, 0], INK = [17, 17, 17];
+const F1 = 1 / FPS;        // the first spring starts on frame 1, so frame 0 is static
+const LOOP_HOLD = 19.85;   // from here on every frame is exactly frame 0
+const UI = [2.6, 0.8];     // UI spring: 1.5 % overshoot. Type always uses z = 1.
+
+// On-screen text, exactly as approved. Line breaks only, no rewording.
+const TXT = {
+  hook: ['Her', 'harcama', 'sana geri', 'dönsün'],   // the orange dot is the final period
+  visit: ['Ziyaret Et.'],
+  scan: ['Tarat.'],
+  earn: ['Kazan.'],
+  earnSub: ['Hesabının bir kısmı', 'puan olarak cebine.'],
+  spend: ['Puanını ağdaki her', 'işletmede harca.'],
+  stamps: ['Damgaları topla,', 'içeceğin bizden.'],
+  tag: ['Yereli keşfet.', 'Ödülleri kazan.'],
+  cta: ["Alanya'da şimdi."],
+};
+
+const canvas = document.getElementById('film');
+const ctx = canvas.getContext('2d', { willReadFrequently: true });
+
+// ---------- math ----------
+// Closed-form step response of a damped spring, 0 -> 1, starting at t0.
+// f = natural frequency (Hz), z = damping ratio. Snaps to exactly 1 once the envelope is negligible.
+function spr(t, t0, f = 3, z = 1) {
+  const dt = t - t0;
+  if (dt <= 0) return 0;
+  const w = 2 * Math.PI * f;
+  let v, env;
+  if (z >= 1) {
+    const e = Math.exp(-w * dt);
+    v = 1 - e * (1 + w * dt);
+    env = e * (1 + w * dt);
+  } else {
+    const wd = w * Math.sqrt(1 - z * z), e = Math.exp(-z * w * dt), k = (z * w) / wd;
+    v = 1 - e * (Math.cos(wd * dt) + k * Math.sin(wd * dt));
+    env = e * Math.sqrt(1 + k * k);
+  }
+  return env < 4e-4 ? 1 : v;
+}
+const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+const lerp = (a, b, k) => a + (b - a) * k;
+const bump = (t, tc, sigma) => Math.exp(-(((t - tc) / sigma) ** 2));
+const easeInOut = (p) => (p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2);
+const circ = (d) => ({ w: d, h: d, r: d / 2 });
+
+// ---------- assets ----------
+const IMG = {};
+const IMAGE_SRC = {
+  map: 'assets/screens/map.png',
+  qr: 'assets/screens/qr_loccard.png',
+  profile: 'assets/screens/profile.png',
+  l: 'assets/brand/letter-l.png',
+  c1: 'assets/brand/letter-c1.png',
+  c2: 'assets/brand/letter-c2.png',
+  a: 'assets/brand/letter-a.png',
+  foxOpen: 'assets/brand/fox-open.png',
+  foxHalf: 'assets/brand/fox-half.png',
+  foxWink: 'assets/brand/fox-wink.png',
+};
+const LATIN = 'U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD';
+const LATIN_EXT = 'U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF';
+const FONTS = [
+  ['Arista', 'assets/fonts/Arista-Pro-Light-trial.ttf', {}],
+  ['DM Sans', 'assets/fonts/dm-sans-latin-600-normal.woff2', { weight: '600', unicodeRange: LATIN }],
+  ['DM Sans', 'assets/fonts/dm-sans-latin-ext-600-normal.woff2', { weight: '600', unicodeRange: LATIN_EXT }],
+  ['DM Sans', 'assets/fonts/dm-sans-latin-700-normal.woff2', { weight: '700', unicodeRange: LATIN }],
+  ['DM Sans', 'assets/fonts/dm-sans-latin-ext-700-normal.woff2', { weight: '700', unicodeRange: LATIN_EXT }],
+  ['Ionicons', 'assets/fonts/Ionicons.ttf', {}],
+  ['MDI', 'assets/fonts/MaterialCommunityIcons.ttf', {}],
+];
+const GLYPH = { cafe: String.fromCodePoint(61897), stamper: String.fromCodePoint(986425) }; // same glyphs the app uses
+
+function loadImage(src, fallback) {
+  return new Promise((resolve, reject) => {
+    const im = new Image();
+    im.onload = () => im.decode().then(() => resolve(im), () => resolve(im));
+    im.onerror = () => (fallback ? loadImage(fallback).then(resolve, reject) : reject(new Error('image ' + src)));
+    im.src = src;
+  });
+}
+
+// A glyph exists in `family` when the same character measures identically with three different fallbacks.
+function missingGlyphs(family, weight, str) {
+  const miss = [];
+  for (const ch of new Set([...str])) {
+    if (ch === ' ') continue;
+    const widths = ['monospace', 'serif', 'cursive'].map((fb) => {
+      ctx.font = `${weight} 100px "${family}", ${fb}`.trim();
+      return ctx.measureText(ch).width;
+    });
+    if (Math.abs(widths[0] - widths[1]) > 0.01 || Math.abs(widths[0] - widths[2]) > 0.01) miss.push(ch);
+  }
+  return miss;
+}
+
+// ---------- layout (static, computed once after fonts load) ----------
+const L = {};
+let SHAPE_KEYS = [];
+const SHAPE0 = { x: 540, y: 960, w: 28, h: 28, r: 14, th: 400, tail: 0, col: 0, scale: 1, hop: 0 };
+
+// Screenshot windows: a rounded-rect mask; source point (ax, ay) sits at the rect centre, drawn at scale s (never > 1).
+const WIN = {
+  map: { x: 220, y: 520, w: 640, h: 1240, r: 48, s: 1.0, ax: 350, ay: 935 },          // centred on the salon pin
+  qr: { x: 106, y: 500, w: 868, h: 1332, r: 48, s: 0.72, ax: 602.8, ay: 1185 },
+  net: { x: 40, y: 560, w: 1000, h: 848, r: 48, s: 1.0, ax: 603, ay: 1276 },          // source x 103-1103, y 852-1700: fox marker stays out
+  row: { x: 242.5, y: 1330, w: 595, h: 193, r: 24, s: 1.0, ax: 522.5, ay: 1557.5 },  // "₺1000 hesaptan +50 puan / Anatolia Table"
+};
+// Real venue pins in map.png (ring centre, ring radius 67 px).
+const VENUE_SRC = [[350, 935], [624, 1180], [909, 993]]; // salon, sea-front restaurant, café
+const STAMP_T = [11.5, 12.0, 12.5, 13.0, 13.25, 13.5, 13.75, 14.0];
+const SLOT = [[-285, -105], [-95, -105], [95, -105], [285, -105], [-285, 105], [-95, 105], [95, 105], [285, 105]];
+
+// Wordmark letters cut by the app (letter PNGs are 336 px tall; x offsets in 975 px wordmark space).
+const LETTERS = [
+  { k: 'l', x: 0, w: 102, pop: 15.5 },
+  { k: 'c1', x: 330, w: 204, pop: 16.0 },
+  { k: 'c2', x: 534, w: 204, pop: 16.06 },
+  { k: 'a', x: 738, w: 237, pop: 16.5 },
+];
+
+function winToCanvas(win, sx, sy) {
+  return { x: win.x + win.w / 2 + (sx - win.ax) * win.s, y: win.y + win.h / 2 + (sy - win.ay) * win.s };
+}
+
+function layout() {
+  // Hook
+  const hs = 210;
+  ctx.font = `${hs}px "Arista"`;
+  L.hook = { size: hs, x0: 80, base: [719, 924, 1129, 1334], gap: 14 };
+  L.hook.w = TXT.hook.map((s) => ctx.measureText(s).width);
+  L.hook.cy = L.hook.base.map((b) => b - 0.235 * hs);
+  L.period = { x: 80 + L.hook.w[3] + 12 + 18, y: L.hook.base[3] - 18 };
+  L.hookOff = 1060;
+
+  L.salon = winToCanvas(WIN.map, 350, 935);
+  L.qr = winToCanvas(WIN.qr, 602, 1380);
+  L.pillY = 940;
+  L.venue = VENUE_SRC.map(([sx, sy]) => winToCanvas(WIN.net, sx, sy));
+  L.cardY = 1110;
+
+  // Wordmark + fox lockup (FoxSplash.tsx: fox 38 %, gap 1 %, word 61 % of lockup width; fox at native 332 px)
+  L.ws = 533 / 975;
+  L.wordW = 975 * L.ws;
+  L.wordH = 336 * L.ws;
+  L.wordLeft = (W - L.wordW) / 2;
+  L.wordTop = 900 - L.wordH / 2;
+  L.foxX = 104;
+  L.foxTop = 900 - 160;
+  L.lockShift = L.foxX + 332 + 9 - L.wordLeft;
+  L.liftY = -260;
+  L.o0 = { x: L.wordLeft + 216 * L.ws, y: L.wordTop + 209.5 * L.ws };
+  L.oD = 229.5 * L.ws;
+  L.oTh = 43 * L.ws;
+
+  // Pill number: right-aligned so changing digit widths never move "puan".
+  ctx.font = '700 120px "DM Sans"';
+  const wNum = ctx.measureText('155').width;
+  ctx.font = '600 60px "DM Sans"';
+  const wPuan = ctx.measureText('puan').width;
+  L.pillSplit = -(wNum + 18 + wPuan) / 2 + wNum;
+
+  // Badges: equal visible height (official artwork, untouched)
+  const bh = 104, gap = 32;
+  const appleW = (IMG.apple.naturalWidth / IMG.apple.naturalHeight) * bh;
+  const g = IMG.google.isTr ? { pad: [0, 29, 646, 221] } : { pad: [41, 41, 605, 209] };
+  const gs = bh / (g.pad[3] - g.pad[1]);
+  const googleW = (g.pad[2] - g.pad[0]) * gs;
+  const left = (W - (appleW + gap + googleW)) / 2, top = 1112;
+  L.badges = [
+    { img: IMG.apple, box: [left, top, appleW, bh], draw: [left, top, appleW, bh], t: 18.5 },
+    { img: IMG.google, box: [left + appleW + gap, top, googleW, bh],
+      draw: [left + appleW + gap - g.pad[0] * gs, top - g.pad[1] * gs, 646 * gs, 250 * gs], t: 18.56 },
+  ];
+
+  buildShapeKeys();
+}
+
+// ---------- THE shape ----------
+// Each key changes some params with its own spring; a param's value is the sum of one spring per change.
+function buildShapeKeys() {
+  const K = [];
+  const key = (t, v, f = 3, z = 1) => K.push({ t, v, f, z });
+  const hk = L.hook;
+
+  // Bar 1 · hook: pop, then cursor that writes the lines, then the period of "dönsün."
+  key(F1, circ(220), 4.2, 0.75);
+  key(0.14, circ(44), 6, 1);
+  key(0.14, { x: hk.x0 + 26, y: hk.cy[0] }, 6.5, 1);
+  key(0.21, { x: hk.x0 + hk.w[0] + hk.gap + 26 }, 4.6, 1);
+  key(0.42, { x: hk.x0 + 26, y: hk.cy[1] }, 6.5, 1);
+  key(0.50, { x: hk.x0 + hk.w[1] + hk.gap + 26 }, 3.4, 1);
+  key(0.92, { x: hk.x0 + 26, y: hk.cy[2] }, 6.5, 1);
+  key(1.00, { x: hk.x0 + hk.w[2] + hk.gap + 26 }, 3.4, 1);
+  key(1.42, { x: L.period.x + L.hookOff, y: L.period.y, ...circ(36) }, 6.5, 1); // out to the right…
+  key(1.50, { x: L.period.x }, 2.8, 1);                                      // …and back with "dönsün"
+
+  // Bar 2 · pin over the real map
+  key(2.00, { x: L.salon.x, y: L.salon.y - 260, ...circ(160), th: 80 }, ...UI); // th = r: solid, ready to open
+  key(2.06, { tail: 1 }, 3.4, 1);
+  key(2.50, { y: L.salon.y }, 3.4, 0.75);
+  key(3.00, { tail: 0 }, 4.5, 1);
+  key(3.04, { th: 10 }, 3.6, 1);
+  key(3.50, { scale: 1.1 }, 6, 1);
+  key(3.62, { scale: 1 }, 4.5, 1);
+
+  // Bar 3 · QR frame
+  key(4.00, { x: L.qr.x, y: L.qr.y, w: 600, h: 600, r: 60 }, ...UI);
+  key(4.50, { w: 540, h: 540, r: 44 }, 4, 0.8);
+  key(5.50, { th: 340 }, 3.6, 1); // aims past the centre so the hole closes in ~0.2 s, no lingering dot
+
+  // Bars 4-5a · points pill
+  key(6.00, { x: 540, y: L.pillY, w: 800, h: 220, r: 110 }, 2.4, 0.8);
+  key(7.50, { scale: 1.04 }, 6, 1);
+  key(7.62, { scale: 1 }, 4.5, 1);
+
+  // Bars 5b-6a · points dot hops across the network; on each venue it opens into a ring
+  key(9.00, circ(56), 3, 0.8);
+  key(9.00, { th: 28 }, 3, 1);
+  L.venue.forEach((v, i) => {
+    const ti = 9.5 + 0.5 * i;
+    if (i > 0) { key(ti, circ(56), 6, 1); key(ti, { th: 28 }, 6, 1); }
+    key(ti, { x: v.x, y: v.y }, 3.4, 0.8);
+    key(ti, { hop: -1 }, 4.5, 1);
+    key(ti + 0.12, { hop: 0 }, 4.5, 1);
+    key(ti + 0.16, circ(162), 4, 0.8);
+    key(ti + 0.16, { th: 9 }, 4, 1);
+  });
+
+  // Bars 6b-8a · stamp card (black)
+  key(11.00, { x: 540, y: L.cardY, w: 900, h: 600, r: 60 }, ...UI);
+  key(11.00, { th: 400 }, 6, 1); // close the ring fast, while the shape is still near-square (no slit)
+  key(11.00, { col: 1 }, 6, 1);
+
+  // Bars 8b-9a · dot -> the "o" of the wordmark
+  key(15.00, { x: L.o0.x, y: L.o0.y, ...circ(150) }, ...UI);
+  key(15.00, { col: 0 }, 6, 1);
+  key(15.50, { ...circ(L.oD), th: L.oTh }, 4, 1);
+  key(17.00, { x: L.o0.x + L.lockShift }, ...UI);
+  key(18.00, { x: L.o0.x, y: L.o0.y + L.liftY }, ...UI);
+  key(19.00, { scale: 1.08 }, 6, 1);
+  key(19.12, { scale: 1 }, 4.5, 1);
+
+  // Bar 10 · back to the seed (exactly frame 0)
+  key(19.55, { x: 540, y: 960, ...circ(28) }, 5.5, 1);
+  key(19.55, { th: 20 }, 6, 1); // past r = 14: closes early, solid seed
+
+  SHAPE_KEYS = K;
+}
+
+function shapeAt(t) {
+  const s = { ...SHAPE0 }, prev = { ...SHAPE0 };
+  for (const k of SHAPE_KEYS) {
+    const p = spr(t, k.t, k.f, k.z);
+    for (const name in k.v) { s[name] += (k.v[name] - prev[name]) * p; prev[name] = k.v[name]; }
+  }
+  return s;
+}
+
+function roundRectPath(x, y, w, h, r) {
+  r = Math.max(0, Math.min(r, w / 2, h / 2));
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+
+function shapeColor(c) {
+  const k = clamp(c, 0, 1);
+  return `rgb(${Math.round(lerp(ORANGE[0], INK[0], k))},${Math.round(lerp(ORANGE[1], INK[1], k))},${Math.round(lerp(ORANGE[2], INK[2], k))})`;
+}
+
+function drawShape(s) {
+  const w = s.w * s.scale, h = s.h * s.scale, r = s.r * s.scale, th = s.th * s.scale;
+  const x = s.x - w / 2, y = s.y + 150 * s.hop - h / 2;
+  if (w < 0.5 || h < 0.5) return;
+  ctx.fillStyle = shapeColor(s.col);
+  ctx.beginPath();
+  roundRectPath(x, y, w, h, r);
+  if (Math.min(w, h) - 2 * th > 1.5) roundRectPath(x + th, y + th, w - 2 * th, h - 2 * th, Math.max(0, r - th)); // ring; otherwise solid
+  ctx.fill('evenodd');
+  if (s.tail > 0.002) {
+    // Teardrop tip: tangent lines from a point under the circular head.
+    const cx = s.x, cy = y + h / 2, rr = w / 2, d = rr * (1 + 0.62 * s.tail), a = Math.acos(rr / d);
+    ctx.beginPath();
+    ctx.moveTo(cx + rr * Math.cos(Math.PI / 2 - a), cy + rr * Math.sin(Math.PI / 2 - a));
+    ctx.lineTo(cx, cy + d);
+    ctx.lineTo(cx + rr * Math.cos(Math.PI / 2 + a), cy + rr * Math.sin(Math.PI / 2 + a));
+    ctx.closePath();
+    ctx.fill();
+  }
+}
+
+// ---------- screenshot windows ----------
+function drawWin(win, img, rect, dy, blur, tone = '') {
+  const { x, w, h, r } = rect, y = rect.y + dy;
+  if (y > H || y + h < 0) return;
+  ctx.save();
+  ctx.beginPath();
+  roundRectPath(x, y, w, h, r);
+  ctx.clip();
+  ctx.fillStyle = COL.white;
+  ctx.fillRect(x, y, w, h);
+  const pad = blur > 0.3 ? blur * 3 : 0;
+  const f = `${tone} ${pad ? `blur(${blur.toFixed(2)}px)` : ''}`.trim();
+  if (f) ctx.filter = f;
+  const sw = (w + 2 * pad) / win.s, sh = (h + 2 * pad) / win.s;
+  ctx.drawImage(img, win.ax - sw / 2, win.ay - sh / 2, sw, sh, x - pad, y - pad, w + 2 * pad, h + 2 * pad);
+  ctx.restore();
+}
+
+function lerpRect(a, b, k) {
+  return { x: lerp(a.x, b.x, k), y: lerp(a.y, b.y, k), w: lerp(a.w, b.w, k), h: lerp(a.h, b.h, k), r: lerp(a.r, b.r, k) };
+}
+
+function drawWindows(t) {
+  // Map -> QR: one window morphs; content swaps behind a short blur at 4.06 s.
+  if (t >= 2.0 && t < 6.6) {
+    const dy = 1500 * (1 - spr(t, 2.1, 2.4, 0.8)) + 1500 * spr(t, 5.9, 2.4, 1);
+    const k = spr(t, 4.0, ...UI);
+    const rect = lerpRect(WIN.map, WIN.qr, k);
+    const blur = 18 * bump(t, 4.06, 0.045);
+    if (t < 4.06) drawWin({ ...WIN.map, ax: WIN.map.ax, ay: WIN.map.ay }, IMG.map, rect, dy, blur);
+    else drawWin(WIN.qr, IMG.qr, rect, dy, blur);
+  }
+  // Network: the real map toned to grey; each venue comes back in full colour, one per beat.
+  if (t >= 8.45 && t < 11.7) {
+    const dy = 1400 * (1 - spr(t, 8.5, 2.4, 0.8)) + 1500 * spr(t, 11.0, 2.4, 1);
+    const blur = 14 * bump(t, 11.06, 0.05);
+    drawWin(WIN.net, IMG.map, WIN.net, dy, blur, 'grayscale(1) contrast(0.82) brightness(1.06)');
+    ctx.save();
+    ctx.beginPath();
+    roundRectPath(WIN.net.x, WIN.net.y + dy, WIN.net.w, WIN.net.h, WIN.net.r);
+    ctx.clip();
+    ctx.fillStyle = 'rgba(247,241,232,0.32)';
+    ctx.fillRect(WIN.net.x, WIN.net.y + dy, WIN.net.w, WIN.net.h);
+    L.venue.forEach((v, i) => {
+      const rad = 76 * spr(t, 9.62 + 0.5 * i, 4, 0.8);
+      if (rad < 0.5) return;
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(v.x, v.y + dy, rad, 0, Math.PI * 2);
+      ctx.clip();
+      const s = WIN.net.s, sw = WIN.net.w / s, sh = WIN.net.h / s;
+      if (blur > 0.3) ctx.filter = `blur(${blur.toFixed(2)}px)`;
+      ctx.drawImage(IMG.map, WIN.net.ax - sw / 2, WIN.net.ay - sh / 2, sw, sh, WIN.net.x, WIN.net.y + dy, WIN.net.w, WIN.net.h);
+      ctx.restore();
+    });
+    ctx.restore();
+  }
+}
+
+// Real activity row, rising out of its own box.
+function drawRow(t) {
+  if (t < 8.0 || t > 9.2) return;
+  const travel = WIN.row.h + 12;
+  const dy = travel * (1 - spr(t, 8.0, 3, 1)) + travel * spr(t, 8.6, 3.6, 1);
+  if (dy >= travel - 0.5) return;
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(0, WIN.row.y - 2, W, WIN.row.h + 4);
+  ctx.clip();
+  drawWin(WIN.row, IMG.profile, WIN.row, dy, 0);
+  ctx.restore();
+}
+
+// ---------- shape contents ----------
+function drawScan(t, s) {
+  if (t < 5.0 || t > 5.48) return;
+  const p = easeInOut(clamp((t - 5.0) / 0.45, 0, 1));
+  const inner = s.w - 2 * s.th - 44;
+  const grow = clamp((t - 5.0) / 0.05, 0, 1) * clamp((5.47 - t) / 0.04, 0, 1);
+  const lw = inner * grow, y = s.y - s.h / 2 + s.th + 26 + p * (s.h - 2 * s.th - 52);
+  if (lw < 1) return;
+  ctx.fillStyle = COL.orange;
+  ctx.beginPath();
+  roundRectPath(s.x - lw / 2, y - 3, lw, 6, 3);
+  ctx.fill();
+}
+
+function drawPillText(t, s) {
+  if (t < 6.5 || t > 9.0) return;
+  const travel = 160;
+  const dy = travel * (1 - spr(t, 6.5, 3.4, 1)) + travel * spr(t, 8.6, 3.6, 1);
+  if (dy >= travel - 0.5) return;
+  const n = Math.round(105 + 50 * spr(t, 7.0, 2.6, 1));
+  ctx.save();
+  ctx.beginPath();
+  roundRectPath(s.x - (s.w * s.scale) / 2, s.y - (s.h * s.scale) / 2, s.w * s.scale, s.h * s.scale, s.r * s.scale);
+  ctx.clip();
+  ctx.translate(s.x, s.y + dy);
+  ctx.scale(s.scale, s.scale);
+  ctx.fillStyle = COL.white;
+  ctx.textBaseline = 'alphabetic';
+  ctx.font = '700 120px "DM Sans"';
+  ctx.textAlign = 'right';
+  ctx.fillText(String(n), L.pillSplit, 43);
+  ctx.font = '600 60px "DM Sans"';
+  ctx.textAlign = 'left';
+  ctx.fillText('puan', L.pillSplit + 18, 43);
+  ctx.restore();
+}
+
+function glyph(ch, family, size, x, y, color) {
+  ctx.font = `${size}px "${family}"`;
+  ctx.fillStyle = color;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(ch, x, y);
+  ctx.textBaseline = 'alphabetic';
+}
+
+function drawCard(t, s) {
+  if (t < 11.1 || t > 15.05) return;
+  const exitS = 1 - spr(t, 14.86, 6, 1);
+  if (exitS <= 0.002) return;
+  ctx.save();
+  ctx.translate(s.x, s.y);
+  // empty slots
+  ctx.lineWidth = 3;
+  ctx.strokeStyle = 'rgba(243,234,219,0.38)';
+  SLOT.forEach(([sx, sy], k) => {
+    const sc = spr(t, 11.12 + 0.025 * k, 4, 0.8) * exitS;
+    if (sc < 0.01) return;
+    ctx.beginPath();
+    ctx.arc(sx, sy, 62 * sc, 0, Math.PI * 2);
+    ctx.stroke();
+  });
+  // stamps: land with a short slam, no bounce. The 8th turns into the drink.
+  STAMP_T.forEach((T, k) => {
+    if (t < T) return;
+    let [sx, sy] = SLOT[k];
+    let d = 124 * (1.35 - 0.35 * spr(t, T, 5.5, 1));
+    const rot = -0.14 * (1 - spr(t, T, 5, 1));
+    let alpha = 1;
+    const last = k === STAMP_T.length - 1;
+    if (last) {
+      const m = spr(t, 14.5, 3, 0.8);
+      sx = lerp(sx, 0, m);
+      sy = lerp(sy, 0, m);
+      d = lerp(d, 270, m);
+    } else {
+      alpha = 1 - 0.68 * spr(t, 14.5, 4, 1);
+    }
+    d *= exitS;
+    if (d < 1) return;
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.translate(sx, sy);
+    ctx.rotate(rot);
+    ctx.fillStyle = COL.stamp;
+    ctx.beginPath();
+    ctx.arc(0, 0, d / 2, 0, Math.PI * 2);
+    ctx.fill();
+    const isDrink = last && t >= 14.1;
+    const gb = last ? 7 * bump(t, 14.1, 0.03) : 0;
+    if (gb > 0.3) ctx.filter = `blur(${gb.toFixed(2)}px)`;
+    glyph(isDrink ? GLYPH.cafe : GLYPH.stamper, isDrink ? 'Ionicons' : 'MDI', d * (isDrink ? 0.56 : 0.54), 0, isDrink ? 2 : 0, COL.ink);
+    ctx.restore();
+  });
+  // counter: stamper + n/8, top-right
+  const travel = 70;
+  const cdy = travel * (1 - spr(t, 11.15, 3.4, 1)) - travel * spr(t, 14.84, 3.6, 1);
+  if (Math.abs(cdy) < travel - 0.5) {
+    const n = STAMP_T.filter((T) => t >= T).length;
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(130, -292, 330, 100);
+    ctx.clip();
+    ctx.translate(0, cdy);
+    ctx.font = '700 46px "DM Sans"';
+    ctx.fillStyle = COL.stamp;
+    ctx.textAlign = 'right';
+    ctx.fillText(`${n}/8`, 402, -224);
+    const tw = ctx.measureText(`${n}/8`).width;
+    glyph(GLYPH.stamper, 'MDI', 44, 402 - tw - 32, -240, COL.stamp);
+    ctx.restore();
+  }
+  ctx.restore();
+}
+
+// ---------- wordmark + fox ----------
+function lockDX(t) { return L.lockShift * (spr(t, 17.0, ...UI) - spr(t, 18.0, ...UI)); }
+function lockDY(t) { return L.liftY * spr(t, 18.0, ...UI); }
+
+function drawLogo(t, s) {
+  if (t < 15.45 || t >= LOOP_HOLD) return;
+  const dx = lockDX(t), dy = lockDY(t);
+  const fold = spr(t, 19.5, 5, 1);
+  const oX = s.x, oY = s.y;
+  for (const lt of LETTERS) {
+    if (t < lt.pop) continue;
+    const p = spr(t, lt.pop, 3.4, 1);
+    const w = lt.w * L.ws, h = L.wordH;
+    let cx = L.wordLeft + dx + (lt.x + lt.w / 2) * L.ws;
+    let cy = L.wordTop + dy + h / 2 + 0.22 * h * (1 - p);
+    let sc = (0.2 + 0.8 * p) * (1 - fold);
+    cx = lerp(cx, oX, fold);
+    cy = lerp(cy, oY, fold);
+    if (sc < 0.005) continue;
+    ctx.drawImage(IMG[lt.k], cx - (w * sc) / 2, cy - (h * sc) / 2, w * sc, h * sc);
+  }
+  // Fox: one short appearance, real splash frames, native size, one wink.
+  if (t >= 17.0 && t < 18.6) {
+    const x = L.foxX - 480 * (1 - spr(t, 17.0, ...UI)) - 480 * spr(t, 18.0, 2.8, 1);
+    const y = L.foxTop + dy;
+    let im = IMG.foxOpen;
+    if (t >= 17.5 && t < 17.535) im = IMG.foxHalf;
+    else if (t >= 17.535 && t < 17.655) im = IMG.foxWink;
+    else if (t >= 17.655 && t < 17.705) im = IMG.foxHalf;
+    const tilt = -0.07 * (spr(t, 17.5, 4, 1) - spr(t, 17.7, 3.5, 1));
+    if (x + 332 > 0) {
+      ctx.save();
+      ctx.translate(x + 166, y + 160);
+      ctx.rotate(tilt);
+      ctx.drawImage(im, -166, -160, 332, 320);
+      ctx.restore();
+    }
+  }
+}
+
+// ---------- type ----------
+// A line slides up into its own box on tIn and up out of it on tOut (masked, never faded).
+function maskedLine(t, str, x, base, size, tIn, tOut, opt = {}) {
+  if (t < tIn || t > tOut + 0.8) return;
+  const travel = size * 1.2;
+  const dy = travel * (1 - spr(t, tIn, 3.2, 1)) - travel * spr(t, tOut, 3.6, 1);
+  if (Math.abs(dy) >= travel - 0.5) return;
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(0, base - 0.9 * size, W, 1.2 * size);
+  ctx.clip();
+  ctx.font = opt.font || `${size}px "Arista"`;
+  ctx.textAlign = opt.align || 'left';
+  ctx.textBaseline = 'alphabetic';
+  if (opt.runs) {
+    const total = opt.runs.reduce((a, r) => a + ctx.measureText(r[0]).width, 0);
+    let cx = opt.align === 'center' ? x - total / 2 : x;
+    ctx.textAlign = 'left';
+    for (const [s, c, wipeAt] of opt.runs) {
+      const rw = ctx.measureText(s).width;
+      ctx.fillStyle = c;
+      ctx.fillText(s, cx, base + dy);
+      if (wipeAt !== undefined && t > wipeAt) {
+        // colour wipe, left to right, on the beat
+        const k = easeInOut(clamp((t - wipeAt) / 0.22, 0, 1));
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(cx - 4, base - 0.9 * size, (rw + 8) * k, 1.2 * size);
+        ctx.clip();
+        ctx.fillStyle = COL.orange;
+        ctx.fillText(s, cx, base + dy);
+        ctx.restore();
+      }
+      cx += rw;
+    }
+  } else {
+    ctx.fillStyle = opt.color || COL.ink;
+    ctx.fillText(str, x, base + dy);
+  }
+  ctx.restore();
+}
+
+function headline(t, lines, size, x, bases, tIn, tOut, opt = {}) {
+  lines.forEach((s, i) => maskedLine(t, s, x, bases[i], size, tIn + i * 0.05, tOut + i * 0.03, opt));
+}
+
+function drawHook(t) {
+  if (t > 2.7) return;
+  const { size, x0, base, w, gap } = L.hook;
+  const tr = [0.21, 0.50, 1.00], fr = [4.6, 3.4, 3.4]; // must match the cursor keys
+  ctx.font = `${size}px "Arista"`;
+  ctx.fillStyle = COL.ink;
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'alphabetic';
+  for (let i = 0; i < 4; i++) {
+    const exitY = -size * 1.2 * spr(t, 2.0 + i * 0.025, 4.5, 1);
+    if (exitY <= -size * 1.2 + 0.5) continue;
+    let clipR = W, x = x0;
+    if (i < 3) {
+      if (t < tr[i]) continue;
+      clipR = x0 + (w[i] + gap) * spr(t, tr[i], fr[i], 1);
+    } else {
+      if (t < 1.5) continue;
+      x = x0 + L.hookOff * (1 - spr(t, 1.5, 2.8, 1));
+    }
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(0, base[i] - 0.9 * size, clipR, 1.2 * size);
+    ctx.clip();
+    ctx.fillText(TXT.hook[i], x, base[i] + exitY);
+    ctx.restore();
+  }
+}
+
+function drawType(t) {
+  drawHook(t);
+  headline(t, TXT.visit, 150, 80, [400], 2.16, 3.80);
+  headline(t, TXT.scan, 150, 80, [400], 4.12, 5.75);
+  headline(t, TXT.earn, 150, 80, [400], 6.12, 8.50);
+  const dm = '600 56px "DM Sans"';
+  maskedLine(t, '', 540, 1180, 56, 6.55, 8.55, { font: dm, align: 'center', runs: [[TXT.earnSub[0], COL.ink]] });
+  maskedLine(t, '', 540, 1252, 56, 6.60, 8.58, { font: dm, align: 'center', runs: [['puan', COL.orange], [TXT.earnSub[1].slice(4), COL.ink]] });
+  headline(t, TXT.spend, 104, 80, [360, 470], 9.12, 10.75);
+  headline(t, TXT.stamps, 110, 80, [360, 476], 11.15, 14.85);
+  maskedLine(t, TXT.tag[0], 540, 1196, 104, 15.55, 17.92, { align: 'center' });
+  maskedLine(t, TXT.tag[1], 540, 1316, 104, 16.55, 17.95, { align: 'center' });
+  const cut = TXT.cta[0].indexOf('şimdi');
+  maskedLine(t, '', 540, 1000, 136, 18.08, 19.5, { align: 'center', runs: [[TXT.cta[0].slice(0, cut), COL.ink], [TXT.cta[0].slice(cut), COL.ink, 19.0]] });
+}
+
+function drawBadges(t) {
+  if (t < 18.5 || t >= LOOP_HOLD) return;
+  L.badges.forEach((b, i) => {
+    const travel = b.box[3] + 30;
+    const dy = travel * (1 - spr(t, b.t, 3.2, 1)) - travel * spr(t, 19.5 + i * 0.03, 3.6, 1);
+    if (Math.abs(dy) >= travel - 0.5) return;
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(b.box[0] - 2, b.box[1] - 2, b.box[2] + 4, b.box[3] + 4);
+    ctx.clip();
+    ctx.drawImage(b.img, b.draw[0], b.draw[1] + dy, b.draw[2], b.draw[3]);
+    ctx.restore();
+  });
+}
+
+// ---------- the frame: a pure function of t ----------
+function seek(tRaw) {
+  const t = ((tRaw % DUR) + DUR) % DUR;
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.globalAlpha = 1;
+  ctx.filter = 'none';
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = 'high';
+  ctx.fillStyle = COL.cream;
+  ctx.fillRect(0, 0, W, H);
+  if (t < F1 || t >= LOOP_HOLD) { drawShape(SHAPE0); return; }
+  const s = shapeAt(t);
+  drawWindows(t);
+  drawRow(t);
+  drawShape(s);
+  drawScan(t, s);
+  drawPillText(t, s);
+  drawCard(t, s);
+  drawLogo(t, s);
+  drawType(t);
+  drawBadges(t);
+}
+
+// ---------- boot ----------
+const ALL_ARISTA = [...TXT.hook, ...TXT.visit, ...TXT.scan, ...TXT.earn, ...TXT.spend, ...TXT.stamps, ...TXT.tag, ...TXT.cta].join('') + 'şŞğĞıİüÜöÖçÇ';
+const ALL_DM = TXT.earnSub.join('') + '0123456789/puan';
+
+window.ready = (async () => {
+  await Promise.all(FONTS.map(async ([family, src, desc]) => {
+    const ff = new FontFace(family, `url(${src})`, desc);
+    await ff.load();
+    document.fonts.add(ff);
+  }));
+  await document.fonts.ready;
+  const entries = await Promise.all([
+    ...Object.entries(IMAGE_SRC).map(async ([k, src]) => [k, await loadImage(src)]),
+    (async () => ['apple', await loadImage('assets/badges/app-store-tr.svg', 'assets/badges/app-store-en.svg')])(),
+  ]);
+  for (const [k, im] of entries) IMG[k] = im;
+  const appleTr = IMG.apple.src.includes('-tr.');
+  IMG.google = await loadImage(appleTr ? 'assets/badges/google-play-tr.png' : 'assets/badges/google-play-en.png');
+  IMG.google.isTr = appleTr;
+  const missing = {
+    Arista: missingGlyphs('Arista', '', ALL_ARISTA),
+    'DM Sans 600': missingGlyphs('DM Sans', '600', ALL_DM),
+    'DM Sans 700': missingGlyphs('DM Sans', '700', '0123456789/'),
+  };
+  layout();
+  seek(0);
+  return { missing, badges: appleTr ? 'tr' : 'en' };
+})();
+
+// Motion-blurred frame: 4 subframes across a 180° shutter, averaged exactly in integer space.
+const ACC = new Uint32Array(W * H * 4);
+const OUT = document.createElement('canvas');
+OUT.width = W; OUT.height = H;
+const OCTX = OUT.getContext('2d');
+window.seek = seek;
+window.renderFrame = (f, sub = 4, type = 'image/png') => {
+  if (sub <= 1) { seek(f / FPS); return canvas.toDataURL(type); }
+  ACC.fill(0);
+  for (let k = 0; k < sub; k++) {
+    seek(f / FPS + ((k + 0.5) / sub - 0.5) * (0.5 / FPS));
+    const d = ctx.getImageData(0, 0, W, H).data;
+    for (let i = 0; i < d.length; i++) ACC[i] += d[i];
+  }
+  const img = OCTX.createImageData(W, H), o = img.data;
+  for (let i = 0; i < o.length; i++) o[i] = ACC[i] / sub; // Uint8ClampedArray rounds
+  OCTX.putImageData(img, 0, 0);
+  return OUT.toDataURL(type);
+};
+window.CUES = JSON.parse(document.getElementById('cues').textContent);
+
+// ---------- preview (?preview) — a viewer only; the film itself is seek(t) ----------
+if (new URLSearchParams(location.search).has('preview')) {
+  document.body.classList.add('preview');
+  const bar = document.createElement('div');
+  bar.innerHTML = '<button id="pp">Pause</button> <input id="sc" type="range" min="0" max="20" step="0.0166667" value="0"> <span id="tc">0.00</span> <audio id="au" src="audio/mix.wav" preload="auto"></audio>';
+  document.body.appendChild(bar);
+  const sc = document.getElementById('sc'), tc = document.getElementById('tc'), pp = document.getElementById('pp'), au = document.getElementById('au');
+  let playing = true, origin = 0;
+  window.ready.then(() => {
+    origin = performance.now();
+    au.play().catch(() => {});
+    const loop = (now) => {
+      if (playing) {
+        const t = ((now - origin) / 1000) % DUR;
+        sc.value = t;
+        if (Math.abs(au.currentTime - t) > 0.08 && !au.paused) au.currentTime = t;
+        tc.textContent = t.toFixed(2);
+        seek(t);
+      }
+      requestAnimationFrame(loop);
+    };
+    requestAnimationFrame(loop);
+  });
+  sc.oninput = () => { playing = false; pp.textContent = 'Play'; au.pause(); seek(+sc.value); tc.textContent = (+sc.value).toFixed(2); };
+  pp.onclick = () => {
+    playing = !playing;
+    pp.textContent = playing ? 'Pause' : 'Play';
+    origin = performance.now() - +sc.value * 1000;
+    if (playing) { au.currentTime = +sc.value; au.play().catch(() => {}); } else au.pause();
+  };
+}
+</script>
+</body>
+</html>

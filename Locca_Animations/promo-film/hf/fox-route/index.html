@@ -1,0 +1,613 @@
+<!doctype html>
+<html lang="tr" data-resolution="portrait" data-composition-variables='[{"id":"lang","type":"string","label":"Language (tr, en, ru)","default":"tr"}]'>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <title>Locca: Ziyaret et. Tarat. Kazan.</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      /* v5 — follows the App Store poster: YERELİ KEŞFET. ÖDÜLLERİ KAZAN. → ZİYARET ET. → TARAT. → KAZAN. → recap → end.
+         Stickers never travel; the route, the scan, the Loccard cells and the stamp card carry the motion. Slow and readable. */
+      @font-face { font-family: "Manrope"; font-weight: 200 800; src: url(assets/fonts/manrope-latin-wght-normal.woff2) format("woff2");
+        unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2212; }
+      @font-face { font-family: "Manrope"; font-weight: 200 800; src: url(assets/fonts/manrope-latin-ext-wght-normal.woff2) format("woff2");
+        unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+1E00-1E9F, U+20A0-20C0, U+2C60-2C7F, U+A720-A7FF; }
+      @font-face { font-family: "Manrope"; font-weight: 200 800; src: url(assets/fonts/manrope-cyrillic-wght-normal.woff2) format("woff2");
+        unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { margin: 0; width: 1080px; height: 1920px; overflow: hidden; background: #f9efe6; }
+      #root { position: relative; width: 100%; height: 100%; overflow: hidden; font-family: "Manrope", sans-serif; color: #1c1b1a; }
+      .clip { position: absolute; inset: 0; }
+      .abs { position: absolute; }
+      .o { color: #d14800; } /* text orange, darker than the brand #FF5B00 so it passes contrast on cream */
+      /* chapter header, as on the poster: logo, a heavy uppercase title, one quiet line */
+      .logo-sm { position: absolute; left: 72px; top: 118px; width: 210px; }
+      .hmask { position: absolute; left: 72px; width: 940px; overflow: hidden; }
+      .hmask > * { display: block; }
+      .title { font-size: 112px; line-height: 124px; font-weight: 800; letter-spacing: -0.035em; }
+      .title.sm { font-size: 92px; line-height: 104px; }
+      .sub { font-size: 40px; line-height: 56px; font-weight: 600; color: #5a524c; letter-spacing: -0.01em; }
+      .sticker { position: absolute; filter: drop-shadow(0 30px 34px rgba(60, 34, 18, 0.26)) drop-shadow(0 8px 10px rgba(60, 34, 18, 0.18)) drop-shadow(0 2px 2px rgba(60, 34, 18, 0.14)); }
+      /* form shade: light from the top-left, so the lower right falls into soft shadow — masked to the fox's own shape */
+      .shade { position: absolute; pointer-events: none; mix-blend-mode: multiply;
+        background: radial-gradient(120% 90% at 28% 18%, rgba(255,255,255,0) 52%, rgba(120,58,20,0.30) 100%);
+        -webkit-mask-size: 100% 100%; mask-size: 100% 100%; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; }
+      .contact { position: absolute; height: 40px; border-radius: 50%; background: radial-gradient(closest-side, rgba(60, 34, 18, 0.42), rgba(60, 34, 18, 0)); }
+      .phone { position: absolute; background: linear-gradient(160deg, #2b2a29, #0d0d0d 40%); border-radius: 64px; padding: 15px;
+        box-shadow: inset 0 0 0 2px #4a4744, 0 2px 4px rgba(0,0,0,.18), 0 34px 70px rgba(60, 34, 18, 0.30); }
+      .phone::after { content: ""; position: absolute; inset: 15px; border-radius: 50px; pointer-events: none;
+        background: linear-gradient(115deg, rgba(255,255,255,0.16) 0%, rgba(255,255,255,0) 32%); }
+      .phone img { display: block; width: 100%; border-radius: 50px; }
+      .pop { position: absolute; background-repeat: no-repeat; border-radius: 26px; background-color: #fff;
+        box-shadow: 0 0 0 1px rgba(60,34,18,.06), 0 2px 6px rgba(60,34,18,.08), 0 24px 48px rgba(60, 34, 18, 0.22); }
+      .card { position: absolute; background: #fff; border-radius: 44px;
+        box-shadow: 0 0 0 1px rgba(60,34,18,.06), 0 2px 6px rgba(60,34,18,.08), 0 30px 60px rgba(60, 34, 18, 0.18); }
+      .stamp { position: absolute; width: 116px; height: 116px; border-radius: 50%; background: #f4e9e1; box-shadow: inset 0 3px 6px rgba(60,34,18,.10); }
+      .stamp.on { background: radial-gradient(circle at 35% 30%, #ff8a3d, #ff5b00 60%, #e24e00); box-shadow: 0 8px 16px rgba(255, 91, 0, 0.28); }
+      .stamp svg { position: absolute; inset: 0; }
+      .stopcard { position: absolute; width: 250px; height: 290px; background: #fff; border-radius: 30px;
+        box-shadow: 0 0 0 1px rgba(60,34,18,.06), 0 24px 44px rgba(60, 34, 18, 0.22); overflow: hidden; }
+      .stopcard::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 60%; background: linear-gradient(#fdf2ea, #fff); }
+      .stopcard img { position: absolute; left: 50%; bottom: 10px; height: 255px; transform: translateX(-50%); filter: drop-shadow(0 10px 10px rgba(60,34,18,.22)); }
+      #loccard { position: absolute; left: 110px; top: 640px; width: 860px; height: 320px; border-radius: 42px; color: #fff;
+        background: linear-gradient(150deg, #34312f, #181716 55%, #222120); box-shadow: inset 0 0 0 1.5px rgba(255,255,255,.08), 0 30px 60px rgba(28, 20, 14, 0.35); }
+      #loccard .brand { position: absolute; left: 50px; top: 44px; font-size: 30px; font-weight: 800; letter-spacing: 0.16em; color: #ff7a2e; }
+      #loccard .lbl { position: absolute; left: 50px; top: 114px; font-size: 24px; font-weight: 700; letter-spacing: 0.14em; color: #9a948f; }
+      #loccard .num { position: absolute; left: 48px; top: 142px; font-size: 84px; font-weight: 800; letter-spacing: -0.02em; color: #ff7a2e; }
+      #lc-cells { position: absolute; left: 330px; top: 184px; width: 480px; height: 52px; }
+      .cell { position: absolute; top: 0; width: 38px; height: 52px; border-radius: 10px; background: #3a3735; }
+      .coin { position: absolute; left: 0; top: 0; width: 46px; height: 52px; border-radius: 12px; background: #ff5b00; box-shadow: 0 6px 14px rgba(255,91,0,.35); }
+      .center { position: absolute; left: 0; width: 1080px; display: flex; justify-content: center; }
+      .pill { background: #ff5b00; color: #fff; border-radius: 52px; font-size: 44px; font-weight: 800; padding: 24px 52px 22px; box-shadow: 0 16px 34px rgba(255, 91, 0, 0.30); }
+      /* a scene is a page: opaque, so the incoming one covers the outgoing one while they slide */
+      .page { position: absolute; inset: 0; overflow: hidden; background: radial-gradient(120% 90% at 30% 25%, #fffaf5, #f9efe6 55%, #efdccb); }
+      #pg-s2b { background: #f9efe6; }
+      .w { display: inline-block; will-change: transform, opacity, filter; }
+      /* Cyrillic uppercase runs wider: Russian titles step down a size */
+      .lang-ru .title { font-size: 96px; line-height: 116px; }
+      .lang-ru .title.sm { font-size: 74px; line-height: 104px; }
+      #grain { position: absolute; inset: 0; pointer-events: none; opacity: 0.07; mix-blend-mode: multiply; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="52" data-width="1080" data-height="1920">
+
+      <!-- Shared background: warm light, the poster's orange corner shapes and sparkles -->
+      <section id="bg" class="clip" data-start="0" data-duration="52" data-track-index="0">
+        <svg class="abs" width="1080" height="1920" viewBox="0 0 1080 1920" data-layout-allow-overflow>
+          <defs>
+            <radialGradient id="warm" cx="0.3" cy="0.25" r="0.95"><stop offset="0" stop-color="#fffaf5" /><stop offset="0.55" stop-color="#f9efe6" /><stop offset="1" stop-color="#efdccb" /></radialGradient>
+            <linearGradient id="blob" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff8a3d" /><stop offset="1" stop-color="#e65000" /></linearGradient>
+          </defs>
+          <rect width="1080" height="1920" fill="url(#warm)" />
+          <path d="M1140 -60 L1140 300 C1060 310 990 280 950 220 C900 150 920 70 860 20 C830 -10 800 -40 790 -60 Z" fill="url(#blob)" />
+          <path d="M-60 1640 C40 1600 130 1640 170 1720 C210 1800 180 1880 230 1980 L-60 1980 Z" fill="url(#blob)" />
+          <g id="sparkles" fill="#ff5b00">
+            <path d="M960 520 L968 548 L996 556 L968 564 L960 592 L952 564 L924 556 L952 548 Z" opacity="0.85" />
+            <path d="M120 1180 L126 1200 L146 1206 L126 1212 L120 1232 L114 1212 L94 1206 L114 1200 Z" opacity="0.7" />
+          </g>
+        </svg>
+      </section>
+
+      <!-- 1 · 0-4 s: hook — asleep, a pin lands, awake; the promise -->
+      <section id="s1" class="clip" data-start="0" data-duration="6.8" data-track-index="1"><div class="page" id="pg-s1"><svg class="abs" width="1080" height="1920" viewBox="0 0 1080 1920" data-layout-allow-overflow><defs><linearGradient id="blob-s1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff8a3d" /><stop offset="1" stop-color="#e65000" /></linearGradient></defs><path d="M1140 -60 L1140 300 C1060 310 990 280 950 220 C900 150 920 70 860 20 C830 -10 800 -40 790 -60 Z" fill="url(#blob-s1)" />
+          <path d="M-60 1640 C40 1600 130 1640 170 1720 C210 1800 180 1880 230 1980 L-60 1980 Z" fill="url(#blob-s1)" />
+          <g fill="#ff5b00">
+            <path d="M960 520 L968 548 L996 556 L968 564 L960 592 L952 564 L924 556 L952 548 Z" opacity="0.85" />
+            <path d="M120 1180 L126 1200 L146 1206 L126 1212 L120 1232 L114 1212 L94 1206 L114 1200 Z" opacity="0.7" />
+          </g></svg>
+        <img class="logo-sm" id="s1-logo" src="assets/locca-logo.png" alt="" />
+        <div class="hmask" style="top:300px; height:124px;"><h1 id="s1-a" class="title sm">YERELİ <span class="o">KEŞFET.</span></h1></div>
+        <div class="hmask" style="top:404px; height:124px;"><h1 id="s1-b" class="title sm">ÖDÜLLERİ <span class="o">KAZAN.</span></h1></div>
+        <svg class="abs" width="1080" height="1920" viewBox="0 0 1080 1920" data-layout-allow-overflow>
+          <defs><linearGradient id="wood" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b47a52" /><stop offset="1" stop-color="#8c5a3a" /></linearGradient></defs>
+          <ellipse cx="540" cy="1640" rx="360" ry="26" fill="rgba(60,34,18,0.12)" />
+          <rect x="300" y="1474" width="22" height="160" rx="8" fill="#2f2b28" /><rect x="758" y="1474" width="22" height="160" rx="8" fill="#2f2b28" />
+          <rect x="240" y="1360" width="600" height="34" rx="12" fill="url(#wood)" />
+          <rect x="230" y="1438" width="620" height="40" rx="14" fill="url(#wood)" />
+          <rect x="230" y="1438" width="620" height="8" rx="4" fill="#d29b72" opacity="0.6" />
+        </svg>
+        <div id="s1-sleep" class="abs"></div>
+        <div id="s1-awake" class="abs"></div>
+        <div id="s1-pin" class="abs"></div>
+      </div></section>
+
+      <!-- 2a · 4-7 s: ZİYARET ET. — the real map -->
+      <section id="s2" class="clip" data-start="6" data-duration="5.8" data-track-index="1"><div class="page" id="pg-s2"><svg class="abs" width="1080" height="1920" viewBox="0 0 1080 1920" data-layout-allow-overflow><defs><linearGradient id="blob-s2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff8a3d" /><stop offset="1" stop-color="#e65000" /></linearGradient></defs><path d="M1140 -60 L1140 300 C1060 310 990 280 950 220 C900 150 920 70 860 20 C830 -10 800 -40 790 -60 Z" fill="url(#blob-s2)" />
+          <path d="M-60 1640 C40 1600 130 1640 170 1720 C210 1800 180 1880 230 1980 L-60 1980 Z" fill="url(#blob-s2)" />
+          <g fill="#ff5b00">
+            <path d="M960 520 L968 548 L996 556 L968 564 L960 592 L952 564 L924 556 L952 548 Z" opacity="0.85" />
+            <path d="M120 1180 L126 1200 L146 1206 L126 1212 L120 1232 L114 1212 L94 1206 L114 1200 Z" opacity="0.7" />
+          </g></svg>
+        <img class="logo-sm" src="assets/locca-logo.png" alt="" />
+        <div class="hmask" style="top:260px; height:124px;"><h1 id="s2-t" class="title">ZİYARET <span class="o">ET.</span></h1></div>
+        <div class="hmask" style="top:392px; height:60px;"><p id="s2-s" class="sub">Sevdiğin mekanları bul ve uğra</p></div>
+        <div id="s2-phone" class="phone" style="left:360px; top:540px; width:520px;"><img src="assets/screens/map.png" alt="" /></div>
+        <div id="s2-fox" class="abs"></div>
+      </div></section>
+
+      <!-- 2b · 7-13 s: the route to three places -->
+      <section id="s2b" class="clip" data-start="11" data-duration="6.8" data-track-index="1"><div class="page" id="pg-s2b">
+        <div id="s3-cam" class="abs" style="left:0; top:0; width:1080px; height:1920px; transform-origin: 720px 1360px;">
+          <img class="abs" src="assets/alanya-map.svg" style="left:0; top:0; width:1080px; height:1920px;" alt="" />
+          <svg class="abs" width="1080" height="1920" viewBox="0 0 1080 1920" data-layout-allow-overflow>
+            <defs><mask id="route-mask"><path id="route-draw" d="M260 470 C420 470 640 520 740 700 C800 820 620 960 420 1010 C300 1040 260 1150 380 1230 C500 1300 640 1260 720 1360" stroke="#fff" stroke-width="44" fill="none" stroke-linecap="round" /></mask></defs>
+            <path d="M260 470 C420 470 640 520 740 700 C800 820 620 960 420 1010 C300 1040 260 1150 380 1230 C500 1300 640 1260 720 1360" stroke="#fff" stroke-width="20" stroke-dasharray="2 30" stroke-linecap="round" fill="none" mask="url(#route-mask)" opacity="0.9" />
+            <path d="M260 470 C420 470 640 520 740 700 C800 820 620 960 420 1010 C300 1040 260 1150 380 1230 C500 1300 640 1260 720 1360" stroke="#ff5b00" stroke-width="12" stroke-dasharray="2 30" stroke-linecap="round" fill="none" mask="url(#route-mask)" />
+          </svg>
+          <div id="s3-markers"></div>
+          <div id="s3-cards"></div>
+        </div>
+        <div class="abs" style="left:0; top:0; width:1080px; height:420px; background: linear-gradient(#f9efe6 62%, rgba(249,239,230,0));"></div>
+        <img class="logo-sm" src="assets/locca-logo.png" alt="" />
+        <div class="hmask" style="top:250px; height:124px;"><h1 id="s2b-t" class="title">ZİYARET <span class="o">ET.</span></h1></div>
+      </div></section>
+
+      <!-- 3 · 13-19 s: TARAT. — the fox shows the Locca QR on its phone; the till scans it -->
+      <section id="s3" class="clip" data-start="17" data-duration="6.8" data-track-index="1"><div class="page" id="pg-s3"><svg class="abs" width="1080" height="1920" viewBox="0 0 1080 1920" data-layout-allow-overflow><defs><linearGradient id="blob-s3" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff8a3d" /><stop offset="1" stop-color="#e65000" /></linearGradient></defs><path d="M1140 -60 L1140 300 C1060 310 990 280 950 220 C900 150 920 70 860 20 C830 -10 800 -40 790 -60 Z" fill="url(#blob-s3)" />
+          <path d="M-60 1640 C40 1600 130 1640 170 1720 C210 1800 180 1880 230 1980 L-60 1980 Z" fill="url(#blob-s3)" />
+          <g fill="#ff5b00">
+            <path d="M960 520 L968 548 L996 556 L968 564 L960 592 L952 564 L924 556 L952 548 Z" opacity="0.85" />
+            <path d="M120 1180 L126 1200 L146 1206 L126 1212 L120 1232 L114 1212 L94 1206 L114 1200 Z" opacity="0.7" />
+          </g></svg><img class="logo-sm" src="assets/locca-logo.png" alt="" />
+        <div class="hmask" style="top:260px; height:124px;"><h1 id="s3-t" class="title o">TARAT.</h1></div>
+        <div class="hmask" style="top:392px; height:60px;"><p id="s3-s" class="sub">Kasada Locca QR kodunu göster.</p></div>
+        <!-- what is being scanned: the QR panel of the real Loccard screen -->
+        <div id="s3-qr" class="pop"></div>
+        <div id="s3-fox" class="abs"></div>
+        <div id="s3-cashier" class="abs"></div>
+        <svg id="s3-waves" class="abs" style="left:500px; top:1300px;" width="150" height="200" viewBox="0 0 150 200" data-layout-allow-overflow>
+          <g stroke="#ff5b00" stroke-width="9" fill="none" stroke-linecap="round">
+            <path id="w1" d="M110 70 C90 90 90 120 110 140" /><path id="w2" d="M80 50 C50 85 50 125 80 160" /><path id="w3" d="M50 30 C10 80 10 130 50 180" />
+          </g>
+        </svg>
+        <div id="s3-check" class="abs" style="left:508px; top:1160px; width:104px; height:104px;"><svg width="104" height="104" viewBox="0 0 104 104"><circle cx="52" cy="52" r="50" fill="#ff5b00" /><path d="M30 54 L46 70 L75 38" stroke="#fff" stroke-width="12" fill="none" stroke-linecap="round" stroke-linejoin="round" /></svg></div>
+        <!-- the counter between them, covering both foxes from the waist down -->
+        <div class="abs" style="left:-20px; top:1522px; width:1120px; height:420px; background: linear-gradient(#f2c7a6, #e9b48d 60%, #dda27a);"></div>
+        <div class="abs" style="left:60px; top:1580px; width:300px; height:300px; border-radius:18px; background: rgba(255,255,255,0.18);"></div>
+        <div class="abs" style="left:390px; top:1580px; width:300px; height:300px; border-radius:18px; background: rgba(255,255,255,0.18);"></div>
+        <div class="abs" style="left:720px; top:1580px; width:300px; height:300px; border-radius:18px; background: rgba(255,255,255,0.18);"></div>
+        <div class="abs" style="left:-20px; top:1480px; width:1120px; height:48px; border-radius:14px; background: linear-gradient(#ffffff, #f1e6dd); box-shadow: 0 14px 24px rgba(60,34,18,0.18);"></div>
+      </div></section>
+
+      <!-- 4 · 19-31 s: KAZAN. — points (the Loccard fills), then a stamp (Palm & Bean 8/8), then the free drink -->
+      <section id="s4" class="clip" data-start="23" data-duration="12.8" data-track-index="1"><div class="page" id="pg-s4"><svg class="abs" width="1080" height="1920" viewBox="0 0 1080 1920" data-layout-allow-overflow><defs><linearGradient id="blob-s4" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff8a3d" /><stop offset="1" stop-color="#e65000" /></linearGradient></defs><path d="M1140 -60 L1140 300 C1060 310 990 280 950 220 C900 150 920 70 860 20 C830 -10 800 -40 790 -60 Z" fill="url(#blob-s4)" />
+          <path d="M-60 1640 C40 1600 130 1640 170 1720 C210 1800 180 1880 230 1980 L-60 1980 Z" fill="url(#blob-s4)" />
+          <g fill="#ff5b00">
+            <path d="M960 520 L968 548 L996 556 L968 564 L960 592 L952 564 L924 556 L952 548 Z" opacity="0.85" />
+            <path d="M120 1180 L126 1200 L146 1206 L126 1212 L120 1232 L114 1212 L94 1206 L114 1200 Z" opacity="0.7" />
+          </g></svg>
+        <img class="logo-sm" src="assets/locca-logo.png" alt="" />
+        <div class="hmask" style="top:260px; height:124px;"><h1 id="s4-t" class="title o">KAZAN.</h1></div>
+        <div class="hmask" style="top:392px; height:60px;"><p id="s4-s" class="sub">Her ziyaretinde puan veya damga topla.</p></div>
+        <div id="loccard">
+          <div class="brand">LOCCARD</div>
+          <div id="lc-lbl" class="lbl">PUANLAR</div>
+          <div id="lc-num" class="num">55</div>
+          <div id="lc-cells"></div>
+        </div>
+        <div id="s4-coins"></div>
+        <div id="s4-card" class="card" style="left:120px; top:600px; width:840px; height:560px;">
+          <div id="s4-badge" class="abs" style="left:44px; top:40px; width:110px; height:110px;"></div>
+          <div class="abs" style="left:176px; top:54px; font-size:46px; font-weight:800; letter-spacing:-0.02em;">Palm &amp; Bean</div>
+          <div id="s4-count" class="abs" style="left:176px; top:114px; font-size:32px; font-weight:800; color:#9a8f86;">7 / 8 damga</div>
+          <div id="s4-stamps"></div>
+        </div>
+        <div id="s4-drop" class="stamp on" style="left:0; top:0;"></div>
+        <div id="s4-cup" class="abs" style="left:380px; top:620px; width:320px; height:380px;">
+          <svg width="320" height="380" viewBox="0 0 320 380" data-layout-allow-overflow>
+            <!-- a latte in a Locca-orange cup on a white saucer, heart in the foam (redrawn 2026-10-21) -->
+            <defs>
+              <linearGradient id="cupg" x1="0" x2="1"><stop offset="0" stop-color="#ff9a52" /><stop offset="0.55" stop-color="#ff6a12" /><stop offset="1" stop-color="#d94a00" /></linearGradient>
+              <linearGradient id="saucerg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff" /><stop offset="1" stop-color="#eadfd6" /></linearGradient>
+              <radialGradient id="crema" cx="0.5" cy="0.45" r="0.6"><stop offset="0" stop-color="#d9a06a" /><stop offset="0.7" stop-color="#a8683c" /><stop offset="1" stop-color="#7a4528" /></radialGradient>
+              <linearGradient id="steamg" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#cdbdb0" stop-opacity="0.9" /><stop offset="1" stop-color="#cdbdb0" stop-opacity="0" /></linearGradient>
+            </defs>
+            <ellipse cx="160" cy="352" rx="140" ry="13" fill="rgba(60,34,18,0.14)" />
+            <!-- saucer -->
+            <ellipse cx="160" cy="322" rx="150" ry="30" fill="url(#saucerg)" />
+            <ellipse cx="160" cy="316" rx="150" ry="26" fill="#fff" />
+            <ellipse cx="160" cy="316" rx="92" ry="14" fill="#efe5dd" />
+            <!-- handle, behind the bowl -->
+            <path d="M258 186 C306 178 314 246 254 262" stroke="#d94a00" stroke-width="20" fill="none" stroke-linecap="round" />
+            <path d="M260 190 C296 186 302 240 256 254" stroke="#ff8a3d" stroke-width="6" fill="none" stroke-linecap="round" opacity="0.7" />
+            <!-- bowl -->
+            <path d="M48 160 C48 262 98 318 160 318 C222 318 272 262 272 160 Z" fill="url(#cupg)" />
+            <path d="M70 182 C72 240 96 284 128 302" stroke="#fff" stroke-width="10" fill="none" stroke-linecap="round" opacity="0.28" />
+            <ellipse cx="160" cy="312" rx="46" ry="6" fill="#b23d00" opacity="0.35" />
+            <!-- rim and the latte -->
+            <ellipse cx="160" cy="160" rx="112" ry="24" fill="#fff" />
+            <ellipse cx="160" cy="163" rx="100" ry="18" fill="url(#crema)" />
+            <path d="M160 176 C140 166 129 157 133 151 C137 145 150 146 160 156 C170 146 183 145 187 151 C191 157 180 166 160 176 Z" fill="#fbf1e6" />
+            <g id="s4-steam" stroke="url(#steamg)" stroke-width="7" fill="none" stroke-linecap="round">
+              <path d="M126 128 C112 108 140 92 124 64" /><path d="M160 122 C146 98 176 82 160 40" /><path d="M194 128 C180 108 208 92 192 64" />
+            </g>
+          </svg>
+        </div>
+        <div class="center" style="top:1030px;"><div id="s4-free" style="font-size:46px; font-weight:800; letter-spacing:0.12em;" class="o">ÜCRETSİZ İÇECEK</div></div>
+        <div id="s4-fox1" class="abs"></div>
+        <div id="s4-fox2" class="abs"></div>
+        <div id="s4-fox3" class="abs"></div>
+        <div id="s4-fox4" class="abs"></div>
+      </div></section>
+
+      <!-- 5 · 31-37 s: HARCA. — points earned at one place come off the total bill at another (1 point = ₺1) -->
+      <section id="sH" class="clip" data-start="35" data-duration="6.8" data-track-index="1"><div class="page" id="pg-sH"><svg class="abs" width="1080" height="1920" viewBox="0 0 1080 1920" data-layout-allow-overflow><defs><linearGradient id="blob-sH" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff8a3d" /><stop offset="1" stop-color="#e65000" /></linearGradient></defs><path d="M1140 -60 L1140 300 C1060 310 990 280 950 220 C900 150 920 70 860 20 C830 -10 800 -40 790 -60 Z" fill="url(#blob-sH)" />
+          <path d="M-60 1640 C40 1600 130 1640 170 1720 C210 1800 180 1880 230 1980 L-60 1980 Z" fill="url(#blob-sH)" />
+          <g fill="#ff5b00">
+            <path d="M960 520 L968 548 L996 556 L968 564 L960 592 L952 564 L924 556 L952 548 Z" opacity="0.85" />
+            <path d="M120 1180 L126 1200 L146 1206 L126 1212 L120 1232 L114 1212 L94 1206 L114 1200 Z" opacity="0.7" />
+          </g></svg>
+        <img class="logo-sm" src="assets/locca-logo.png" alt="" />
+        <div class="hmask" style="top:260px; height:124px;"><h1 id="sH-t" class="title o">HARCA.</h1></div>
+        <div class="hmask" style="top:392px; height:120px;"><p id="sH-s" class="sub" style="width:900px;">Bir mekânda kazandığın puanı başka bir mekânda harca.</p></div>
+        <div id="sH-bill" class="card" style="left:190px; top:600px; width:700px; height:520px;">
+          <div id="sH-badge" class="abs" style="left:40px; top:36px; width:96px; height:96px;"></div>
+          <div id="sH-place" class="abs" style="left:156px; top:60px; font-size:40px; font-weight:800; letter-spacing:-0.02em;">Kale Sofrası</div>
+          <div class="abs" style="left:44px; right:44px; top:170px; border-top:3px dashed #eadfd6;"></div>
+          <div id="sH-billL" class="abs" style="left:44px; top:205px; font-size:38px; font-weight:700; color:#5a524c;">Hesap</div>
+          <div class="abs" style="right:44px; top:205px; font-size:38px; font-weight:800;">₺250</div>
+          <div id="sH-row" class="abs" style="left:44px; right:44px; top:275px; height:60px;">
+            <div id="sH-ptsL" class="abs" style="left:0; top:0; font-size:38px; font-weight:700; color:#d14800;">Puan</div>
+            <div class="abs" style="right:0; top:0; font-size:38px; font-weight:800; color:#d14800;">−₺105</div>
+          </div>
+          <div class="abs" style="left:44px; right:44px; top:370px; border-top:3px solid #1c1b1a;"></div>
+          <div id="sH-payL" class="abs" style="left:44px; top:410px; font-size:40px; font-weight:800;">Ödenecek</div>
+          <div id="sH-total" class="abs" style="right:44px; top:388px; font-size:84px; font-weight:800; letter-spacing:-0.03em;">₺250</div>
+        </div>
+        <div id="sH-chip" class="abs" style="left:640px; top:540px; height:84px; padding:0 30px; border-radius:42px; display:flex; align-items:center; gap:16px; color:#ff7a2e; font-size:34px; font-weight:800; letter-spacing:0.08em;
+          background: linear-gradient(150deg, #34312f, #181716); box-shadow: 0 18px 34px rgba(28,20,14,.35);">LOCCARD <span style="color:#fff; letter-spacing:-0.01em; font-size:40px;">105</span></div>
+        <div id="sH-fox" class="abs"></div>
+      </div></section>
+
+      <!-- 6 · 37-44 s: recap — ZİYARET ET. TARAT. KAZAN. (HARCA. has its own scene, not repeated here) -->
+      <section id="s5" class="clip" data-start="41" data-duration="7.8" data-track-index="1"><div class="page" id="pg-s5"><svg class="abs" width="1080" height="1920" viewBox="0 0 1080 1920" data-layout-allow-overflow><defs><linearGradient id="blob-s5" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff8a3d" /><stop offset="1" stop-color="#e65000" /></linearGradient></defs><path d="M1140 -60 L1140 300 C1060 310 990 280 950 220 C900 150 920 70 860 20 C830 -10 800 -40 790 -60 Z" fill="url(#blob-s5)" />
+          <path d="M-60 1640 C40 1600 130 1640 170 1720 C210 1800 180 1880 230 1980 L-60 1980 Z" fill="url(#blob-s5)" />
+          <g fill="#ff5b00">
+            <path d="M960 520 L968 548 L996 556 L968 564 L960 592 L952 564 L924 556 L952 548 Z" opacity="0.85" />
+            <path d="M120 1180 L126 1200 L146 1206 L126 1212 L120 1232 L114 1212 L94 1206 L114 1200 Z" opacity="0.7" />
+          </g></svg>
+        <img class="logo-sm" src="assets/locca-logo.png" alt="" />
+        <div class="hmask" style="left:180px; top:250px; height:110px;"><h1 id="s5-a" class="title sm">ZİYARET ET.</h1></div>
+        <div class="hmask" style="left:180px; top:354px; height:110px;"><h1 id="s5-b" class="title sm">TARAT.</h1></div>
+        <div class="hmask" style="left:180px; top:458px; height:110px;"><h1 id="s5-c" class="title sm o">KAZAN.</h1></div>
+        <svg class="abs" style="left:72px; top:258px;" width="90" height="320" viewBox="0 0 90 320" data-layout-allow-overflow>
+          <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="40" cy="44" r="34" stroke="#ff5b00" stroke-width="6" /><path class="chk" d="M24 46 L36 58 L58 32" stroke="#ff5b00" stroke-width="9" />
+            <circle cx="40" cy="148" r="34" stroke="#ff5b00" stroke-width="6" /><path class="chk" d="M24 150 L36 162 L58 136" stroke="#ff5b00" stroke-width="9" />
+            <circle cx="40" cy="252" r="34" stroke="#ff5b00" stroke-width="6" /><path class="chk" d="M24 254 L36 266 L58 240" stroke="#ff5b00" stroke-width="9" />
+          </g>
+        </svg>
+        <div class="hmask" style="top:620px; height:180px;"><p id="s5-s" class="sub" style="width:560px;">QR kodunu göster ve puan veya damga kazanmaya başla.</p></div>
+        <div id="s5-phone" class="phone" style="left:620px; top:900px; width:400px;"><img src="assets/screens/home.png" alt="" /></div>
+        <div id="s5-pop" class="pop"></div>
+        <div id="s5-fox" class="abs"></div>
+      </div></section>
+
+      <!-- 7 · 44-48 s: end card -->
+      <section id="s6" class="clip" data-start="48" data-duration="4" data-track-index="1"><div class="page" id="pg-s6"><svg class="abs" width="1080" height="1920" viewBox="0 0 1080 1920" data-layout-allow-overflow><defs><linearGradient id="blob-s6" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff8a3d" /><stop offset="1" stop-color="#e65000" /></linearGradient></defs><path d="M1140 -60 L1140 300 C1060 310 990 280 950 220 C900 150 920 70 860 20 C830 -10 800 -40 790 -60 Z" fill="url(#blob-s6)" />
+          <path d="M-60 1640 C40 1600 130 1640 170 1720 C210 1800 180 1880 230 1980 L-60 1980 Z" fill="url(#blob-s6)" />
+          <g fill="#ff5b00">
+            <path d="M960 520 L968 548 L996 556 L968 564 L960 592 L952 564 L924 556 L952 548 Z" opacity="0.85" />
+            <path d="M120 1180 L126 1200 L146 1206 L126 1212 L120 1232 L114 1212 L94 1206 L114 1200 Z" opacity="0.7" />
+          </g></svg>
+        <img id="s6-logo" class="abs" src="assets/locca-logo.png" style="left:300px; top:520px; width:480px;" alt="" />
+        <div id="s6-pin" class="abs"></div>
+        <div class="hmask" style="left:0; width:1080px; top:770px; height:110px; text-align:center;"><h1 id="s6-a" class="title sm">YERELİ <span class="o">KEŞFET.</span></h1></div>
+        <div class="hmask" style="left:0; width:1080px; top:874px; height:110px; text-align:center;"><h1 id="s6-b" class="title sm">ÖDÜLLERİ <span class="o">KAZAN.</span></h1></div>
+        <div class="center" style="top:1040px;"><div id="s6-pill" class="pill">Çok yakında</div></div>
+        <div id="s6-fox" class="abs"></div>
+      </div></section>
+
+      <section id="fx" class="clip" data-start="0" data-duration="52" data-track-index="2">
+        <svg id="grain" width="1080" height="1920" viewBox="0 0 1080 1920" data-layout-allow-overflow>
+          <filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" seed="7" stitchTiles="stitch" /><feColorMatrix type="saturate" values="0" /></filter>
+          <rect width="1080" height="1920" filter="url(#noise)" />
+        </svg>
+      </section>
+
+      <audio id="score" src="assets/fox-route_mix.wav" data-start="0" data-duration="52"></audio>
+    </div>
+
+    <script>
+      const $ = (id) => document.getElementById(id);
+      // ---------- language: render with --variables '{"lang":"en"}' (or ru); Turkish is the default ----------
+      const V = (window.__hyperframes && window.__hyperframes.getVariables) ? window.__hyperframes.getVariables() : {};
+      const LANG = ["tr", "en", "ru"].includes(V.lang) ? V.lang : "tr";
+      const o = (w) => `<span class="o">${w}</span>`;
+      const COPY = {
+        tr: { hook1: `YERELİ ${o("KEŞFET.")}`, hook2: `ÖDÜLLERİ ${o("KAZAN.")}`, visit: `ZİYARET ${o("ET.")}`, visitSub: "Sevdiğin mekanları bul ve uğra",
+              scan: "TARAT.", scanSub: "Kasada Locca QR kodunu göster.", earn: "KAZAN.", earnSub: "Her ziyaretinde puan veya damga topla.",
+              points: "PUANLAR", stamps: (n) => `${n} / 8 damga`, free: "ÜCRETSİZ İÇECEK",
+              spend: "HARCA.", spendSub: "Bir mekânda kazandığın puanı başka bir mekânda harca.", bill: "Hesap", pts: "Puan", pay: "Ödenecek",
+              r1: "ZİYARET ET.", r2: "TARAT.", r3: "KAZAN.", recapSub: "QR kodunu göster ve puan veya damga kazanmaya başla.", soon: "Çok yakında" },
+        en: { hook1: `DISCOVER ${o("LOCAL.")}`, hook2: `EARN ${o("REWARDS.")}`, visit: `${o("VISIT.")}`, visitSub: "Find the places you love and drop by",
+              scan: "SCAN.", scanSub: "Show your Locca QR code at the register.", earn: "EARN.", earnSub: "Collect points or stamps on every visit.",
+              points: "POINTS", stamps: (n) => `${n} / 8 stamps`, free: "FREE DRINK",
+              spend: "SPEND.", spendSub: "Earn at one place, spend at another.", bill: "Bill", pts: "Points", pay: "To pay",
+              r1: "VISIT.", r2: "SCAN.", r3: "EARN.", recapSub: "Show your QR code and start earning points or stamps.", soon: "Coming soon" },
+        ru: { hook1: `ОТКРОЙ ${o("ПРИЛОЖЕНИЕ.")}`, hook2: `ПОЛУЧИ ${o("БОНУСЫ.")}`, visit: `${o("ВЫБИРАЙ.")}`, visitSub: "Сначала находи любимые места",
+              scan: "СКАНИРУЙ.", scanSub: "Покажи QR-код Locca на кассе.", earn: "ПОЛУЧАЙ.", earnSub: "Собирай баллы или штампы за каждый визит.",
+              points: "БАЛЛЫ", stamps: (n) => `${n} / 8 штампов`, free: "БЕСПЛАТНЫЙ НАПИТОК",
+              spend: "ТРАТЬ.", spendSub: "Копи в одном месте — трать в другом.", bill: "Счёт", pts: "Баллы", pay: "К оплате",
+              r1: "ЗАХОДИ.", r2: "СКАНИРУЙ.", r3: "ПОЛУЧАЙ.", recapSub: "Покажи QR-код и начни получать баллы или штампы.", soon: "Скоро" },
+      };
+      const T = COPY[LANG];
+      document.documentElement.lang = LANG;
+      $("root").classList.add(`lang-${LANG}`);
+      const put = (id, html) => { $(id).innerHTML = html; };
+      put("s1-a", T.hook1); put("s1-b", T.hook2); put("s6-a", T.hook1); put("s6-b", T.hook2);
+      put("s2-t", T.visit); put("s2b-t", T.visit); put("s2-s", T.visitSub);
+      put("s3-t", T.scan); put("s3-s", T.scanSub); put("s4-t", T.earn); put("s4-s", T.earnSub);
+      put("lc-lbl", T.points); put("s4-count", T.stamps(7)); put("s4-free", T.free);
+      put("s5-a", T.r1); put("s5-b", T.r2); put("s5-c", T.r3);
+      put("sH-t", T.spend); put("sH-s", T.spendSub); put("sH-billL", T.bill); put("sH-ptsL", T.pts); put("sH-payL", T.pay); put("s5-s", T.recapSub); put("s6-pill", T.soon);
+      // the app's own screens in the same language (taken from the simulator; John Doe, never an email)
+      // screenshots taken 2026-10-20 in each language (tr2 = Turkish); the card holder's name is painted out in the QR files
+      const SCREEN = (name) => `assets/screens/${LANG === "tr" ? "tr2" : LANG}/${name}`;
+      // crops measured on those files: the QR panel (it moves with the card height) and the "visits" row (heading + card)
+      const QR_PANEL = { tr: [40, 980, 1126, 1100], en: [40, 980, 1126, 1150], ru: [40, 1020, 1126, 1150] }[LANG];
+      const VISITS = [60, 820, 620, 780];
+      document.querySelectorAll('img[src^="assets/screens/"]').forEach((im) => { im.src = SCREEN(im.getAttribute("src").replace("assets/screens/", "")); });
+      const POSE = {
+        "sleep": [1012, 684], "sit-happy-eyes-closed": [664, 956],  "sit-look-up-pin": [808, 1004], "map-wink": [496, 532], "thumbs-up": [524, 552],
+        "sit-wink": [700, 1112], "phone-look": [892, 1104], "sit-smile": [684, 1108],
+        "hug-heart": [416, 512], "head-heart-eyes": [432, 548], "cool-sunglasses": [684, 1136], "wave": [856, 1060],
+      };
+      function sticker(host, name, cx, bottom, h, shadow = true) { // standing on `bottom`, centred on cx, h tall
+        const [nw, nh] = POSE[name], w = Math.round(h * nw / nh);
+        const g = document.createElement("div"); g.className = "abs";
+        Object.assign(g.style, { left: `${cx - w / 2}px`, top: `${bottom - h}px`, width: `${w}px`, height: `${h + 20}px`, transformOrigin: "50% 92%" });
+        if (shadow) { const s = document.createElement("div"); s.className = "contact"; Object.assign(s.style, { left: `${w * 0.12}px`, top: `${h - 20}px`, width: `${w * 0.76}px` }); g.appendChild(s); }
+        const im = document.createElement("img"); im.src = `assets/fox/${name}.png`; im.className = "sticker"; im.alt = "";
+        Object.assign(im.style, { left: "0px", top: "0px", width: `${w}px`, height: `${h}px` });
+        g.appendChild(im);
+        const sh = document.createElement("div"); sh.className = "shade";
+        Object.assign(sh.style, { left: "0px", top: "0px", width: `${w}px`, height: `${h}px`, webkitMaskImage: `url(assets/fox/${name}.png)`, maskImage: `url(assets/fox/${name}.png)` });
+        g.appendChild(sh); host.appendChild(g);
+        return { el: g, x: cx - w / 2, y: bottom - h, w, h };
+      }
+      const PIN = '<svg width="100%" height="100%" viewBox="0 0 80 110"><defs><linearGradient id="pg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff8a3d"/><stop offset="1" stop-color="#e24e00"/></linearGradient></defs><ellipse cx="40" cy="108" rx="16" ry="4" fill="rgba(60,34,18,.25)"/><path d="M40 106 C30 90 0 66 0 40 A40 40 0 0 1 80 40 C80 66 50 90 40 106 Z" fill="url(#pg)"/><circle cx="40" cy="40" r="15" fill="#fff"/></svg>';
+      function pin(host, x, y, s) {
+        const d = document.createElement("div"); d.className = "abs"; d.innerHTML = PIN;
+        Object.assign(d.style, { left: `${x - 40 * s}px`, top: `${y - 110 * s}px`, width: `${80 * s}px`, height: `${110 * s}px`, transformOrigin: "50% 100%", filter: "drop-shadow(0 8px 10px rgba(60,34,18,.22))" });
+        host.appendChild(d); return d;
+      }
+      const ICON = {
+        cafe: '<rect x="32" y="44" width="44" height="40" rx="7" fill="#fff" stroke="#1c1b1a" stroke-width="5"/><path d="M76 52 A10 10 0 0 1 76 72" stroke="#1c1b1a" stroke-width="5" fill="none"/><rect x="34" y="58" width="40" height="10" fill="#ff5b00"/><path d="M44 36 C40 30 48 26 44 18 M58 36 C54 30 62 26 58 18" stroke="#1c1b1a" stroke-width="4.5" fill="none" stroke-linecap="round"/>',
+        dessert: '<path d="M28 74 L80 74 L80 56 L28 46 Z" fill="#fff4e3" stroke="#1c1b1a" stroke-width="5" stroke-linejoin="round"/><path d="M28 60 L80 66" stroke="#e2a868" stroke-width="6"/><path d="M28 46 L80 56 L80 50 C62 44 44 40 28 40 Z" fill="#ff5b00" stroke="#1c1b1a" stroke-width="5" stroke-linejoin="round"/><circle cx="56" cy="34" r="6" fill="#d14800" stroke="#1c1b1a" stroke-width="3"/>',
+        food: '<circle cx="54" cy="58" r="24" fill="#fff" stroke="#1c1b1a" stroke-width="5"/><circle cx="54" cy="58" r="13" fill="#f4e9e1" stroke="#e2a868" stroke-width="3"/><path d="M22 36 L22 50 M18 36 L18 46 Q18 52 22 52 Q26 52 26 46 L26 36 M22 52 L22 82" stroke="#1c1b1a" stroke-width="4" stroke-linecap="round" fill="none"/><path d="M88 36 C80 44 80 56 86 60 L86 82" stroke="#1c1b1a" stroke-width="4.5" stroke-linecap="round" fill="none"/>',
+      };
+      function badge(host, kind, cx, cy, r) {
+        const d = document.createElement("div"); d.className = "abs";
+        d.innerHTML = `<svg width="100%" height="100%" viewBox="0 0 108 108"><circle cx="54" cy="54" r="51" fill="#fff"/><circle cx="54" cy="54" r="46" fill="none" stroke="#ff5b00" stroke-width="4"/>${ICON[kind]}</svg>`;
+        Object.assign(d.style, { left: `${cx - r}px`, top: `${cy - r}px`, width: `${2 * r}px`, height: `${2 * r}px`, filter: "drop-shadow(0 10px 16px rgba(60,34,18,0.25))" });
+        host.appendChild(d); return d;
+      }
+      function crop(el, src, [sx, sy, sw, sh], left, top, w) { // a crop of a real screen, never above its own pixels
+        const k = Math.min(1, w / sw), W = sw * k, H = sh * k;
+        Object.assign(el.style, { left: `${left - W / 2}px`, top: `${top - H / 2}px`, width: `${W}px`, height: `${H}px`, backgroundImage: `url(${src.url})`, backgroundSize: `${src.w * k}px ${src.h * k}px`, backgroundPosition: `${-sx * k}px ${-sy * k}px` });
+      }
+      const CHECK = '<svg viewBox="0 0 116 116"><path d="M38 60 L52 74 L80 44" stroke="#fff" stroke-width="11" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+      // 1
+      const sleep = sticker($("s1-sleep"), "sleep", 540, 1400, 340, false);
+      const awake = sticker($("s1-awake"), "sit-look-up-pin", 500, 1450, 660, false);
+      const s1pin = pin($("s1-pin"), awake.x + awake.w * 0.86, awake.y + awake.h * 0.12, 1.2);
+      // 2a
+      const s2fox = sticker($("s2-fox"), "map-wink", 290, 1760, 470);
+      // 2b
+      const STOPS = [
+        { kind: "food", x: 740, y: 700, card: [520, 690], pose: "thumbs-up" },
+        { kind: "dessert", x: 380, y: 1230, card: [158, 1220], pose: "sit-wink" },
+        { kind: "cafe", x: 720, y: 1360 },
+      ];
+      pin($("s3-markers"), 260, 470, 0.9);
+      STOPS.forEach((s) => {
+        s.badge = badge($("s3-markers"), s.kind, s.x, s.y, 68); // centred on the route point
+        if (s.pose) {
+          const c = document.createElement("div"); c.className = "stopcard";
+          Object.assign(c.style, { left: `${s.card[0] - 125}px`, top: `${s.card[1] - 145}px`, transformOrigin: "50% 100%" });
+          c.innerHTML = `<img src="assets/fox/${s.pose}.png" alt="">`; $("s3-cards").appendChild(c); s.cardEl = c;
+        }
+      });
+      // 3: the fox holds its phone out toward the terminal; the counter hides everything below its waist
+      // two foxes face each other across the counter: ours holds out its phone, the cashier (mirrored) scans it
+      const s3fox = sticker($("s3-fox"), "phone-look", 200, 1800, 700, false);
+      const cashier = sticker($("s3-cashier"), "phone-look", 930, 1800, 700, false);
+      cashier.el.querySelector("img").style.transform = "scaleX(-1)"; cashier.el.querySelector(".shade").style.transform = "scaleX(-1)";
+      crop($("s3-qr"), { url: SCREEN("qr_loccard.png"), w: 1206, h: 2622 }, QR_PANEL, 540, 790, 420);
+      // 4
+      const CELLS = 10, cellX = (i) => i * 48;
+      for (let i = 0; i < CELLS; i++) { const c = document.createElement("div"); c.className = "cell"; c.id = `cell${i}`; c.style.left = `${cellX(i)}px`; $("lc-cells").appendChild(c); }
+      const CELL_T = Array.from({ length: CELLS }, (_, i) => 20.4 + i * 0.4);  // one point lands every 0.4 s
+      CELL_T.forEach((t, i) => { const c = document.createElement("div"); c.className = "coin"; c.id = `coin${i}`; $("s4-coins").appendChild(c); });
+      const fox1 = sticker($("s4-fox1"), "thumbs-up", 540, 1720, 520);
+      badge($("s4-badge"), "cafe", 55, 55, 55);
+      const SLOT = (i) => [58 + (i % 4) * 190, 200 + Math.floor(i / 4) * 170];
+      for (let i = 0; i < 8; i++) {
+        const d = document.createElement("div"); d.className = "stamp" + (i < 7 ? " on" : ""); const [x, y] = SLOT(i);
+        Object.assign(d.style, { left: `${x}px`, top: `${y}px` }); if (i < 7) d.innerHTML = CHECK; $("s4-stamps").appendChild(d);
+      }
+      const last = SLOT(7), dropAt = [120 + last[0], 600 + last[1]];
+      $("s4-drop").innerHTML = CHECK;
+      const fox2 = sticker($("s4-fox2"), "sit-smile", 540, 1780, 560);
+      const fox3 = sticker($("s4-fox3"), "hug-heart", 540, 1720, 520);
+      const fox4 = sticker($("s4-fox4"), "head-heart-eyes", 540, 1720, 560);
+      // HARCA.: another restaurant (Kale Sofrası, a made-up name, the same in every language), our happy fox
+      badge($("sH-badge"), "food", 48, 48, 48);
+      const sHfox = sticker($("sH-fox"), "sit-happy-eyes-closed", 200, 1820, 520);
+      // 5: the "Ziyaretlerim" row with its heading, measured in home.png (heading 841-877, cards 913-1333)
+      crop($("s5-pop"), { url: SCREEN("home.png"), w: 1206, h: 2622 }, VISITS, 700, 1330, 560);
+      const s5fox = sticker($("s5-fox"), "cool-sunglasses", 190, 1820, 560);
+      // 6
+      const s6pin = pin($("s6-pin"), 810, 585, 0.7);
+      const s6fox = sticker($("s6-fox"), "wave", 540, 1760, 560);
+
+      // ---------- timeline: calm, one thing at a time, every line holds ≥ 2.5 s ----------
+      const tl = gsap.timeline({ paused: true });
+      // Two holds of one bar (2 s) each, 2026-10-21: the hook holds from 4 s so the fox can wake and the line can land,
+      // and ZİYARET ET. holds from 6 s so its line ends before the map. Times below stay the original picture times;
+      // hold() maps them (tools/audio_route.mjs and tools/vo_route.mjs use the same HOLDS).
+      const HOLDS = [[4, 2], [6, 2]];
+      const hold = (t) => HOLDS.reduce((u, [at, d]) => (t >= at ? u + d : u), t);
+      ["to", "from", "fromTo", "set"].forEach((m) => {
+        const f = tl[m].bind(tl);
+        tl[m] = (...a) => { const t = a[a.length - 1]; if (typeof t === "number") a[a.length - 1] = hold(t); return f(...a); };
+      });
+      const slap = (el, t, rot = 0) => tl.fromTo(el, { scale: 0.7, rotation: rot - 4, opacity: 0 }, { scale: 1, rotation: rot, opacity: 1, duration: 0.6, ease: "back.out(1.6)", immediateRender: false }, t);
+      const off = (el, t) => tl.set(el, { opacity: 0 }, t);
+      // split a line into word spans once (keeps coloured spans), then stagger them in
+      function splitWords(el) {
+        if (el.dataset.split) return [...el.querySelectorAll(".w")];
+        const walk = (node) => [...node.childNodes].forEach((c) => {
+          if (c.nodeType === 3) {
+            const frag = document.createDocumentFragment();
+            c.textContent.split(/(\s+)/).forEach((p) => { if (!p) return; if (/^\s+$/.test(p)) frag.appendChild(document.createTextNode(p)); else { const w = document.createElement("span"); w.className = "w"; w.textContent = p; frag.appendChild(w); } });
+            c.replaceWith(frag);
+          } else if (c.nodeType === 1) walk(c);
+        });
+        walk(el); el.dataset.split = "1"; return [...el.querySelectorAll(".w")];
+      }
+      const rise = (sel, t) => {
+        const ws = splitWords(document.querySelector(sel));
+        tl.set(ws, { opacity: 0 }, 0);
+        tl.fromTo(ws, { opacity: 0, y: 48, filter: "blur(14px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.6, stagger: 0.09, ease: "power3.out", immediateRender: false }, t);
+      };
+      const enter = (el, t, y = 260, rot = 0) => tl.set(el, { opacity: 0 }, 0) && tl.fromTo(el, { y, opacity: 0, rotation: 0, rotationY: -28, transformPerspective: 1800 }, { y: 0, opacity: 1, rotation: rot, rotationY: -8, transformPerspective: 1800, duration: 1.0, ease: "power3.out", immediateRender: false }, t);
+      const popFrom = (el, t, fx, fy, fs) => tl.fromTo(el, { x: fx, y: fy, scale: fs, opacity: 0.5 }, { x: 0, y: 0, scale: 1, opacity: 1, duration: 0.8, ease: "power3.out", immediateRender: false }, t);
+
+      // 1 · hook
+      off(awake.el, 0); off(s1pin, 0);
+      tl.fromTo(sleep.el, { scaleY: 1 }, { scaleY: 1.015, duration: 0.7, ease: "sine.inOut", yoyo: true, repeat: 1, immediateRender: false }, 0);
+      tl.fromTo(s1pin, { y: -1500, opacity: 1 }, { y: 0, duration: 0.5, ease: "power2.in", immediateRender: false }, 0.6);
+      tl.fromTo(s1pin, { scaleX: 1.25, scaleY: 0.75 }, { scaleX: 1, scaleY: 1, duration: 0.5, ease: "back.out(2.5)", immediateRender: false }, 1.1);
+      off(sleep.el, 1.3); slap(awake.el, 1.3);
+      tl.fromTo("#s1-logo", { opacity: 0, y: -20 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out", immediateRender: false }, 0.2);
+      rise("#s1-a", 3.0); rise("#s1-b", 3.6); // with the narrator, after the fox has woken
+      // 2a · ZİYARET ET.
+      rise("#s2-t", 4.0); rise("#s2-s", 4.4);
+      enter("#s2-phone", 4.2, 300, 6);
+      off(s2fox.el, 4.0); slap(s2fox.el, 5.0);
+      // 2b · the route
+      const route = $("route-draw"), L = route.getTotalLength();
+      route.style.strokeDasharray = `${L}`; route.style.strokeDashoffset = `${L}`;
+      tl.set(route, { strokeDashoffset: L }, 7.0);
+      // where each stop sits along the path, found by sampling it (not guessed), so a leg ends right under its badge
+      const atStop = (s) => { let best = 0, bd = 1e9; for (let k = 0; k <= 600; k++) { const l = (L * k) / 600, p = route.getPointAtLength(l), d = (p.x - s.x) ** 2 + (p.y - s.y) ** 2; if (d < bd) { bd = d; best = l; } } return best; };
+      const LEG = STOPS.map((st, i) => atStop(st) - (i < 2 ? 12 : 0));
+      tl.to(route, { strokeDashoffset: L - LEG[0], duration: 1.0, ease: "power2.inOut" }, 7.3);
+      tl.to(route, { strokeDashoffset: L - LEG[1], duration: 1.0, ease: "power2.inOut" }, 9.3);
+      tl.to(route, { strokeDashoffset: L - LEG[2], duration: 1.0, ease: "power2.inOut" }, 11.1);
+      STOPS.forEach((s) => off(s.badge, 7.0));
+      slap(STOPS[0].badge, 8.3); slap(STOPS[1].badge, 10.3); slap(STOPS[2].badge, 12.1);
+      off(STOPS[0].cardEl, 7.0); off(STOPS[1].cardEl, 7.0);
+      slap(STOPS[0].cardEl, 8.6, -3); slap(STOPS[1].cardEl, 10.6, 3);
+      tl.to("#s3-cam", { scale: 1.5, duration: 0.6, ease: "power2.inOut" }, 12.4);
+      // 3 · TARAT.
+      rise("#s3-t", 13.0); rise("#s3-s", 13.4);
+      off(s3fox.el, 13.0); slap(s3fox.el, 13.2);
+      off(cashier.el, 13.0); slap(cashier.el, 13.5);
+      off("#s3-qr", 13.0); popFrom($("s3-qr"), 14.0, 0, 520, 0.4);
+      ["#w1", "#w2", "#w3"].forEach((w, i) => { // the scan: three waves from the terminal toward the phone, twice
+        tl.set(w, { opacity: 0 }, 13.0);
+        [14.9, 15.55].forEach((t0) => { tl.to(w, { opacity: 1, duration: 0.12 }, t0 + i * 0.12); tl.to(w, { opacity: 0, duration: 0.25 }, t0 + 0.36 + i * 0.12); });
+      });
+      off("#s3-check", 13.0); slap($("s3-check"), 16.2);
+      // 4 · KAZAN. — points
+      rise("#s4-t", 19.0); rise("#s4-s", 19.4);
+      tl.fromTo("#loccard", { y: 220, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: "power3.out", immediateRender: false }, 19.6);
+      off(fox1.el, 19.0); slap(fox1.el, 19.8);
+      tl.set("#lc-num", { textContent: "55" }, 19.0);
+      for (let i = 0; i < CELLS; i++) tl.set(`#cell${i}`, { backgroundColor: "#3a3735" }, 19.0);
+      CELL_T.forEach((t, i) => { // each point flies up from the fox's paw into the next cell of the Loccard
+        const el = `#coin${i}`, tx = 110 + 330 + cellX(i) - 4, ty = 640 + 184;
+        tl.set(el, { x: 600, y: 1300, opacity: 0, scale: 0.5, rotation: 0 }, 19.0);
+        tl.to(el, { opacity: 1, scale: 1, duration: 0.1 }, t - 0.45);
+        tl.to(el, { x: tx, duration: 0.45, ease: "power1.inOut" }, t - 0.45);
+        tl.to(el, { y: ty, rotation: 180, duration: 0.45, ease: "power2.out" }, t - 0.45);
+        off(el, t);
+        tl.set(`#cell${i}`, { backgroundColor: "#ff5b00" }, t);
+        tl.fromTo(`#cell${i}`, { scaleY: 1.35, scaleX: 0.8 }, { scaleY: 1, scaleX: 1, duration: 0.4, ease: "back.out(3)", immediateRender: false }, t);
+        tl.set("#lc-num", { textContent: String(55 + 5 * (i + 1)) }, t);
+      });
+      tl.to("#loccard", { x: -1100, duration: 0.75, ease: "power3.inOut" }, 24.4);
+      off(fox1.el, 24.6);
+      // 4 · KAZAN. — a stamp
+      tl.fromTo("#s4-card", { x: 1100, opacity: 1 }, { x: 0, duration: 0.75, ease: "power3.inOut", immediateRender: false }, 24.4);
+      tl.set("#s4-card", { x: 1100 }, 19.0);
+      tl.set("#s4-drop", { left: dropAt[0], top: dropAt[1], opacity: 0 }, 19.0);
+      tl.fromTo("#s4-drop", { y: -760, rotation: -40, opacity: 1 }, { y: 0, rotation: 0, duration: 0.5, ease: "power2.in", immediateRender: false }, 25.5);
+      tl.fromTo("#s4-drop", { scaleX: 1.35, scaleY: 0.7 }, { scaleX: 1, scaleY: 1, duration: 0.5, ease: "back.out(3)", immediateRender: false }, 26.0);
+      tl.fromTo("#s4-card", { scale: 1.04 }, { scale: 1, duration: 0.6, ease: "back.out(3)", immediateRender: false }, 26.0);
+      tl.set("#s4-count", { textContent: T.stamps(7), color: "#9a8f86" }, 19.0); tl.set("#s4-count", { textContent: T.stamps(8), color: "#d14800" }, 26.0);
+      off(fox2.el, 19.0); slap(fox2.el, 26.3);
+      tl.to(["#s4-card", "#s4-drop"], { x: -1100, duration: 0.75, ease: "power3.inOut" }, 28.0);
+      off(fox2.el, 28.4);
+      // 4 · KAZAN. — the free drink
+      tl.set("#s4-cup", { x: 1100 }, 19.0);
+      tl.fromTo("#s4-cup", { x: 1100, opacity: 1 }, { x: 0, duration: 0.75, ease: "power3.inOut", immediateRender: false }, 28.0);
+      tl.fromTo("#s4-steam", { y: 6 }, { y: -6, duration: 0.8, ease: "sine.inOut", yoyo: true, repeat: 2, immediateRender: false }, 28.9);
+      tl.set("#s4-free", { opacity: 0 }, 19.0); tl.fromTo("#s4-free", { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: "power3.out", immediateRender: false }, 29.0);
+      off(fox3.el, 19.0); off(fox4.el, 19.0); slap(fox3.el, 28.7); off(fox3.el, 29.9); slap(fox4.el, 29.9);
+      // HARCA. — the Loccard's 105 points land on a bill at another place; the total drops from ₺250 to ₺145
+      rise("#sH-t", 31.2); rise("#sH-s", 31.6);
+      enter("#sH-bill", 32.0, 220, 0);
+      off(sHfox.el, 31.0); slap(sHfox.el, 32.4);
+      tl.set("#sH-row", { opacity: 0 }, 0);
+      tl.set("#sH-chip", { opacity: 0 }, 0);
+      tl.fromTo("#sH-chip", { x: 380, y: -40, opacity: 0, rotation: 8 }, { x: 0, y: 0, opacity: 1, rotation: -4, duration: 0.7, ease: "power3.out", immediateRender: false }, 33.0);
+      tl.to("#sH-chip", { x: -260, y: 330, scale: 0.6, rotation: 0, duration: 0.5, ease: "power2.in" }, 34.0);   // drops onto the points row
+      tl.to("#sH-chip", { opacity: 0, duration: 0.1 }, 34.5);
+      tl.fromTo("#sH-row", { opacity: 0, x: -30 }, { opacity: 1, x: 0, duration: 0.4, ease: "power3.out", immediateRender: false }, 34.5);
+      const total = { v: 250 };
+      tl.set("#sH-total", { textContent: "₺250", color: "#1c1b1a" }, 0);
+      tl.to(total, { v: 145, duration: 0.9, ease: "power2.out", onUpdate: () => { $("sH-total").textContent = `₺${Math.round(total.v)}`; } }, 34.8);
+      tl.set("#sH-total", { color: "#d14800" }, 35.7);
+      tl.fromTo("#sH-total", { scale: 1.12 }, { scale: 1, duration: 0.5, ease: "back.out(3)", immediateRender: false }, 35.7);
+      // 5 · recap
+      rise("#s5-a", 37.0); rise("#s5-b", 37.4); rise("#s5-c", 37.8); rise("#s5-s", 38.3);
+      enter("#s5-phone", 39.2, 300, 6);
+      off("#s5-pop", 37.0); popFrom($("s5-pop"), 40.8, 120, -260, 0.5); // after the line has been read
+      off(s5fox.el, 37.0); slap(s5fox.el, 37.6);
+      // 6 · end
+      tl.fromTo("#s6-logo", { scale: 0.8, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.8, ease: "power3.out", immediateRender: false }, 44);
+      off(s6pin, 44); slap(s6pin, 44.6);
+      tl.fromTo(s6pin, { y: 0 }, { y: -36, duration: 0.25, ease: "power2.out", yoyo: true, repeat: 1, immediateRender: false }, 46.6);
+      rise("#s6-a", 44.4); rise("#s6-b", 44.7);
+      tl.set("#s6-pill", { opacity: 0 }, 44); slap($("s6-pill"), 45.3);
+      off(s6fox.el, 44); slap(s6fox.el, 44.2);
+      tl.fromTo(s6fox.el, { rotation: -2 }, { rotation: 2, duration: 0.6, ease: "sine.inOut", yoyo: true, repeat: 3, immediateRender: false }, 45.4);
+
+      // ---------- scene transitions ----------
+      const SLIDE = 0.75;
+      const slide = (from, to, t) => { // page-slide: the new page pushes in from the right, the old one parallaxes left and shrinks
+        tl.fromTo(to, { xPercent: 100 }, { xPercent: 0, duration: SLIDE, ease: "power3.inOut", immediateRender: false }, t);
+        tl.fromTo(from, { xPercent: 0, scale: 1 }, { xPercent: -28, scale: 0.94, duration: SLIDE, ease: "power3.inOut", immediateRender: false }, t);
+        tl.set(to, { boxShadow: "-30px 0 60px rgba(60,34,18,0.18)" }, t); tl.set(to, { boxShadow: "none" }, t + SLIDE);
+      };
+      // zoom-through: the hook pushes past the camera and blurs; ZİYARET ET. settles in behind it
+      tl.fromTo("#pg-s2", { scale: 0.9, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.8, ease: "power3.out", immediateRender: false }, 4.0);
+      tl.fromTo("#pg-s1", { scale: 1, filter: "blur(0px)", opacity: 1 }, { scale: 1.35, filter: "blur(10px)", opacity: 0, duration: 0.7, ease: "power2.in", immediateRender: false }, 4.0);
+      // digital zoom into the map: the phone grows and blurs, the illustrated route map settles in
+      tl.fromTo("#s2-phone", { scale: 1 }, { scale: 2.6, duration: 0.8, ease: "power3.in", immediateRender: false }, 6.6);
+      tl.fromTo("#pg-s2", { filter: "blur(0px)", opacity: 1 }, { filter: "blur(8px)", opacity: 0, duration: 0.5, ease: "power2.in", immediateRender: false }, 7.0);
+      tl.fromTo("#pg-s2b", { scale: 1.18, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.9, ease: "power3.out", immediateRender: false }, 7.0);
+      slide("#pg-s2b", "#pg-s3", 13.0);
+      slide("#pg-s3", "#pg-s4", 19.0);
+      slide("#pg-s4", "#pg-sH", 31.0);
+      slide("#pg-sH", "#pg-s5", 37.0);
+      // pull-back reveal: the recap pulls away into a card, the end card is underneath
+      tl.fromTo("#pg-s6", { scale: 1.08, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.9, ease: "power3.out", immediateRender: false }, 44);
+      tl.fromTo("#pg-s5", { scale: 1, borderRadius: "0px", opacity: 1 }, { scale: 0.78, borderRadius: "64px", opacity: 0, duration: 0.8, ease: "power3.inOut", immediateRender: false }, 44);
+      // recap checklist: each check draws itself as its line lands
+      document.querySelectorAll(".chk").forEach((p, i) => {
+        const len = p.getTotalLength(); p.style.strokeDasharray = `${len}`;
+        tl.set(p, { strokeDashoffset: len }, 0);
+        tl.to(p, { strokeDashoffset: 0, duration: 0.4, ease: "power2.out" }, 37.6 + i * 0.4);
+      });
+
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>

@@ -1,0 +1,530 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1920" viewBox="0 0 1080 1920" fill="none">
+  <defs>
+    <!-- Land & Topographic Gradients -->
+    <linearGradient id="landBase" x1="180" y1="0" x2="900" y2="1600" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FBF4F0"/>
+      <stop offset="45%" stop-color="#F7E3D6"/>
+      <stop offset="82%" stop-color="#F3E2CF"/>
+      <stop offset="100%" stop-color="#E6D5C3"/>
+    </linearGradient>
+
+    <linearGradient id="foothillGrad1" x1="540" y1="0" x2="540" y2="340" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#E6D5C3" stop-opacity="0.75"/>
+      <stop offset="65%" stop-color="#F3E2CF" stop-opacity="0.45"/>
+      <stop offset="100%" stop-color="#F7E3D6" stop-opacity="0"/>
+    </linearGradient>
+
+    <linearGradient id="foothillGrad2" x1="540" y1="0" x2="540" y2="220" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#F2B084" stop-opacity="0.28"/>
+      <stop offset="100%" stop-color="#F3E2CF" stop-opacity="0"/>
+    </linearGradient>
+
+    <!-- Beach Sand Gradient -->
+    <linearGradient id="beachGrad" x1="400" y1="1430" x2="420" y2="1585" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#F3E2CF" stop-opacity="0"/>
+      <stop offset="35%" stop-color="#F3E2CF"/>
+      <stop offset="78%" stop-color="#FBF4F0"/>
+      <stop offset="100%" stop-color="#E6D5C3"/>
+    </linearGradient>
+
+    <!-- Sea Gradients -->
+    <linearGradient id="seaGrad" x1="540" y1="1500" x2="540" y2="1920" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#A8DDE0"/>
+      <stop offset="24%" stop-color="#5DB7C2"/>
+      <stop offset="72%" stop-color="#2F8E9E"/>
+      <stop offset="100%" stop-color="#2F8E9E"/>
+    </linearGradient>
+
+    <linearGradient id="seaDeepShade" x1="540" y1="1680" x2="540" y2="1920" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#1C1B1A" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#1C1B1A" stop-opacity="0.18"/>
+    </linearGradient>
+
+    <linearGradient id="shallowGlow" x1="450" y1="1510" x2="450" y2="1660" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.55"/>
+      <stop offset="40%" stop-color="#A8DDE0" stop-opacity="0.45"/>
+      <stop offset="100%" stop-color="#5DB7C2" stop-opacity="0"/>
+    </linearGradient>
+
+    <linearGradient id="sunGlint" x1="120" y1="1580" x2="760" y2="1880" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0"/>
+      <stop offset="35%" stop-color="#FBF4F0" stop-opacity="0.22"/>
+      <stop offset="50%" stop-color="#FFFFFF" stop-opacity="0.34"/>
+      <stop offset="65%" stop-color="#FBF4F0" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0"/>
+    </linearGradient>
+
+    <!-- Peninsula / Castle Hill Gradients -->
+    <linearGradient id="peninsulaBase" x1="800" y1="1430" x2="1060" y2="1750" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#F3E2CF"/>
+      <stop offset="48%" stop-color="#E6D5C3"/>
+      <stop offset="100%" stop-color="#F2B084"/>
+    </linearGradient>
+
+    <linearGradient id="peninsulaCliff" x1="790" y1="1490" x2="1050" y2="1760" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#E6D5C3"/>
+      <stop offset="55%" stop-color="#F2B084"/>
+      <stop offset="100%" stop-color="#C8553D" stop-opacity="0.55"/>
+    </linearGradient>
+
+    <linearGradient id="peninsulaRidge" x1="840" y1="1460" x2="1040" y2="1660" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FBF4F0"/>
+      <stop offset="60%" stop-color="#F3E2CF"/>
+      <stop offset="100%" stop-color="#E6D5C3"/>
+    </linearGradient>
+
+    <!-- Kizil Kule Gradients -->
+    <linearGradient id="towerLeft" x1="845" y1="1350" x2="885" y2="1500" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#A9432F"/>
+      <stop offset="100%" stop-color="#A9432F"/>
+    </linearGradient>
+
+    <linearGradient id="towerCenter" x1="885" y1="1350" x2="925" y2="1500" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#C8553D"/>
+      <stop offset="100%" stop-color="#A9432F"/>
+    </linearGradient>
+
+    <linearGradient id="towerRight" x1="925" y1="1350" x2="965" y2="1500" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#F2B084"/>
+      <stop offset="28%" stop-color="#C8553D"/>
+      <stop offset="100%" stop-color="#C8553D"/>
+    </linearGradient>
+
+    <!-- Lighting & Vignette Gradients -->
+    <radialGradient id="topLeftLight" cx="15%" cy="12%" r="75%" fx="10%" fy="8%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.42"/>
+      <stop offset="38%" stop-color="#FBF4F0" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#FBF4F0" stop-opacity="0"/>
+    </radialGradient>
+
+    <radialGradient id="cornerVignette" cx="50%" cy="50%" r="72%" fx="50%" fy="50%">
+      <stop offset="0%" stop-color="#1C1B1A" stop-opacity="0"/>
+      <stop offset="68%" stop-color="#1C1B1A" stop-opacity="0.02"/>
+      <stop offset="100%" stop-color="#1C1B1A" stop-opacity="0.11"/>
+    </radialGradient>
+
+    <!-- Soft Shadow Filter -->
+    <filter id="softShadow" x="-15%" y="-15%" width="130%" height="135%">
+      <feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#1C1B1A" flood-opacity="0.08"/>
+    </filter>
+
+    <filter id="towerShadow" x="-25%" y="-20%" width="150%" height="150%">
+      <feDropShadow dx="-8" dy="12" stdDeviation="10" flood-color="#1C1B1A" flood-opacity="0.16"/>
+    </filter>
+
+    <!-- Fine Grain Filter (fixed seed, <= 0.06 opacity) -->
+    <filter id="mapGrain" x="0%" y="0%" width="100%" height="100%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="0.75" numOctaves="3" seed="17" result="noise"/>
+      <feColorMatrix type="matrix" values="0 0 0 0 0.11  0 0 0 0 0.106  0 0 0 0 0.102  0 0 0 0.045 0" in="noise" result="WarmGrain"/>
+    </filter>
+
+    <!-- Reusable Palm Tree Symbol (seen from slightly above, with darker under-layer) -->
+    <g id="palm">
+      <!-- Ground shadow -->
+      <ellipse cx="4" cy="7" rx="18" ry="15" fill="#1C1B1A" fill-opacity="0.09"/>
+      <!-- Darker under-layer fronds (#4F7E55) -->
+      <path d="M0 0 C-8 -16 -22 -18 -26 -10 C-18 -6 -10 -2 0 0 Z" fill="#4F7E55"/>
+      <path d="M0 0 C8 -16 22 -18 26 -10 C18 -6 10 -2 0 0 Z" fill="#4F7E55"/>
+      <path d="M0 0 C-16 6 -24 18 -16 24 C-10 18 -6 8 0 0 Z" fill="#4F7E55"/>
+      <path d="M0 0 C16 6 24 18 16 24 C10 18 6 8 0 0 Z" fill="#4F7E55"/>
+      <path d="M0 0 C-4 -20 4 -26 8 -22 C6 -14 3 -6 0 0 Z" fill="#4F7E55"/>
+      <path d="M0 0 C-20 -2 -28 6 -22 12 C-14 8 -6 4 0 0 Z" fill="#4F7E55"/>
+      <!-- Lighter top fronds (#6E9E6B) -->
+      <path d="M0 0 C-12 -12 -22 -6 -22 2 C-14 2 -7 1 0 0 Z" fill="#6E9E6B"/>
+      <path d="M0 0 C-6 -18 4 -24 10 -16 C6 -10 3 -5 0 0 Z" fill="#6E9E6B"/>
+      <path d="M0 0 C14 -12 24 -4 22 4 C14 3 7 1 0 0 Z" fill="#6E9E6B"/>
+      <path d="M0 0 C12 12 8 24 -2 22 C-2 14 -1 7 0 0 Z" fill="#6E9E6B"/>
+      <path d="M0 0 C-10 14 -20 14 -18 6 C-12 4 -6 2 0 0 Z" fill="#6E9E6B"/>
+      <path d="M0 0 C4 -14 16 -18 18 -10 C12 -6 6 -3 0 0 Z" fill="#6E9E6B"/>
+      <!-- Warm sunlit center crown -->
+      <circle cx="0" cy="0" r="3.2" fill="#F3E2CF"/>
+      <circle cx="-0.8" cy="-0.8" r="1.8" fill="#F2B084"/>
+    </g>
+
+    <!-- Reusable Small Green Tree -->
+    <g id="treeGreen">
+      <ellipse cx="3" cy="5" rx="13" ry="11" fill="#1C1B1A" fill-opacity="0.08"/>
+      <circle cx="1" cy="2" r="12" fill="#4F7E55"/>
+      <circle cx="-1" cy="-1" r="10.5" fill="#6E9E6B"/>
+      <circle cx="-4" cy="-4" r="5" fill="#FBF4F0" fill-opacity="0.22"/>
+    </g>
+
+    <!-- Reusable Small Apricot Tree -->
+    <g id="treeApricot">
+      <ellipse cx="3" cy="5" rx="12" ry="10" fill="#1C1B1A" fill-opacity="0.08"/>
+      <circle cx="1" cy="2" r="11" fill="#C8553D" fill-opacity="0.65"/>
+      <circle cx="-1" cy="-1" r="9.5" fill="#F2B084"/>
+      <circle cx="-3.5" cy="-3.5" r="4.5" fill="#FBF4F0" fill-opacity="0.35"/>
+    </g>
+  </defs>
+
+  <!-- 1. LAND BASE & GENTLE TOPOGRAPHY -->
+  <rect width="1080" height="1920" fill="url(#landBase)"/>
+
+  <!-- Upper Taurus Foothill Contours (y: 0 to 310) -->
+  <path d="M0 0 H1080 V260 C920 290 760 220 560 250 C360 280 180 210 0 255 Z" fill="url(#foothillGrad1)"/>
+  <path d="M0 0 H1080 V180 C940 215 740 140 520 175 C320 205 160 145 0 185 Z" fill="url(#foothillGrad2)"/>
+  <path d="M0 0 H1080 V105 C880 135 680 80 460 110 C260 135 120 90 0 115 Z" fill="#E6D5C3" fill-opacity="0.55"/>
+  <!-- Subtle topographic contour lines -->
+  <path d="M0 255 C180 210 360 280 560 250 C760 220 920 290 1080 260" stroke="#E6D5C3" stroke-width="2" opacity="0.8"/>
+  <path d="M0 185 C160 145 320 205 520 175 C740 140 940 215 1080 180" stroke="#E6D5C3" stroke-width="1.5" opacity="0.7"/>
+
+  <!-- Soft urban neighborhood ground plates (subtle stone/peach zoning) -->
+  <path d="M70 330 C180 300 480 310 640 360 C820 410 960 520 970 720 C980 920 880 1140 780 1280 C660 1420 340 1440 160 1370 C50 1320 35 1080 50 820 C65 560 20 360 70 330 Z" fill="#F3E2CF" fill-opacity="0.45"/>
+  <path d="M140 540 C280 500 580 520 710 620 C840 720 850 960 760 1140 C670 1320 420 1350 250 1260 C110 1180 95 960 115 760 C135 610 100 560 140 540 Z" fill="#E6D5C3" fill-opacity="0.32"/>
+
+  <!-- 2. CURVED SANDY BEACH STRIP (Left of the tower & peninsula) -->
+  <path d="M0 1465 C220 1475 460 1455 680 1468 C770 1474 830 1485 875 1505 L875 1595 L0 1610 Z" fill="url(#beachGrad)"/>
+  <path d="M0 1515 C230 1528 470 1505 685 1518 C765 1523 825 1532 865 1545 L865 1585 L0 1595 Z" fill="#FBF4F0" fill-opacity="0.65"/>
+
+  <!-- 3. CALM STREETS & OPEN PLAZAS (Designed around the route & 4 marker zones) -->
+  <!-- Subtle street edge shadow layer -->
+  <g stroke="#E6D5C3" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <!-- Perimeter & secondary grid streets (width 28 + 4px shadow edge) -->
+    <path d="M0 370 C210 365 440 390 680 380 C850 372 975 410 1080 425" stroke-width="31"/>
+    <path d="M260 220 C255 320 260 400 260 470 C260 590 195 720 185 880 C175 1040 205 1290 190 1510" stroke-width="30"/>
+    <path d="M0 680 C160 675 340 695 520 700 C630 703 685 700 740 700 C845 700 960 725 1080 740" stroke-width="30"/>
+    <path d="M530 240 C535 410 525 560 520 700 C515 840 450 930 420 1010 C395 1080 385 1155 380 1230 C375 1335 365 1425 360 1515" stroke-width="30"/>
+    <path d="M860 260 C850 430 785 570 740 700 C710 790 795 940 825 1090 C850 1215 780 1300 720 1360 C680 1400 660 1455 650 1515" stroke-width="30"/>
+    <path d="M0 1020 C140 1015 290 1010 420 1010 C580 1010 730 1045 825 1090 C920 1135 1005 1150 1080 1160" stroke-width="30"/>
+    <path d="M0 1385 C140 1395 270 1345 380 1230" stroke-width="29"/>
+    <path d="M0 1480 C240 1490 480 1470 720 1475 C805 1477 860 1482 905 1485" stroke-width="30"/>
+    <!-- Main Route Corridor Boulevard (width 32 + 4px shadow edge) -->
+    <path d="M260 470 C420 470 640 520 740 700 C800 820 620 960 420 1010 C300 1040 260 1150 380 1230 C500 1300 640 1260 720 1360" stroke-width="36"/>
+  </g>
+
+  <!-- Open Plaza Shadow Bases at the 4 Marker Spots -->
+  <g fill="#E6D5C3">
+    <circle cx="260" cy="474" r="64"/>
+    <circle cx="740" cy="704" r="64"/>
+    <circle cx="380" cy="1234" r="64"/>
+    <circle cx="720" cy="1364" r="64"/>
+  </g>
+
+  <!-- Cream/White Road Surfaces (26-32 px wide) -->
+  <g stroke="#FBF4F0" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <path d="M0 368 C210 363 440 388 680 378 C850 370 975 408 1080 423" stroke-width="27"/>
+    <path d="M260 218 C255 318 260 398 260 470 C260 590 195 720 185 880 C175 1040 205 1290 190 1508" stroke-width="26"/>
+    <path d="M0 678 C160 673 340 693 520 698 C630 701 685 698 740 700 C845 700 960 723 1080 738" stroke-width="26"/>
+    <path d="M530 238 C535 408 525 558 520 698 C515 838 450 928 420 1010 C395 1080 385 1155 380 1230 C375 1335 365 1425 360 1513" stroke-width="26"/>
+    <path d="M860 258 C850 428 785 568 740 700 C710 790 795 940 825 1090 C850 1215 780 1300 720 1360 C680 1400 660 1455 650 1513" stroke-width="26"/>
+    <path d="M0 1018 C140 1013 290 1008 420 1010 C580 1010 730 1043 825 1088 C920 1133 1005 1148 1080 1158" stroke-width="26"/>
+    <path d="M0 1383 C140 1393 270 1343 380 1230" stroke-width="26"/>
+    <path d="M0 1478 C240 1488 480 1468 720 1473 C805 1475 860 1480 905 1483" stroke-width="26"/>
+    <!-- Main Route Corridor Boulevard -->
+    <path d="M260 470 C420 470 640 520 740 700 C800 820 620 960 420 1010 C300 1040 260 1150 380 1230 C500 1300 640 1260 720 1360" stroke-width="32" stroke="#FFFFFF" stroke-opacity="0.92"/>
+  </g>
+
+  <!-- Open Plazas at the 4 Clear Spots: (260, 470), (740, 700), (380, 1230), (720, 1360) -->
+  <!-- Plaza 1: (260, 470) -->
+  <circle cx="260" cy="470" r="62" fill="#FBF4F0"/>
+  <circle cx="260" cy="470" r="46" fill="#FFFFFF" fill-opacity="0.75"/>
+  <circle cx="260" cy="470" r="34" stroke="#F3E2CF" stroke-width="2" stroke-dasharray="6 6"/>
+
+  <!-- Plaza 2: (740, 700) -->
+  <circle cx="740" cy="700" r="62" fill="#FBF4F0"/>
+  <circle cx="740" cy="700" r="46" fill="#FFFFFF" fill-opacity="0.75"/>
+  <circle cx="740" cy="700" r="34" stroke="#F3E2CF" stroke-width="2" stroke-dasharray="6 6"/>
+
+  <!-- Plaza 3: (380, 1230) -->
+  <circle cx="380" cy="1230" r="62" fill="#FBF4F0"/>
+  <circle cx="380" cy="1230" r="46" fill="#FFFFFF" fill-opacity="0.75"/>
+  <circle cx="380" cy="1230" r="34" stroke="#F3E2CF" stroke-width="2" stroke-dasharray="6 6"/>
+
+  <!-- Plaza 4: (720, 1360) -->
+  <circle cx="720" cy="1360" r="62" fill="#FBF4F0"/>
+  <circle cx="720" cy="1360" r="46" fill="#FFFFFF" fill-opacity="0.75"/>
+  <circle cx="720" cy="1360" r="34" stroke="#F3E2CF" stroke-width="2" stroke-dasharray="6 6"/>
+
+  <!-- 4. THE TOWN: LOW, QUIET 3D BUILDING BLOCKS (y: 250 to 1500) -->
+  <!-- Every block has a soft shadow, a darker front face (extruded +10px down), and a lighter top face -->
+  <!-- Carefully placed >100px away from (260,470), (740,700), (380,1230), (720,1360) and clear of the route corridor -->
+  <g filter="url(#softShadow)">
+    <!-- North-West District (x: 40-170, y: 260-620) -->
+    <g>
+      <rect x="48" y="268" width="92" height="58" rx="12" fill="#E6D5C3"/>
+      <rect x="48" y="258" width="92" height="58" rx="12" fill="#FBF4F0"/>
+      <rect x="155" y="274" width="66" height="52" rx="11" fill="#F2B084" fill-opacity="0.7"/>
+      <rect x="155" y="264" width="66" height="52" rx="11" fill="#F7E3D6"/>
+
+      <rect x="44" y="422" width="84" height="74" rx="14" fill="#E6D5C3"/>
+      <rect x="44" y="412" width="84" height="74" rx="14" fill="#FBF4F0"/>
+      <rect x="52" y="520" width="110" height="68" rx="14" fill="#F2B084" fill-opacity="0.65"/>
+      <rect x="52" y="510" width="110" height="68" rx="14" fill="#F7E3D6"/>
+      <rect x="74" y="598" width="76" height="50" rx="11" fill="#E6D5C3"/>
+      <rect x="74" y="588" width="76" height="50" rx="11" fill="#F3E2CF"/>
+    </g>
+
+    <!-- North-Central District (x: 340-800, y: 255-430) -->
+    <g>
+      <rect x="330" y="268" width="104" height="62" rx="13" fill="#E6D5C3"/>
+      <rect x="330" y="258" width="104" height="62" rx="13" fill="#FBF4F0"/>
+      <rect x="448" y="276" width="58" height="54" rx="11" fill="#C8553D" fill-opacity="0.75"/>
+      <rect x="448" y="266" width="58" height="54" rx="11" fill="#F2B084"/>
+
+      <rect x="570" y="266" width="112" height="66" rx="14" fill="#E6D5C3"/>
+      <rect x="570" y="256" width="112" height="66" rx="14" fill="#FBF4F0"/>
+      <rect x="702" y="274" width="96" height="60" rx="13" fill="#F2B084" fill-opacity="0.7"/>
+      <rect x="702" y="264" width="96" height="60" rx="13" fill="#F7E3D6"/>
+
+      <rect x="576" y="418" width="98" height="58" rx="12" fill="#E6D5C3"/>
+      <rect x="576" y="408" width="98" height="58" rx="12" fill="#F3E2CF"/>
+      <rect x="692" y="422" width="110" height="66" rx="13" fill="#E6D5C3"/>
+      <rect x="692" y="412" width="110" height="66" rx="13" fill="#FBF4F0"/>
+    </g>
+
+    <!-- North-East Hills District (x: 885-1035, y: 270-670) -->
+    <g>
+      <rect x="895" y="284" width="115" height="68" rx="14" fill="#E6D5C3"/>
+      <rect x="895" y="274" width="115" height="68" rx="14" fill="#FBF4F0"/>
+      <rect x="888" y="458" width="126" height="74" rx="14" fill="#F2B084" fill-opacity="0.68"/>
+      <rect x="888" y="448" width="126" height="74" rx="14" fill="#F7E3D6"/>
+      <rect x="865" y="556" width="92" height="64" rx="13" fill="#E6D5C3"/>
+      <rect x="865" y="546" width="92" height="64" rx="13" fill="#FBF4F0"/>
+      <rect x="970" y="564" width="68" height="78" rx="13" fill="#C8553D" fill-opacity="0.7"/>
+      <rect x="970" y="554" width="68" height="78" rx="13" fill="#F2B084"/>
+    </g>
+
+    <!-- Upper-Mid Pocket (between Plaza 1 and Route, x: 295-490, y: 545-665) -->
+    <g>
+      <rect x="305" y="566" width="96" height="68" rx="13" fill="#E6D5C3"/>
+      <rect x="305" y="556" width="96" height="68" rx="13" fill="#FBF4F0"/>
+      <rect x="416" y="572" width="76" height="62" rx="12" fill="#F2B084" fill-opacity="0.65"/>
+      <rect x="416" y="562" width="76" height="62" rx="12" fill="#F7E3D6"/>
+    </g>
+
+    <!-- Mid-West District (x: 42-460, y: 730-960) -->
+    <g>
+      <rect x="46" y="736" width="106" height="76" rx="14" fill="#E6D5C3"/>
+      <rect x="46" y="726" width="106" height="76" rx="14" fill="#FBF4F0"/>
+      <rect x="52" y="836" width="98" height="68" rx="13" fill="#F2B084" fill-opacity="0.65"/>
+      <rect x="52" y="826" width="98" height="68" rx="13" fill="#F7E3D6"/>
+      <rect x="60" y="922" width="90" height="58" rx="12" fill="#E6D5C3"/>
+      <rect x="60" y="912" width="90" height="58" rx="12" fill="#F3E2CF"/>
+
+      <rect x="225" y="738" width="118" height="74" rx="14" fill="#E6D5C3"/>
+      <rect x="225" y="728" width="118" height="74" rx="14" fill="#FBF4F0"/>
+      <rect x="362" y="744" width="112" height="68" rx="14" fill="#F2B084" fill-opacity="0.7"/>
+      <rect x="362" y="734" width="112" height="68" rx="14" fill="#F7E3D6"/>
+      <rect x="222" y="838" width="104" height="78" rx="14" fill="#C8553D" fill-opacity="0.72"/>
+      <rect x="222" y="828" width="104" height="78" rx="14" fill="#F2B084"/>
+      <rect x="344" y="834" width="96" height="66" rx="13" fill="#E6D5C3"/>
+      <rect x="344" y="824" width="96" height="66" rx="13" fill="#FBF4F0"/>
+    </g>
+
+    <!-- Mid-Central Pocket (x: 545-645, y: 745-835, clear of Plaza 2 & route) -->
+    <g>
+      <rect x="548" y="756" width="84" height="62" rx="12" fill="#E6D5C3"/>
+      <rect x="548" y="746" width="84" height="62" rx="12" fill="#FBF4F0"/>
+    </g>
+
+    <!-- Mid-East District (x: 840-1035, y: 775-1100) -->
+    <g>
+      <rect x="862" y="788" width="110" height="70" rx="14" fill="#E6D5C3"/>
+      <rect x="862" y="778" width="110" height="70" rx="14" fill="#FBF4F0"/>
+      <rect x="852" y="882" width="92" height="66" rx="13" fill="#F2B084" fill-opacity="0.68"/>
+      <rect x="852" y="872" width="92" height="66" rx="13" fill="#F7E3D6"/>
+      <rect x="958" y="886" width="76" height="84" rx="13" fill="#E6D5C3"/>
+      <rect x="958" y="876" width="76" height="84" rx="13" fill="#F3E2CF"/>
+      <rect x="875" y="988" width="124" height="76" rx="14" fill="#C8553D" fill-opacity="0.72"/>
+      <rect x="875" y="978" width="124" height="76" rx="14" fill="#F2B084"/>
+    </g>
+
+    <!-- South-West District (x: 42-225, y: 1060-1430) -->
+    <g>
+      <rect x="48" y="1068" width="106" height="72" rx="14" fill="#E6D5C3"/>
+      <rect x="48" y="1058" width="106" height="72" rx="14" fill="#FBF4F0"/>
+      <rect x="44" y="1164" width="112" height="78" rx="14" fill="#F2B084" fill-opacity="0.68"/>
+      <rect x="44" y="1154" width="112" height="78" rx="14" fill="#F7E3D6"/>
+      <rect x="54" y="1266" width="96" height="68" rx="13" fill="#E6D5C3"/>
+      <rect x="54" y="1256" width="96" height="68" rx="13" fill="#FBF4F0"/>
+      <rect x="218" y="1352" width="108" height="68" rx="13" fill="#E6D5C3"/>
+      <rect x="218" y="1342" width="108" height="68" rx="13" fill="#F3E2CF"/>
+      <rect x="64" y="1408" width="102" height="52" rx="11" fill="#F2B084" fill-opacity="0.65"/>
+      <rect x="64" y="1398" width="102" height="52" rx="11" fill="#F7E3D6"/>
+    </g>
+
+    <!-- South-Central District (x: 465-775, y: 1045-1205, between route loops) -->
+    <g>
+      <rect x="476" y="1058" width="110" height="72" rx="14" fill="#E6D5C3"/>
+      <rect x="476" y="1048" width="110" height="72" rx="14" fill="#FBF4F0"/>
+      <rect x="604" y="1066" width="96" height="68" rx="13" fill="#F2B084" fill-opacity="0.7"/>
+      <rect x="604" y="1056" width="96" height="68" rx="13" fill="#F7E3D6"/>
+      <rect x="714" y="1098" width="76" height="64" rx="12" fill="#E6D5C3"/>
+      <rect x="714" y="1088" width="76" height="64" rx="12" fill="#F3E2CF"/>
+      <rect x="520" y="1152" width="104" height="58" rx="12" fill="#C8553D" fill-opacity="0.72"/>
+      <rect x="520" y="1142" width="104" height="58" rx="12" fill="#F2B084"/>
+    </g>
+
+    <!-- South Waterfront & Harbour District (x: 400-610, y: 1345-1445 & East x: 845-1030, y: 1185-1340) -->
+    <g>
+      <rect x="405" y="1358" width="108" height="68" rx="14" fill="#E6D5C3"/>
+      <rect x="405" y="1348" width="108" height="68" rx="14" fill="#FBF4F0"/>
+      <rect x="528" y="1366" width="84" height="62" rx="12" fill="#F2B084" fill-opacity="0.7"/>
+      <rect x="528" y="1356" width="84" height="62" rx="12" fill="#F7E3D6"/>
+
+      <rect x="862" y="1194" width="114" height="68" rx="14" fill="#E6D5C3"/>
+      <rect x="862" y="1184" width="114" height="68" rx="14" fill="#FBF4F0"/>
+      <rect x="848" y="1286" width="94" height="62" rx="13" fill="#F2B084" fill-opacity="0.68"/>
+      <rect x="848" y="1276" width="94" height="62" rx="13" fill="#F7E3D6"/>
+      <rect x="956" y="1282" width="82" height="68" rx="13" fill="#E6D5C3"/>
+      <rect x="956" y="1272" width="82" height="68" rx="13" fill="#F3E2CF"/>
+    </g>
+  </g>
+
+  <!-- Brand Orange (#FF5B00) Accent #1: Tiny architectural roof cupola near upper boulevard -->
+  <circle cx="477" cy="293" r="6" fill="#FF5B00"/>
+
+  <!-- 5. SEA & SHORELINE WAVES (Below coastline ~ (0, 1560) to (1080, 1530)) -->
+  <path d="M0 1560 C190 1572 390 1542 590 1548 C725 1552 815 1535 1080 1530 L1080 1920 L0 1920 Z" fill="url(#seaGrad)"/>
+  <path d="M0 1560 C190 1572 390 1542 590 1548 C725 1552 815 1535 1080 1530 L1080 1710 L0 1710 Z" fill="url(#shallowGlow)"/>
+  <rect x="0" y="1680" width="1080" height="240" fill="url(#seaDeepShade)"/>
+
+  <!-- Faint Sun-Glint Band across the Sea -->
+  <path d="M0 1630 C280 1605 560 1665 880 1740 L1080 1785 L1080 1895 C780 1835 460 1755 0 1735 Z" fill="url(#sunGlint)"/>
+
+  <!-- 4 Soft Foam / Wave Lines along the Shore & Peninsula -->
+  <path d="M0 1562 C190 1574 390 1544 590 1550 C705 1553 775 1546 825 1555" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round" opacity="0.78"/>
+  <path d="M0 1582 C205 1595 400 1564 600 1572 C700 1576 755 1584 795 1615 C825 1640 845 1705 905 1748 C965 1785 1030 1775 1080 1765" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" opacity="0.52"/>
+  <path d="M0 1612 C220 1626 420 1596 625 1606 C715 1612 765 1645 815 1702 C865 1758 945 1802 1080 1795" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" opacity="0.34"/>
+  <path d="M0 1654 C245 1668 465 1640 675 1658 C765 1666 825 1745 915 1805 C975 1842 1035 1838 1080 1835" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round" opacity="0.22"/>
+
+  <!-- Tiny Harbour Pier & Brand Orange (#FF5B00) Accent #2 (Moored boat hull) -->
+  <path d="M830 1495 L765 1515 L768 1524 L835 1504 Z" fill="#E6D5C3"/>
+  <ellipse cx="742" cy="1592" rx="14" ry="5.5" transform="rotate(-14 742 1592)" fill="#1C1B1A" fill-opacity="0.16"/>
+  <path d="M726 1589 C734 1582 749 1580 758 1585 C751 1593 737 1595 726 1589 Z" fill="#FFFFFF"/>
+  <path d="M730 1588 C737 1584 747 1583 754 1586 C748 1590 738 1591 730 1588 Z" fill="#FF5B00"/>
+
+  <!-- 6. ALANYA PENINSULA / CASTLE HILL (x: 780-1080, y: 1450-1760) -->
+  <g filter="url(#softShadow)">
+    <!-- Outer coastal rock base -->
+    <path d="M815 1450 C885 1425 995 1420 1080 1440 L1080 1748 C1025 1762 945 1765 895 1732 C840 1696 802 1632 786 1572 C774 1524 785 1462 815 1450 Z" fill="url(#peninsulaBase)"/>
+
+    <!-- Layered cliff facets (darker coastal drop-offs on left/south-west) -->
+    <path d="M786 1572 C802 1632 840 1696 895 1732 C945 1765 1025 1762 1080 1748 L1080 1685 C1015 1705 945 1702 895 1664 C848 1628 825 1568 815 1505 C800 1522 782 1548 786 1572 Z" fill="url(#peninsulaCliff)"/>
+    <path d="M792 1590 C815 1648 855 1702 908 1732 L925 1695 C875 1665 842 1615 824 1558 Z" fill="#A9432F" fill-opacity="0.28"/>
+    <path d="M895 1732 C945 1765 1020 1762 1080 1748 L1080 1712 C1020 1726 955 1724 912 1692 Z" fill="#1C1B1A" fill-opacity="0.12"/>
+
+    <!-- Mid terrace plateau -->
+    <path d="M832 1468 C898 1445 995 1442 1080 1462 L1080 1688 C1018 1702 948 1698 902 1662 C856 1626 832 1568 822 1516 C818 1492 820 1474 832 1468 Z" fill="#E6D5C3"/>
+
+    <!-- Upper sunlit ridge plateau -->
+    <path d="M862 1488 C918 1468 1005 1468 1080 1485 L1080 1638 C1025 1652 965 1648 924 1618 C884 1588 864 1542 856 1506 C854 1496 856 1490 862 1488 Z" fill="url(#peninsulaRidge)"/>
+
+    <!-- Subtle rock striation lines -->
+    <path d="M804 1545 C822 1605 862 1665 922 1702 C972 1732 1030 1730 1080 1718" stroke="#C8553D" stroke-width="1.5" opacity="0.32"/>
+    <path d="M838 1518 C855 1575 888 1628 942 1660 C988 1686 1038 1685 1080 1675" stroke="#A9432F" stroke-width="1.5" opacity="0.24"/>
+  </g>
+
+  <!-- Crenellated Castle Wall Line along the Peninsula Ridge -->
+  <g>
+    <!-- Wall shadow -->
+    <path d="M845 1486 L885 1592 L958 1654 L1068 1662" stroke="#1C1B1A" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" opacity="0.12"/>
+    <!-- Main stone rampart wall -->
+    <path d="M842 1480 L882 1586 L955 1648 L1065 1656" stroke="#FBF4F0" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M842 1480 L882 1586 L955 1648 L1065 1656" stroke="#C8553D" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="9 7" opacity="0.75"/>
+    <!-- Upper ridge wall connecting toward Kizil Kule -->
+    <path d="M925 1468 L995 1492 L1075 1502" stroke="#FBF4F0" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M925 1468 L995 1492 L1075 1502" stroke="#A9432F" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="8 6" opacity="0.7"/>
+    <!-- Bastion turrets along the castle wall -->
+    <rect x="873" y="1576" width="18" height="18" rx="4" fill="#C8553D" stroke="#FBF4F0" stroke-width="2"/>
+    <rect x="946" y="1638" width="18" height="18" rx="4" fill="#C8553D" stroke="#FBF4F0" stroke-width="2"/>
+    <rect x="1032" y="1645" width="18" height="18" rx="4" fill="#C8553D" stroke="#FBF4F0" stroke-width="2"/>
+    <rect x="986" y="1482" width="16" height="16" rx="4" fill="#A9432F" stroke="#FBF4F0" stroke-width="2"/>
+  </g>
+
+  <!-- 7. KIZIL KULE (Octagonal Red-Brick Harbour Tower at ~(905, 1480), width ~120, height ~150) -->
+  <g>
+    <!-- Soft cast shadow on the ground -->
+    <ellipse cx="892" cy="1502" rx="74" ry="24" fill="#1C1B1A" fill-opacity="0.18"/>
+    <ellipse cx="905" cy="1498" rx="64" ry="18" fill="#E6D5C3"/>
+
+    <g filter="url(#towerShadow)">
+      <!-- Left Visible Face (Darker: #A9432F, x: 845 to 883) -->
+      <polygon points="845,1368 883,1380 883,1494 845,1480" fill="url(#towerLeft)"/>
+      <polygon points="845,1368 883,1380 883,1494 845,1480" fill="#1C1B1A" fill-opacity="0.12"/>
+
+      <!-- Center Visible Face (Medium: #C8553D, x: 883 to 927) -->
+      <polygon points="883,1380 927,1380 927,1498 883,1494" fill="url(#towerCenter)"/>
+
+      <!-- Right Visible Face (Lighter/Sunlit: #C8553D + #F2B084, x: 927 to 965) -->
+      <polygon points="927,1380 965,1368 965,1480 927,1498" fill="url(#towerRight)"/>
+
+      <!-- Subtle horizontal brick-course bands -->
+      <polyline points="845,1405 883,1417 927,1417 965,1405" stroke="#F3E2CF" stroke-width="1.5" opacity="0.35"/>
+      <polyline points="845,1445 883,1457 927,1457 965,1445" stroke="#F3E2CF" stroke-width="1.5" opacity="0.35"/>
+
+      <!-- Octagonal Upper Roof / Terrace -->
+      <polygon points="845,1368 872,1352 938,1352 965,1368 927,1380 883,1380" fill="#F2B084"/>
+      <polygon points="856,1366 876,1355 934,1355 954,1366 924,1376 886,1376" fill="#E6D5C3"/>
+      <!-- Inner rooftop turret ring -->
+      <ellipse cx="905" cy="1365" rx="22" ry="7" fill="#A9432F"/>
+      <ellipse cx="905" cy="1363" rx="18" ry="5.5" fill="#F3E2CF"/>
+
+      <!-- Crenellated Top Parapet (Merlons across left, center, and right faces) -->
+      <!-- Left face merlons -->
+      <polygon points="845,1356 855,1359 855,1372 845,1368" fill="#A9432F"/>
+      <polygon points="860,1361 870,1364 870,1376 860,1373" fill="#A9432F"/>
+      <polygon points="874,1365 883,1368 883,1380 874,1377" fill="#A9432F"/>
+      <!-- Center face merlons -->
+      <rect x="886" y="1367" width="10" height="14" rx="1.5" fill="#C8553D"/>
+      <rect x="900" y="1367" width="10" height="14" rx="1.5" fill="#C8553D"/>
+      <rect x="914" y="1367" width="10" height="14" rx="1.5" fill="#C8553D"/>
+      <!-- Right face merlons -->
+      <polygon points="927,1368 936,1365 936,1377 927,1380" fill="#F2B084"/>
+      <polygon points="940,1364 950,1361 950,1373 940,1376" fill="#F2B084"/>
+      <polygon points="955,1359 965,1356 965,1368 955,1372" fill="#F2B084"/>
+
+      <!-- Small Arch Windows -->
+      <!-- Left face windows -->
+      <path d="M860 1404 A4 4 0 0 1 868 1404 V1416 H860 Z" fill="#1C1B1A" fill-opacity="0.78"/>
+      <path d="M860 1444 A4 4 0 0 1 868 1444 V1456 H860 Z" fill="#1C1B1A" fill-opacity="0.78"/>
+      <!-- Center face windows & entrance arch -->
+      <path d="M894 1408 A4.5 4.5 0 0 1 903 1408 V1421 H894 Z" fill="#1C1B1A" fill-opacity="0.82"/>
+      <path d="M908 1408 A4.5 4.5 0 0 1 917 1408 V1421 H908 Z" fill="#1C1B1A" fill-opacity="0.82"/>
+      <path d="M899 1466 A6.5 6.5 0 0 1 912 1466 V1495 H899 Z" fill="#1C1B1A" fill-opacity="0.85"/>
+      <!-- Right face windows -->
+      <path d="M942 1404 A4 4 0 0 1 950 1404 V1416 H942 Z" fill="#1C1B1A" fill-opacity="0.72"/>
+      <path d="M942 1444 A4 4 0 0 1 950 1444 V1456 H942 Z" fill="#1C1B1A" fill-opacity="0.72"/>
+    </g>
+  </g>
+
+  <!-- 8. PALM TREES (10 palms) & SMALL ROUND TREES (Apricot/Green) -->
+  <!-- All placed >105px from (260,470), (740,700), (380,1230), (720,1360) and clear of the route -->
+  <g>
+    <!-- 10 Palm Trees -->
+    <use href="#palm" transform="translate(145, 345) scale(1.05)"/>
+    <use href="#palm" transform="translate(650, 355) scale(0.95) rotate(25)"/>
+    <use href="#palm" transform="translate(940, 410) scale(1.0) rotate(-18)"/>
+    <use href="#palm" transform="translate(135, 655) scale(1.08) rotate(12)"/>
+    <use href="#palm" transform="translate(925, 725) scale(1.0) rotate(40)"/>
+    <use href="#palm" transform="translate(145, 995) scale(1.05) rotate(-30)"/>
+    <use href="#palm" transform="translate(885, 1135) scale(0.98) rotate(15)"/>
+    <use href="#palm" transform="translate(185, 1465) scale(1.12) rotate(-12)"/>
+    <use href="#palm" transform="translate(475, 1472) scale(1.08) rotate(22)"/>
+    <use href="#palm" transform="translate(825, 1435) scale(1.02) rotate(-25)"/>
+
+    <!-- Small Round Trees in Green & Apricot -->
+    <use href="#treeGreen" transform="translate(215, 295)"/>
+    <use href="#treeApricot" transform="translate(495, 345)"/>
+    <use href="#treeGreen" transform="translate(835, 340)"/>
+    <use href="#treeApricot" transform="translate(180, 565)"/>
+    <use href="#treeGreen" transform="translate(555, 485) scale(0.9)"/>
+    <use href="#treeApricot" transform="translate(845, 520)"/>
+    <use href="#treeGreen" transform="translate(495, 815)"/>
+    <use href="#treeApricot" transform="translate(195, 935) scale(0.92)"/>
+    <use href="#treeGreen" transform="translate(655, 1020)"/>
+    <use href="#treeApricot" transform="translate(205, 1195)"/>
+    <use href="#treeGreen" transform="translate(575, 1345) scale(0.95)"/>
+    <use href="#treeApricot" transform="translate(915, 1545) scale(0.9)"/>
+    <use href="#treeGreen" transform="translate(965, 1595) scale(1.05)"/>
+    <use href="#treeGreen" transform="translate(1025, 1555) scale(0.9)"/>
+  </g>
+
+  <!-- 9. SOFT WARM TOP-LEFT RADIAL HIGHLIGHT & GENTLE VIGNETTE (<= 0.12 opacity) -->
+  <rect width="1080" height="1920" fill="url(#topLeftLight)"/>
+  <rect width="1080" height="1920" fill="url(#cornerVignette)"/>
+
+  <!-- 10. FINE GRAIN OVERLAY (feTurbulence fixed seed, opacity <= 0.06, multiply blend) -->
+  <rect width="1080" height="1920" filter="url(#mapGrain)" opacity="0.95" style="mix-blend-mode: multiply;"/>
+</svg>

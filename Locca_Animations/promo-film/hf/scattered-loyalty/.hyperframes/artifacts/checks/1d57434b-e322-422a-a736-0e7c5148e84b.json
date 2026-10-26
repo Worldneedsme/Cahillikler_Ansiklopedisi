@@ -1,0 +1,424 @@
+{
+  "ok": false,
+  "strict": false,
+  "browserSkipped": false,
+  "lint": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 3,
+    "infoCount": 0,
+    "findings": [
+      {
+        "code": "nested_structure_needs_subcomposition",
+        "severity": "warning",
+        "message": "<section id=\"bg\"> is a timeline element that contains nested <svg>. The timeline shows one row per top-level element, and the root composition is built only from sub-compositions.",
+        "selector": "#bg",
+        "dataAttributes": {},
+        "sourceFile": "/Users/volkanbarantopcu/Desktop/Locca/promo-film/hf/scattered-loyalty/index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0
+        },
+        "time": 0,
+        "fixHint": "Move <section id=\"bg\"> and its contents into a sub-composition file and mount it with data-composition-src."
+      },
+      {
+        "code": "nested_structure_needs_subcomposition",
+        "severity": "warning",
+        "message": "<section id=\"scene\"> is a timeline element that contains nested <div id=\"wallet\">. The timeline shows one row per top-level element, and the root composition is built only from sub-compositions.",
+        "selector": "#scene",
+        "dataAttributes": {},
+        "sourceFile": "/Users/volkanbarantopcu/Desktop/Locca/promo-film/hf/scattered-loyalty/index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0
+        },
+        "time": 0,
+        "fixHint": "Move <section id=\"scene\"> and its contents into a sub-composition file and mount it with data-composition-src."
+      },
+      {
+        "code": "nested_structure_needs_subcomposition",
+        "severity": "warning",
+        "message": "<section id=\"fx\"> is a timeline element that contains nested <svg id=\"grain\">. The timeline shows one row per top-level element, and the root composition is built only from sub-compositions.",
+        "selector": "#fx",
+        "dataAttributes": {},
+        "sourceFile": "/Users/volkanbarantopcu/Desktop/Locca/promo-film/hf/scattered-loyalty/index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0
+        },
+        "time": 0,
+        "fixHint": "Move <section id=\"fx\"> and its contents into a sub-composition file and mount it with data-composition-src."
+      }
+    ],
+    "filesScanned": 1
+  },
+  "runtime": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 0,
+    "infoCount": 0,
+    "findings": []
+  },
+  "layout": {
+    "ok": false,
+    "errorCount": 1,
+    "warningCount": 2,
+    "infoCount": 4,
+    "findings": [
+      {
+        "code": "text_occluded",
+        "severity": "error",
+        "time": 2.222,
+        "selector": "#pc1 > div:nth-of-type(2)",
+        "message": "Text is hidden beneath an opaque element.",
+        "rect": {
+          "left": 655.79,
+          "top": 758.36,
+          "right": 702.45,
+          "bottom": 799.02,
+          "width": 46.67,
+          "height": 40.66
+        },
+        "containerSelector": "#pc2",
+        "text": "7/8",
+        "fixHint": "Give the text its own zone, raise its stacking order above the covering element, or mark intentional layering with data-layout-allow-occlusion.",
+        "coveredFraction": 0.81,
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 655.79,
+          "y": 758.36,
+          "width": 46.67,
+          "height": 40.66
+        },
+        "firstSeen": 2.222,
+        "lastSeen": 4.889,
+        "occurrences": 4,
+        "heldMs": 2667.0000000000005,
+        "times": [
+          2.222,
+          3.111,
+          4,
+          4.889
+        ]
+      },
+      {
+        "code": "panel_out_of_canvas",
+        "severity": "warning",
+        "time": 0.444,
+        "selector": "#phone",
+        "message": "Painted panel extends outside the composition canvas.",
+        "rect": {
+          "left": 310,
+          "top": 1040,
+          "right": 770,
+          "bottom": 2010,
+          "width": 460,
+          "height": 970
+        },
+        "containerSelector": "#root",
+        "text": "9:41",
+        "fixHint": "Move the panel inward, or mark intentional off-canvas animation with data-layout-allow-overflow.",
+        "containerRect": {
+          "left": 0,
+          "top": 0,
+          "right": 1080,
+          "bottom": 1920,
+          "width": 1080,
+          "height": 1920
+        },
+        "overflow": {
+          "bottom": 90
+        },
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 310,
+          "y": 1040,
+          "width": 460,
+          "height": 970
+        },
+        "firstSeen": 0.444,
+        "lastSeen": 4,
+        "occurrences": 5,
+        "heldMs": 3556,
+        "times": [
+          0.444,
+          1.333,
+          2.222,
+          3.111,
+          4
+        ]
+      },
+      {
+        "code": "content_overlap",
+        "severity": "warning",
+        "time": 4.889,
+        "selector": "#pc0 > div:nth-of-type(1)",
+        "message": "Two text blocks overlap and may render unreadable.",
+        "rect": {
+          "left": 101.23,
+          "top": 678.44,
+          "right": 257.36,
+          "bottom": 743.74,
+          "width": 156.13,
+          "height": 65.3
+        },
+        "containerSelector": "#lc-num",
+        "text": "Kale Sofrası",
+        "fixHint": "Give each block its own zone, or put data-layout-allow-overlap on the text or on a container inside the scene. A marker on the scene root does not apply.",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 101.23,
+          "y": 678.44,
+          "width": 156.13,
+          "height": 65.3
+        },
+        "firstSeen": 4.875,
+        "lastSeen": 5.25,
+        "occurrences": 4,
+        "heldMs": 375,
+        "times": [
+          4.875,
+          4.889,
+          5,
+          5.25
+        ]
+      },
+      {
+        "code": "canvas_overflow",
+        "severity": "info",
+        "time": 4.889,
+        "selector": "#screen > div:nth-of-type(1)",
+        "message": "Text extends outside the composition canvas.",
+        "rect": {
+          "left": 365,
+          "top": 1981,
+          "right": 414.16,
+          "bottom": 2014,
+          "width": 49.16,
+          "height": 33
+        },
+        "containerSelector": "#root",
+        "text": "9:41",
+        "fixHint": "Move the text inward, reduce its size, or mark intentional off-canvas animation with data-layout-allow-overflow.",
+        "containerRect": {
+          "left": 0,
+          "top": 0,
+          "right": 1080,
+          "bottom": 1920,
+          "width": 1080,
+          "height": 1920
+        },
+        "overflow": {
+          "bottom": 94
+        },
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 365,
+          "y": 1981,
+          "width": 49.16,
+          "height": 33
+        },
+        "firstSeen": 4.889,
+        "lastSeen": 7.556,
+        "occurrences": 4,
+        "heldMs": 2667,
+        "times": [
+          4.889,
+          5.778,
+          6.667,
+          7.556
+        ]
+      },
+      {
+        "code": "content_overlap",
+        "severity": "info",
+        "time": 5.5,
+        "selector": "#ch0 > div:nth-of-type(2)",
+        "message": "Two text blocks overlap and may render unreadable.",
+        "rect": {
+          "left": 216.93,
+          "top": 910.76,
+          "right": 300.02,
+          "bottom": 942.2,
+          "width": 83.09,
+          "height": 31.44
+        },
+        "containerSelector": "#row0 > div:nth-of-type(2)",
+        "text": "12 puan",
+        "fixHint": "Give each block its own zone, or put data-layout-allow-overlap on the text or on a container inside the scene. A marker on the scene root does not apply.",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 216.93,
+          "y": 910.76,
+          "width": 83.09,
+          "height": 31.44
+        },
+        "firstSeen": 5.5,
+        "lastSeen": 5.5,
+        "occurrences": 1,
+        "heldMs": 0,
+        "times": [
+          5.5
+        ]
+      },
+      {
+        "code": "content_overlap",
+        "severity": "info",
+        "time": 5.625,
+        "selector": "#ch1 > div:nth-of-type(2)",
+        "message": "Two text blocks overlap and may render unreadable.",
+        "rect": {
+          "left": 312.43,
+          "top": 977.83,
+          "right": 407.89,
+          "bottom": 1011.77,
+          "width": 95.46,
+          "height": 33.94
+        },
+        "containerSelector": "#row2 > div:nth-of-type(2)",
+        "text": "40 puan",
+        "fixHint": "Give each block its own zone, or put data-layout-allow-overlap on the text or on a container inside the scene. A marker on the scene root does not apply.",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 312.43,
+          "y": 977.83,
+          "width": 95.46,
+          "height": 33.94
+        },
+        "firstSeen": 5.625,
+        "lastSeen": 5.625,
+        "occurrences": 1,
+        "heldMs": 0,
+        "times": [
+          5.625
+        ]
+      },
+      {
+        "code": "text_occluded",
+        "severity": "info",
+        "time": 5.778,
+        "selector": "#ch2 > div:nth-of-type(2)",
+        "message": "Text is hidden beneath an opaque element.",
+        "rect": {
+          "left": 222.83,
+          "top": 940.23,
+          "right": 287.55,
+          "bottom": 967.92,
+          "width": 64.73,
+          "height": 27.68
+        },
+        "containerSelector": "#loccard",
+        "text": "8 puan",
+        "fixHint": "Give the text its own zone, raise its stacking order above the covering element, or mark intentional layering with data-layout-allow-occlusion.",
+        "coveredFraction": 1,
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 222.83,
+          "y": 940.23,
+          "width": 64.73,
+          "height": 27.68
+        },
+        "firstSeen": 5.778,
+        "lastSeen": 5.778,
+        "occurrences": 1,
+        "heldMs": 0,
+        "times": [
+          5.778
+        ]
+      }
+    ],
+    "duration": 8,
+    "samples": [
+      0.444,
+      1.333,
+      2.222,
+      3.111,
+      4,
+      4.889,
+      5.778,
+      6.667,
+      7.556
+    ],
+    "transitionSamples": [],
+    "transitionSamplesDropped": 0,
+    "tolerance": 2,
+    "totalIssueCount": 7,
+    "truncated": false
+  },
+  "motion": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 0,
+    "infoCount": 0,
+    "findings": [],
+    "enabled": false,
+    "samples": 0
+  },
+  "contrast": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 1,
+    "infoCount": 0,
+    "findings": [
+      {
+        "code": "contrast_aa_failure",
+        "severity": "warning",
+        "message": "Contrast is 1.14:1; WCAG AA requires 3:1.",
+        "text": "8 puan",
+        "fg": "rgb(28,27,26)",
+        "bg": "rgb(39,38,37)",
+        "ratio": 1.14,
+        "requiredRatio": 3,
+        "suggestedColor": "rgb(112,111,110)",
+        "large": true,
+        "selector": "div > section:nth-of-type(2) > div:nth-of-type(4) > div:nth-of-type(3) > div:nth-of-type(2)",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 222.82711791992188,
+          "y": 941.3607177734375,
+          "width": 64.72781372070312,
+          "height": 25.989990234375
+        },
+        "time": 5.778,
+        "times": [
+          5.778
+        ]
+      }
+    ],
+    "enabled": true,
+    "samples": [
+      0.444,
+      2.222,
+      4,
+      5.778,
+      7.556
+    ],
+    "checked": 44,
+    "passed": 43
+  },
+  "hdr": {
+    "autoPromotion": null,
+    "inspection": "available"
+  },
+  "snapshots": {
+    "enabled": false,
+    "files": [],
+    "times": [],
+    "findingFiles": []
+  }
+}

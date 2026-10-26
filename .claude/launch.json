@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "kanal-sablonu",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "8765", "--directory", "C:/Users/Win10/Desktop/Cahillikler Ansiklopedısı/kanal-sablonu"],
+      "port": 8765
+    }
+  ]
+}

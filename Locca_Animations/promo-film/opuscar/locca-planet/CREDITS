@@ -1,0 +1,13 @@
+Minik Alanya gezegeni — Locca (2026)
+
+Picture: every tile, building and light is generated in code (main.js) with three.js (MIT).
+Post pipeline (post.js): adapted from lemomo-ai/lemo-opuscar, styles/lowpoly-island/demo/post.js — MIT License, © 2026 LemoLab.
+Style grammar: "Low-poly Isometric Island" from the Lemo-Opuscar library (MIT).
+The fox is a low-poly version of Locca's mascot, built in code (makeFox in main.js). The locca logo: Locca's own artwork.
+
+Music & sound: original score (score.py) from events in the picture; foley synthesized.
+Samples (CC0): FreePats project (freepats.zenvoid.org), Karoryfer Samples / sfzinstruments, Versilian Community Sample Library (Versilian Studios)
+Instrument sample libraries are CC0 1.0: FreePats (freepats.zenvoid.org), Karoryfer Samples (sfzinstruments), Versilian Community Sample Library (VCSL, Versilian Studios).
+
+Fonts (SIL Open Font License 1.1): Josefin Sans (Santiago Orozco), Jost (indestructible type*).
+The 3D digits use the "helvetiker bold" typeface data shipped with three.js (examples/fonts), under the MgOpen font licence (© 2004 MAGENTA Ltd., free to use and redistribute with its notice).

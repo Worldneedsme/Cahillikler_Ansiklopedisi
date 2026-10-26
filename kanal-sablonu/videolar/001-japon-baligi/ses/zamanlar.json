@@ -1,0 +1,334 @@
+{
+ "sahneler": [
+  {
+   "id": "s0",
+   "sure": 3.065,
+   "kelimeler": [
+    {
+     "metin": "Japon",
+     "bas": 0.07,
+     "son": 0.383
+    },
+    {
+     "metin": "balığının",
+     "bas": 0.43,
+     "son": 0.836
+    },
+    {
+     "metin": "hafızası",
+     "bas": 0.906,
+     "son": 1.451
+    },
+    {
+     "metin": "üç",
+     "bas": 1.509,
+     "son": 1.625
+    },
+    {
+     "metin": "saniyeymiş,",
+     "bas": 1.683,
+     "son": 2.38
+    },
+    {
+     "metin": "öyle",
+     "bas": 2.415,
+     "son": 2.635
+    },
+    {
+     "metin": "mi?",
+     "bas": 2.682,
+     "son": 2.868
+    }
+   ]
+  },
+  {
+   "id": "s1",
+   "sure": 3.344,
+   "kelimeler": [
+    {
+     "metin": "Yok",
+     "bas": 0.058,
+     "son": 0.313
+    },
+    {
+     "metin": "öyle",
+     "bas": 0.395,
+     "son": 0.546
+    },
+    {
+     "metin": "bir",
+     "bas": 0.592,
+     "son": 0.673
+    },
+    {
+     "metin": "şey.",
+     "bas": 0.708,
+     "son": 0.929
+    },
+    {
+     "metin": "Bu",
+     "bas": 0.975,
+     "son": 1.103
+    },
+    {
+     "metin": "balıklar",
+     "bas": 1.173,
+     "son": 1.8
+    },
+    {
+     "metin": "en",
+     "bas": 1.858,
+     "son": 1.95
+    },
+    {
+     "metin": "az",
+     "bas": 2.02,
+     "son": 2.101
+    },
+    {
+     "metin": "üç",
+     "bas": 2.183,
+     "son": 2.299
+    },
+    {
+     "metin": "ay",
+     "bas": 2.368,
+     "son": 2.438
+    },
+    {
+     "metin": "hatırlıyor.",
+     "bas": 2.461,
+     "son": 3.135
+    }
+   ]
+  },
+  {
+   "id": "s2",
+   "sure": 7.663,
+   "kelimeler": [
+    {
+     "metin": "Plymouth",
+     "bas": 0.081,
+     "son": 0.476
+    },
+    {
+     "metin": "Üniversitesi'nde",
+     "bas": 0.511,
+     "son": 1.498
+    },
+    {
+     "metin": "balıklara",
+     "bas": 1.707,
+     "son": 2.218
+    },
+    {
+     "metin": "bir",
+     "bas": 2.276,
+     "son": 2.415
+    },
+    {
+     "metin": "kolu",
+     "bas": 2.485,
+     "son": 2.705
+    },
+    {
+     "metin": "itince",
+     "bas": 2.752,
+     "son": 3.1
+    },
+    {
+     "metin": "yem",
+     "bas": 3.181,
+     "son": 3.355
+    },
+    {
+     "metin": "geldiğini",
+     "bas": 3.437,
+     "son": 3.866
+    },
+    {
+     "metin": "öğretmişler.",
+     "bas": 3.889,
+     "son": 4.621
+    },
+    {
+     "metin": "Aylar",
+     "bas": 4.83,
+     "son": 5.213
+    },
+    {
+     "metin": "geçmiş,",
+     "bas": 5.283,
+     "son": 5.747
+    },
+    {
+     "metin": "balıklar",
+     "bas": 5.77,
+     "son": 6.235
+    },
+    {
+     "metin": "hâlâ",
+     "bas": 6.316,
+     "son": 6.745
+    },
+    {
+     "metin": "unutmamış.",
+     "bas": 6.827,
+     "son": 7.419
+    }
+   ]
+  },
+  {
+   "id": "s3",
+   "sure": 7.291,
+   "kelimeler": [
+    {
+     "metin": "Asıl",
+     "bas": 0.035,
+     "son": 0.36
+    },
+    {
+     "metin": "ilginci",
+     "bas": 0.43,
+     "son": 0.859
+    },
+    {
+     "metin": "şu:",
+     "bas": 0.917,
+     "son": 1.184
+    },
+    {
+     "metin": "yemin",
+     "bas": 1.428,
+     "son": 1.718
+    },
+    {
+     "metin": "hangi",
+     "bas": 1.8,
+     "son": 2.078
+    },
+    {
+     "metin": "saatte",
+     "bas": 2.113,
+     "son": 2.531
+    },
+    {
+     "metin": "geldiğini",
+     "bas": 2.589,
+     "son": 3.053
+    },
+    {
+     "metin": "de",
+     "bas": 3.1,
+     "son": 3.17
+    },
+    {
+     "metin": "çözmüşler.",
+     "bas": 3.228,
+     "son": 3.889
+    },
+    {
+     "metin": "Saati",
+     "bas": 4.168,
+     "son": 4.551
+    },
+    {
+     "metin": "gelince",
+     "bas": 4.609,
+     "son": 4.981
+    },
+    {
+     "metin": "kolun",
+     "bas": 5.062,
+     "son": 5.375
+    },
+    {
+     "metin": "başına",
+     "bas": 5.422,
+     "son": 5.759
+    },
+    {
+     "metin": "gidip",
+     "bas": 5.793,
+     "son": 6.037
+    },
+    {
+     "metin": "bekliyorlarmış.",
+     "bas": 6.072,
+     "son": 7.047
+    }
+   ]
+  },
+  {
+   "id": "s4",
+   "sure": 5.48,
+   "kelimeler": [
+    {
+     "metin": "Yani",
+     "bas": 0.058,
+     "son": 0.337
+    },
+    {
+     "metin": "üç",
+     "bas": 0.36,
+     "son": 0.488
+    },
+    {
+     "metin": "saniyelik",
+     "bas": 0.522,
+     "son": 0.952
+    },
+    {
+     "metin": "hafıza",
+     "bas": 1.01,
+     "son": 1.347
+    },
+    {
+     "metin": "balıkta",
+     "bas": 1.393,
+     "son": 1.73
+    },
+    {
+     "metin": "değil,",
+     "bas": 1.776,
+     "son": 2.055
+    },
+    {
+     "metin": "bu",
+     "bas": 2.229,
+     "son": 2.334
+    },
+    {
+     "metin": "lafı",
+     "bas": 2.392,
+     "son": 2.624
+    },
+    {
+     "metin": "yayanlarda.",
+     "bas": 2.659,
+     "son": 3.355
+    },
+    {
+     "metin": "Takip",
+     "bas": 3.506,
+     "son": 3.936
+    },
+    {
+     "metin": "et,",
+     "bas": 4.005,
+     "son": 4.203
+    },
+    {
+     "metin": "cahil",
+     "bas": 4.319,
+     "son": 4.69
+    },
+    {
+     "metin": "kalma!",
+     "bas": 4.76,
+     "son": 5.271
+    }
+   ]
+  }
+ ]
+}

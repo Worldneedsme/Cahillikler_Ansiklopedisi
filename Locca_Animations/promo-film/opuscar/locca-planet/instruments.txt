@@ -1,0 +1,15 @@
+cajon
+frame_drum
+glass
+glockenspiel
+hand_chimes
+harp
+jazz_bass
+kalimba
+marimba
+shaker
+sus_cymbal
+vibraphone
+vibraphone_bowed
+woodblock
+Samples (CC0): FreePats project (freepats.zenvoid.org), Karoryfer Samples / sfzinstruments, Versilian Community Sample Library (Versilian Studios)

@@ -1,0 +1,206 @@
+<title>Locca Uzay Storyboard</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,800&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  /* Layout: a production sheet. Two films stacked, each = one strip of 9:16 frames, then its shot list; a comparison closes the page. */
+  :root {
+    --bg: #eef0f2; --surface: #ffffff; --ink: #16191d; --muted: #5d6670; --line: #d5dae0;
+    --accent: #e8590c; --accent-soft: #fde4d4;
+    --display: "Bricolage Grotesque", "Instrument Sans", system-ui, sans-serif;
+    --body: "Instrument Sans", system-ui, -apple-system, sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+    --bg: #121418; --surface: #1b1e24; --ink: #eceef1; --muted: #9aa3ad; --line: #2c3139; --accent: #ff7a2e; --accent-soft: #3a2416; color-scheme: dark } }
+  :root[data-theme="dark"] { --bg: #121418; --surface: #1b1e24; --ink: #eceef1; --muted: #9aa3ad; --line: #2c3139; --accent: #ff7a2e; --accent-soft: #3a2416; color-scheme: dark }
+  body { background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 15px; line-height: 1.55;
+    padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 40px 64px; }
+  .wrap { max-width: 1120px; margin: 0 auto; display: flex; flex-direction: column; gap: 56px; }
+  header { display: flex; flex-direction: column; gap: 12px; }
+  .kicker { font-family: var(--mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+  h1 { font-family: var(--display); font-weight: 800; font-size: clamp(32px, 5vw, 52px); line-height: 1.05; letter-spacing: -.02em; margin: 0; text-wrap: balance; }
+  h1 em { font-style: normal; color: var(--accent); }
+  .lede { max-width: 68ch; color: var(--muted); margin: 0; }
+  .specs { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip { font-family: var(--mono); font-size: 12px; padding: 4px 10px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); }
+  section.film { display: flex; flex-direction: column; gap: 20px; }
+  .film-head { display: grid; grid-template-columns: auto 1fr; gap: 6px 18px; align-items: baseline; }
+  .film-head .letter { grid-row: span 2; font-family: var(--display); font-weight: 800; font-size: 64px; line-height: .9; color: var(--accent); }
+  h2 { font-family: var(--display); font-weight: 800; font-size: 28px; letter-spacing: -.01em; margin: 0; text-wrap: balance; }
+  .film-head p { margin: 0; color: var(--muted); max-width: 72ch; }
+  .strip { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 12px; }
+  @media (max-width: 760px) { .strip { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  figure { margin: 0; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+  figure svg { width: 100%; height: auto; aspect-ratio: 9 / 16; border-radius: 10px; display: block; max-width: 100%; }
+  figcaption { font-size: 13px; line-height: 1.35; }
+  figcaption b { font-family: var(--mono); font-weight: 500; font-size: 12px; color: var(--accent); display: block; }
+  .tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; min-width: 680px; font-size: 14px; }
+  th, td { text-align: left; vertical-align: top; padding: 10px 14px; border-bottom: 1px solid var(--line); }
+  tr:last-child td { border-bottom: 0; }
+  th { font-family: var(--mono); font-weight: 500; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+  td.t { font-family: var(--mono); font-size: 12.5px; white-space: nowrap; color: var(--accent); font-variant-numeric: tabular-nums; }
+  .notes { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
+  .note { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; min-width: 0; }
+  .note h3 { font-family: var(--mono); font-weight: 500; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 0 0 6px; }
+  .note p, .note ul { margin: 0; }
+  .note ul { padding-left: 18px; }
+  .note.warn { border-color: var(--accent); background: var(--accent-soft); }
+  .verdict { background: var(--surface); border-left: 4px solid var(--accent); border-radius: 4px 12px 12px 4px; padding: 18px 20px; max-width: 76ch; }
+  .verdict p { margin: 0 0 8px; } .verdict p:last-child { margin: 0; }
+</style>
+
+<div class="wrap">
+  <header>
+    <span class="kicker">Locca · B2C kampanya · 21 Ekim 2026</span>
+    <h1>Uzay ve 3D dünya: <em>iki film</em>, bir karar</h1>
+    <p class="lede">İki konsept, lemo-opuscar kütüphanesindeki iki stile dayanıyor: Low-poly Island ve Satellite Briefing. İkisi de aynı hikâyeyi anlatıyor: yereli keşfet, damga ve puan topla, ödülü kazan. Kareler kaba eskiz; amaç kurguyu ve tonu görmek.</p>
+    <div class="specs">
+      <span class="chip">~15 sn</span><span class="chip">9:16 Reels / TikTok</span><span class="chip">TR · EN · RU</span><span class="chip">Sözsüz orta, sadece kapanış metni</span><span class="chip">60 fps · −14 LUFS</span>
+    </div>
+  </header>
+
+  <!-- ===================== A ===================== -->
+  <section class="film" id="a">
+    <div class="film-head">
+      <span class="letter">A</span>
+      <h2>Minik Alanya gezegeni</h2>
+      <p>Uzay boşluğunda yüzen, köşeli bloklardan küçük bir Alanya. Mekânlar birer nota çalarak yerden biter, ziyaretler gece ışık olarak yanar, puanlar adanın etrafında bir halkaya dönüşür. Kamera izometrik ve perspektifsiz; her şey bir maket gibi.</p>
+    </div>
+    <div class="strip" id="strip-a"></div>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Zaman</th><th>Görüntü</th><th>Ses</th><th>Metin</th></tr></thead>
+      <tbody>
+        <tr><td class="t">0.0–2.0</td><td>Mor-lacivert boşluk, yıldızlar. Tek bir altıgen karo aşağıdan yükselip yaylanarak oturuyor; üstünde turuncu Locca pini. Karo yüzeyi kırarken küçük bir sıçrama halkası.</td><td>Alçak bir drone ve tek bir çan notası: filmin motifi.</td><td>—</td></tr>
+        <tr><td class="t">2.0–5.0</td><td>Ada büyüyor: kum ve çimen karolar yükseliyor, köşeli bir Kızıl Kule çıkıyor. Üç mekân sırayla düşüp zıplayarak yerine oturuyor: kafe (mercan çatı), tatlıcı (pembe), restoran. Kamera yavaşça adanın etrafında dönüyor.</td><td>Her parça bir nota: kalimba, vibrafon, tahta blok, pentatonik. Resim melodiyi yazıyor.</td><td>—</td></tr>
+        <tr><td class="t">5.0–8.0</td><td>Kafenin önünde tilki duruyor (sabit poz, kartondan bir figür gibi). Mekânlar arasında turuncu bir rota çizgisi parlıyor. Her mekândan yukarı doğru bir damga diski ve küçük turuncu bir puan kristali süzülüyor. Palm &amp; Bean'in diskinde 7/8.</td><td>Kristaller cam "tink" sesiyle, damgalar tahta tıkırtısıyla çıkıyor.</td><td>—</td></tr>
+        <tr><td class="t">8.0–11.0</td><td>Işık saati: gün akşama, akşam geceye dönüyor. Ziyaret edilen mekânların pencereleri tek tek sıcak turuncu yanıyor. Kristaller adanın etrafında bir yörünge halkası oluşturuyor; halkanın içinde sayı 105'e oturuyor.</td><td>Her pencere bir "whump" ve uğultuyla yanıyor; halka tamamlanınca akor çözülüyor.</td><td>105</td></tr>
+        <tr><td class="t">11.0–13.0</td><td>Saf ortografik zoom-out: ada bir noktaya küçülüyor. Uzayda başka küçük adalar da beliriyor (başka şehirler), içlerinden biri turuncu ışıldıyor.</td><td>Müzik inceliyor, tek motif notası geri dönüyor.</td><td>—</td></tr>
+        <tr><td class="t">13.0–15.0</td><td>Kapanış: başlık harfleri karolar gibi suyun altından tek tek yükselip oturuyor, altında Locca logosu.</td><td>Son nota ve çan.</td><td>YERELİ KEŞFET.<br>ÖDÜLLERİ KAZAN.</td></tr>
+      </tbody>
+    </table></div>
+    <div class="notes">
+      <div class="note"><h3>Teknik</h3><p>three.js sahne, HyperFrames içinde (three adaptörü var). Altıgen karolar, düz gölgelendirme, ortam kapatması (GTAO), gökyüzü sisi ve bloom. Müzik olaylardan üretiliyor: her parçanın inişi bir nota.</p></div>
+      <div class="note"><h3>Tilki</h3><p>Stilin kendi karakteri yok. Tilkiyi sahnede ayakta duran düz bir karton figür olarak koyarız; hareket etmez, sadece poz değiştirir. Daha önce kayan çıkartmaları beğenmemiştin, o yüzden yürümüyor.</p></div>
+      <div class="note"><h3>İş yükü</h3><p>En ağır seçenek: sıfırdan 3D motor kurulumu, ışık ve renk ayarı. İlk taslak riso klibinden belirgin şekilde uzun sürer. Kullanıcıdan bir şey gerekmez.</p></div>
+    </div>
+  </section>
+
+  <!-- ===================== B ===================== -->
+  <section class="film" id="b">
+    <div class="film-head">
+      <span class="letter">B</span>
+      <h2>Yörüngeden sokağa</h2>
+      <p>Gerçek uydu görüntüsüyle uzaydan Alanya'ya tek, kesintisiz bir dalış. Görüntü bir analistin grisine çekiliyor, üstüne ince beyaz ölçü çizgileri çiziliyor. Locca bir "keşif operasyonu" gibi anlatılıyor: hedefe kilitlen, rotayı ölç, puanı oku.</p>
+    </div>
+    <div class="strip" id="strip-b"></div>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Zaman</th><th>Görüntü</th><th>Ses</th><th>Metin</th></tr></thead>
+      <tbody>
+        <tr><td class="t">0.0–2.5</td><td>Siyah uzay, Dünya'nın kenarı gerçek renkte. Ekranda bir hedef nişangâhı arıyor; köşede yükseklik göstergesi: ALT 700 km.</td><td>Yörünge uğultusu, telsiz hışırtısı, tek bir "ping".</td><td>ALT 700 km</td></tr>
+        <tr><td class="t">2.5–6.0</td><td>Dalış: Türkiye, Akdeniz kıyısı, Alanya yarımadası. Renk griye dönüyor, yükseklik ve ölçek çubuğu hızla akıyor. Nişangâh kalenin olduğu yarımadaya kilitleniyor.</td><td>Yükselen riser, hızlanan tıkırtılar, kilitlenmede ping.</td><td>ALANYA · 36.54°K 32.00°D</td></tr>
+        <tr><td class="t">6.0–9.0</td><td>Kilitli kuşbakışı kare, yavaş kayma. Bir tarama çizgisi geçerken üstüne Locca'nın basılı haritası düşüyor; üç mekân köşeli parantezlerle işaretleniyor: Kale Sofrası, Şeker Fırın, Palm &amp; Bean.</td><td>Tarama "şşşt" sesi; her parantez bir servo tıkırtısı.</td><td>Mekân adları</td></tr>
+        <tr><td class="t">9.0–12.0</td><td>Mesafe çizgisi: çentikli ince bir çizgi mekândan mekâna uzuyor; her durakta turuncu okuma beliriyor: +12, +40, +45 PUAN. Palm &amp; Bean'de 7/8 DAMGA.</td><td>Mandal sesiyle uzayan çizgi; her okuma perdeli bir vuruşla iniyor.</td><td>+12 · +40 · +45 PUAN<br>7/8 DAMGA</td></tr>
+        <tr><td class="t">12.0–14.0</td><td>Hikâyenin döndüğü yerde renk geri geliyor: grinin içinde sadece Palm &amp; Bean'in bloğu gerçek renge dönüyor. Sağ üçte büyük okuma: 105 PUAN.</td><td>Kısa bir sessizlik, sonra filmin en ağır vuruşu.</td><td>105 PUAN</td></tr>
+        <tr><td class="t">14.0–16.0</td><td>Yörüngeye geri tırmanış; nişangâhın köşeli parantezleri açılıp başlık kartını çerçeveliyor. Tilki burada, kartın yanında tek pozla.</td><td>Bas nabzı ve kapanış.</td><td>YERELİ KEŞFET.<br>ÖDÜLLERİ KAZAN.</td></tr>
+      </tbody>
+    </table></div>
+    <div class="notes">
+      <div class="note warn"><h3>Görüntü kısıtı</h3><p>Ücretsiz ve lisansı temiz uydu görüntüsü (Sentinel-2, Landsat) en fazla 10 m çözünürlükte. Bu çözünürlükte Alanya'nın kıyısı, kalesi ve limanı net görünür ama tek tek sokaklar ve bir kafenin çatısı seçilmez. Son yakınlaşmayı basılı Locca haritası taşır. Google Earth, Bing ve Maxar görüntüleri kullanılamaz.</p></div>
+      <div class="note"><h3>Gerçek ve kurgu</h3><p>Zemin gerçek, mekânlar uydurma. Pinleri makul sokaklara koyarız, ama ekranda "ölçülmüş" gibi duran işaretler kurgu olacak. Sondaki künyeye "Contains modified Copernicus Sentinel data 2025" yazılır.</p></div>
+      <div class="note"><h3>Ton ve tilki</h3><p>Ciddi bir istihbarat brifingi tonu, eğlenceli bir sadakat uygulamasıyla çelişip esprili bir zıtlık yaratabilir. Tilki zeminde yer alamaz (stil kuralı), yalnızca kapanışta görünür.</p></div>
+    </div>
+  </section>
+
+  <section class="film">
+    <h2>Karşılaştırma</h2>
+    <div class="tablewrap"><table>
+      <thead><tr><th></th><th>A · Minik gezegen</th><th>B · Yörüngeden sokağa</th></tr></thead>
+      <tbody>
+        <tr><td><b>Duygu</b></td><td>Sıcak, oyunsu, büyülü bir maket</td><td>Sinematik, ciddi, "operasyon" havası</td></tr>
+        <tr><td><b>Locca'yı anlatma</b></td><td>Keşif, damga, puan ve ödül adım adım görünüyor</td><td>Rota ve puan okumaları çok net; damga daha az</td></tr>
+        <tr><td><b>Tilki</b></td><td>Sahnenin içinde, sabit pozlarla</td><td>Sadece kapanışta</td></tr>
+        <tr><td><b>Alanya'ya bağ</b></td><td>Stilize: Kızıl Kule ve kıyı</td><td>Gerçek: uydudan Alanya'nın kendisi</td></tr>
+        <tr><td><b>Dil sürümleri</b></td><td>Kolay: sadece kapanış metni</td><td>Orta: etiketler ve okumalar da çevrilmeli</td></tr>
+        <tr><td><b>Risk</b></td><td>3D kurulum süresi, render süresi</td><td>Görüntü çözünürlüğü, lisans, gerçek/kurgu karışımı</td></tr>
+        <tr><td><b>Seri olarak</b></td><td>Her gönderide adaya yeni bir mekân eklenir</td><td>Her gönderide başka bir semte dalış</td></tr>
+      </tbody>
+    </table></div>
+    <div class="verdict">
+      <p><b>Önerim A.</b> Mottoyu en doğrudan anlatan ve tilkiyi sahnede tutan konsept bu. Ayrıca bir seriye dönüşebilir: ada her gönderide yeni bir mekânla büyür.</p>
+      <p>B daha "vay" dedirten bir açılışa sahip, ama asıl hikâyeyi (damga ve puan) gerçek görüntünün çözünürlüğü yetmediği için çizilmiş bir harita katmanına bırakıyor.</p>
+    </div>
+  </section>
+</div>
+
+<script>
+  // Rough storyboard frames, drawn as SVG (viewBox 90 × 160). Sketches only: they show framing and beats, not final art.
+  const NS = "http://www.w3.org/2000/svg";
+  const svg = (inner, defs = "") => `<svg viewBox="0 0 90 160" xmlns="${NS}" role="img">${defs ? `<defs>${defs}</defs>` : ""}${inner}</svg>`;
+  // a seeded random, so the frames are the same on every load
+  let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  const stars = (n, col = "#fff") => Array.from({ length: n }, () => `<circle cx="${(rnd() * 90).toFixed(1)}" cy="${(rnd() * 160).toFixed(1)}" r="${(0.3 + rnd() * 0.5).toFixed(2)}" fill="${col}" opacity="${(0.4 + rnd() * 0.6).toFixed(2)}"/>`).join("");
+  // an isometric hex column: top face + two visible sides
+  function hex(cx, cy, r, h, top, side) {
+    const pts = Array.from({ length: 6 }, (_, i) => { const a = Math.PI / 6 + i * Math.PI / 3; return [cx + r * Math.cos(a), cy + r * Math.sin(a) * 0.55]; });
+    const P = (p) => p.map((q) => q.map((v) => v.toFixed(1)).join(",")).join(" ");
+    const s1 = [pts[0], pts[1], [pts[1][0], pts[1][1] + h], [pts[0][0], pts[0][1] + h]];
+    const s2 = [pts[1], pts[2], [pts[2][0], pts[2][1] + h], [pts[1][0], pts[1][1] + h]];
+    const s3 = [pts[5], pts[0], [pts[0][0], pts[0][1] + h], [pts[5][0], pts[5][1] + h]];
+    return `<polygon points="${P(s3)}" fill="${side}" opacity=".85"/><polygon points="${P(s1)}" fill="${side}"/><polygon points="${P(s2)}" fill="${side}" opacity=".7"/><polygon points="${P(pts)}" fill="${top}"/>`;
+  }
+  const house = (x, y, wall, roof) => `<rect x="${x - 4}" y="${y - 6}" width="8" height="6" fill="${wall}"/><polygon points="${x - 5},${y - 6} ${x},${y - 10} ${x + 5},${y - 6}" fill="${roof}"/>`;
+  const tower = (x, y) => `<rect x="${x - 3.5}" y="${y - 14}" width="7" height="14" fill="#c9705a"/><rect x="${x - 4.5}" y="${y - 16}" width="9" height="2.5" fill="#b35e4a"/>`;
+  function island(cx, cy, s = 1, night = false) {
+    const g = night ? ["#5b6a9a", "#3d4670"] : ["#a9d18e", "#7fa86a"], sand = night ? ["#8a86a8", "#625e80"] : ["#f2dfae", "#d9c08a"];
+    let o = "";
+    [[0, 0, g], [-13, 4, sand], [13, 4, g], [-6, 9, g], [7, 9, sand], [0, -6, g], [-13, -4, g], [13, -4, sand]].forEach(([dx, dy, c]) => { o += hex(cx + dx * s, cy + dy * s, 7.4 * s, 4 * s, c[0], c[1]); });
+    return o;
+  }
+  const A = [
+    ["0–2", "Boşlukta tek karo yükselir, üstünde Locca pini.", svg(
+      `<rect width="90" height="160" fill="url(#va)"/>${stars(40)}<ellipse cx="45" cy="92" rx="14" ry="4" fill="none" stroke="#bcd" stroke-width=".6" opacity=".7"/>${hex(45, 86, 9, 6, "#a9d18e", "#7fa86a")}<path d="M45 72 c-4 0 -6 3 -6 6 c0 4 6 9 6 9 c0 0 6 -5 6 -9 c0 -3 -2 -6 -6 -6z" fill="#ff6a1a"/><circle cx="45" cy="78" r="2" fill="#fff"/>`,
+      `<linearGradient id="va" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1d1840"/><stop offset="1" stop-color="#4a3a78"/></linearGradient>`)],
+    ["2–5", "Ada büyür; kule ve üç mekân notalarla düşer.", svg(
+      `<rect width="90" height="160" fill="url(#vb)"/>${stars(18)}${island(45, 90)}${tower(45, 84)}${house(32, 92, "#fff3e6", "#ef7d6a")}${house(58, 92, "#fff3e6", "#e88aa8")}${house(39, 101, "#fff3e6", "#6c93c9")}<path d="M58 66 v12" stroke="#fff" stroke-width=".8" stroke-dasharray="2 1.5"/><text x="61" y="70" font-size="5" fill="#fff" font-family="monospace">♪</text>`,
+      `<linearGradient id="vb" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a3170"/><stop offset="1" stop-color="#b9a7d8"/></linearGradient>`)],
+    ["5–8", "Turuncu rota, damga diskleri ve puan kristalleri.", svg(
+      `<rect width="90" height="160" fill="url(#vc)"/>${stars(10)}${island(45, 92)}${tower(45, 86)}${house(32, 94, "#fff3e6", "#ef7d6a")}${house(58, 94, "#fff3e6", "#e88aa8")}${house(39, 103, "#fff3e6", "#6c93c9")}<path d="M32 96 Q38 104 39 104 T58 96" fill="none" stroke="#ff6a1a" stroke-width="1.4"/><polygon points="58,74 61,78 58,82 55,78" fill="#ff8a3d"/><polygon points="32,76 35,80 32,84 29,80" fill="#ff8a3d"/><circle cx="39" cy="80" r="4" fill="#fff" stroke="#ff6a1a" stroke-width=".8"/><text x="39" y="81.6" font-size="3.6" text-anchor="middle" fill="#ff6a1a" font-family="monospace">7/8</text><rect x="22" y="96" width="5" height="9" rx="1" fill="#ff7a2e"/><circle cx="24.5" cy="95" r="2.6" fill="#ff7a2e"/>`,
+      `<linearGradient id="vc" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4d4a8c"/><stop offset="1" stop-color="#e9c9c4"/></linearGradient>`)],
+    ["8–11", "Gece: pencereler yanar, kristaller 105'lik halka olur.", svg(
+      `<rect width="90" height="160" fill="#14163a"/>${stars(45)}${island(45, 92, 1, true)}${house(32, 94, "#ffb35c", "#3d4670")}${house(58, 94, "#ffb35c", "#3d4670")}${house(39, 103, "#ffb35c", "#3d4670")}<ellipse cx="45" cy="90" rx="32" ry="11" fill="none" stroke="#ff7a2e" stroke-width="1.2" stroke-dasharray="1.5 2.5"/><text x="45" y="62" font-size="12" text-anchor="middle" fill="#ff8a3d" font-family="sans-serif" font-weight="800">105</text>`)],
+    ["11–13", "Zoom-out: ada bir noktaya, uzayda başka adalar.", svg(
+      `<rect width="90" height="160" fill="#14163a"/>${stars(70)}${[[20, 40], [70, 55], [30, 120], [66, 130], [52, 30]].map(([x, y]) => hex(x, y, 3, 1.6, "#5b6a9a", "#3d4670")).join("")}${hex(45, 82, 4, 2, "#ff8a3d", "#c45a1e")}<circle cx="45" cy="82" r="9" fill="#ff7a2e" opacity=".18"/>`)],
+    ["13–15", "Başlık karo gibi yükselir, Locca logosu.", svg(
+      `<rect width="90" height="160" fill="url(#ve)"/>${stars(20)}<text x="45" y="70" font-size="8.5" text-anchor="middle" fill="#fff" font-family="sans-serif" font-weight="800">YERELİ KEŞFET.</text><text x="45" y="81" font-size="8.5" text-anchor="middle" fill="#ffb27a" font-family="sans-serif" font-weight="800">ÖDÜLLERİ KAZAN.</text><rect x="30" y="94" width="30" height="10" rx="5" fill="#ff6a1a"/><text x="45" y="101.4" font-size="6" text-anchor="middle" fill="#fff" font-family="sans-serif" font-weight="700">locca</text>`,
+      `<linearGradient id="ve" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1d1840"/><stop offset="1" stop-color="#6a4f8f"/></linearGradient>`)],
+  ];
+  // satellite frames: the ground is fractal noise graded to grey; white hairlines and one orange reading
+  const ground = (id, f = 0.05, light = 0) => `<filter id="${id}"><feTurbulence type="fractalNoise" baseFrequency="${f}" numOctaves="4" seed="3"/><feColorMatrix type="matrix" values="0.33 0.33 0.33 0 ${light} 0.33 0.33 0.33 0 ${light} 0.33 0.33 0.33 0 ${light + 0.02} 0 0 0 0 1"/></filter>`;
+  const brackets = (x, y, w, h, c = "#f2f5f6") => `<path d="M${x} ${y + 4} V${y} H${x + 4} M${x + w - 4} ${y} H${x + w} V${y + 4} M${x + w} ${y + h - 4} V${y + h} H${x + w - 4} M${x + 4} ${y + h} H${x} V${y + h - 4}" fill="none" stroke="${c}" stroke-width=".8"/>`;
+  const mono = (x, y, s, t, c = "#f2f5f6", a = "start") => `<text x="${x}" y="${y}" font-size="${s}" fill="${c}" font-family="monospace" text-anchor="${a}">${t}</text>`;
+  const sea = `<path d="M0 0 H90 V58 C70 64 60 52 48 60 C40 66 30 58 20 66 C12 72 6 66 0 70 Z" fill="#1d2933" opacity=".85"/>`;
+  const B = [
+    ["0–2.5", "Yörünge: Dünya'nın kenarı, nişangâh arıyor.", svg(
+      `<rect width="90" height="160" fill="#05070b"/>${stars(30, "#cfd8e3")}<circle cx="45" cy="210" r="120" fill="url(#earth)"/><circle cx="45" cy="210" r="121.5" fill="none" stroke="#8fc7ff" stroke-width="1.2" opacity=".6"/>${brackets(30, 66, 30, 30)}${mono(6, 12, 4.2, "ALT 700 km")}${mono(6, 154, 3.6, "Copernicus Sentinel-2", "#8a96a3")}`,
+      `<radialGradient id="earth" cx=".4" cy=".2" r=".8"><stop offset="0" stop-color="#3f7fb8"/><stop offset=".55" stop-color="#2b5a83"/><stop offset="1" stop-color="#0d1c2c"/></radialGradient>`)],
+    ["2.5–6", "Dalış: Akdeniz kıyısı, kilit Alanya'da.", svg(
+      `<rect width="90" height="160" filter="url(#g1)"/>${sea}<path d="M38 60 C42 50 52 50 54 58" fill="#3a4148" opacity=".9"/>${brackets(34, 44, 24, 22)}<circle cx="46" cy="55" r="1" fill="#f2f5f6"/>${mono(6, 12, 4.2, "ALT 12 km")}${mono(60, 154, 3.6, "|—— 2 km")}${mono(45, 76, 3.6, "ALANYA", "#f2f5f6", "middle")}`,
+      ground("g1", 0.06, 0.08))],
+    ["6–9", "Basılı Locca haritası taramayla düşer; üç parantez.", svg(
+      `<rect width="90" height="160" filter="url(#g2)"/><rect x="0" y="0" width="90" height="96" fill="#2e70ce" opacity=".14"/><path d="M0 96 H90" stroke="#f2f5f6" stroke-width=".6" opacity=".7"/>${brackets(14, 40, 16, 14)}${brackets(56, 52, 16, 14)}${brackets(32, 86, 16, 14)}${mono(22, 37, 3.4, "Kale Sofrası", "#f2f5f6", "middle")}${mono(64, 49, 3.4, "Şeker Fırın", "#f2f5f6", "middle")}${mono(40, 110, 3.4, "Palm &amp; Bean", "#f2f5f6", "middle")}`,
+      ground("g2", 0.09, 0.06))],
+    ["9–12", "Mesafe çizgisi mekândan mekâna; +12 · +40 · +45.", svg(
+      `<rect width="90" height="160" filter="url(#g3)"/><path d="M22 47 L64 59 L40 93" fill="none" stroke="#f2f5f6" stroke-width=".9"/>${[[30, 49], [38, 51.5], [46, 54], [56, 57], [58, 68], [52, 76], [46, 84]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r=".7" fill="#f2f5f6"/>`).join("")}${mono(24, 44, 4.4, "+12", "#ff8a3d")}${mono(66, 56, 4.4, "+40", "#ff8a3d")}${mono(43, 100, 4.4, "+45", "#ff8a3d")}${mono(22, 108, 3.4, "7/8 DAMGA", "#ff8a3d")}`,
+      ground("g3", 0.09, 0.06))],
+    ["12–14", "Renk sadece Palm &amp; Bean'e döner; 105 PUAN.", svg(
+      `<rect width="90" height="160" filter="url(#g4)"/><rect x="32" y="84" width="16" height="14" fill="#c98f5a"/><rect x="34" y="86" width="5" height="5" fill="#7fa86a"/>${brackets(30, 82, 20, 18, "#ff8a3d")}${mono(62, 74, 3.6, "PUAN", "#f2f5f6")}<text x="86" y="92" font-size="15" text-anchor="end" fill="#ff8a3d" font-family="sans-serif" font-weight="300">105</text>`,
+      ground("g4", 0.1, 0.04))],
+    ["14–16", "Yörüngeye dönüş; parantezler başlığı çerçeveler.", svg(
+      `<rect width="90" height="160" fill="#05070b"/>${stars(30, "#cfd8e3")}<circle cx="45" cy="230" r="120" fill="#2b5a83"/>${brackets(8, 52, 74, 46, "#f2f5f6")}<text x="45" y="72" font-size="7.6" text-anchor="middle" fill="#f2f5f6" font-family="sans-serif" font-weight="800">YERELİ KEŞFET.</text><text x="45" y="82" font-size="7.6" text-anchor="middle" fill="#ff8a3d" font-family="sans-serif" font-weight="800">ÖDÜLLERİ KAZAN.</text><rect x="34" y="88" width="22" height="7" rx="3.5" fill="#ff6a1a"/><text x="45" y="93.3" font-size="4.4" text-anchor="middle" fill="#fff" font-family="sans-serif" font-weight="700">locca</text><rect x="64" y="104" width="10" height="14" rx="2" fill="#ff7a2e"/><circle cx="69" cy="102" r="4" fill="#ff7a2e"/>`)],
+  ];
+  const fill = (id, frames) => { document.getElementById(id).innerHTML = frames.map(([t, cap, s]) => `<figure>${s}<figcaption><b>${t} sn</b>${cap}</figcaption></figure>`).join(""); };
+  fill("strip-a", A); fill("strip-b", B);
+</script>

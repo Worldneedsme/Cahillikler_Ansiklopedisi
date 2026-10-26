@@ -1,0 +1,13 @@
+claps
+dan_tranh
+drum_kit
+electric_bass
+electric_guitar
+glockenspiel
+gran_cassa
+tenor_sax_stac
+trumpet_stac
+woodblock
+xylophone
+Drums: "MuldjordKit" by Lars Muldjord (drumgizmo.org), FreePats version, licensed under CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/)
+Samples (CC0): FreePats project (freepats.zenvoid.org), VS Chamber Orchestra: Community Edition (Versilian Studios), Versilian Community Sample Library (Versilian Studios)

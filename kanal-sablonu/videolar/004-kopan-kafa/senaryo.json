@@ -1,0 +1,41 @@
+{
+  "id": "004-kopan-kafa",
+  "kitap_no": 24,
+  "saglayici": "elevenlabs",
+  "ses": "X5CGTTx85DmIuopBFHlz",
+  "ses_adi": "Nikole – Natural, Clear and Light",
+  "model": "eleven_multilingual_v2",
+  "ses_ayari": {
+    "stability": 0.38,
+    "similarity_boost": 0.85,
+    "style": 0.4,
+    "use_speaker_boost": true
+  },
+  "sahneler": [
+    {
+      "id": "s0",
+      "tip": "kanca",
+      "vo": "Giyotinle kesilen bir kafa, birkaç saniye daha seni görebilir mi?"
+    },
+    {
+      "id": "s1",
+      "tip": "ters-kose",
+      "vo": "Bazı tanıklara göre evet. Göz kırpmalar ve bakışlar beş ila on üç saniye sürmüş."
+    },
+    {
+      "id": "s2",
+      "tip": "aciklama",
+      "vo": "Bir de giyotini Fransız icadı sanıyoruz. Oysa İngiltere'de, Halifax'ta yüzyıllar önce benzeri kullanılıyormuş."
+    },
+    {
+      "id": "s3",
+      "tip": "bonus",
+      "vo": "Adını veren Doktor Guillotin ise giyotinle ölmedi. Omzundaki bir çıban yüzünden öldü."
+    },
+    {
+      "id": "s4",
+      "tip": "kapanis",
+      "vo": "Yani ne icat Fransız, ne de mucidi kurban. Takip et, cahil kalma!"
+    }
+  ]
+}
