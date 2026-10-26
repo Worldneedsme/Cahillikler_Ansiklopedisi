@@ -7,9 +7,10 @@ import json, os, subprocess, sys
 
 import numpy as np
 
+from ortam import FFMPEG
+
 SR = 48000
 MUZIK = 0.5  # müzik seviyesi (önceki 0.9, kullanıcı isteğiyle kısıldı; yaklaşık −5 dB)
-FFMPEG = r'C:\Users\Win10\tools\ffmpeg-8.1\bin\ffmpeg.exe'
 rng = np.random.default_rng(7)
 
 

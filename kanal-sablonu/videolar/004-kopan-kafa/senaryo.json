@@ -15,27 +15,37 @@
     {
       "id": "s0",
       "tip": "kanca",
-      "vo": "Giyotinle kesilen bir kafa, birkaç saniye daha seni görebilir mi?"
+      "vo": "Giyotinle kesilen bir kafa, birkaç saniye daha seni görebilir mi?",
+      "ekran": "Kesilen kafa / seni görebilir mi?",
+      "ikon": "👀"
     },
     {
       "id": "s1",
       "tip": "ters-kose",
-      "vo": "Bazı tanıklara göre evet. Göz kırpmalar ve bakışlar beş ila on üç saniye sürmüş."
+      "vo": "Bazı tanıklara göre evet. Göz kırpmalar ve bakışlar beş ila on üç saniye sürmüş.",
+      "ekran": "Tanıklara göre: / 5-13 SANİYE",
+      "ikon": "⏱️"
     },
     {
       "id": "s2",
       "tip": "aciklama",
-      "vo": "Bir de giyotini Fransız icadı sanıyoruz. Oysa İngiltere'de, Halifax'ta yüzyıllar önce benzeri kullanılıyormuş."
+      "vo": "Bir de giyotini Fransız icadı sanıyoruz. Oysa İngiltere'de, Halifax'ta yüzyıllar önce benzeri kullanılıyormuş.",
+      "ekran": "Giyotin Fransız icadı mı? / Halifax, İngiltere",
+      "ikon": "🇬🇧"
     },
     {
       "id": "s3",
       "tip": "bonus",
-      "vo": "Adını veren Doktor Guillotin ise giyotinle ölmedi. Omzundaki bir çıban yüzünden öldü."
+      "vo": "Adını veren Doktor Guillotin ise giyotinle ölmedi. Omzundaki bir çıban yüzünden öldü.",
+      "ekran": "Asıl ilginci… / ÇIBANDAN ÖLDÜ",
+      "ikon": "🩹"
     },
     {
       "id": "s4",
       "tip": "kapanis",
-      "vo": "Yani ne icat Fransız, ne de mucidi kurban. Takip et, cahil kalma!"
+      "vo": "Yani ne icat Fransız, ne de mucidi kurban. Takip et, cahil kalma!",
+      "ekran": "Ne icat Fransız, / ne mucit kurban",
+      "ikon": "🤷"
     }
   ]
 }

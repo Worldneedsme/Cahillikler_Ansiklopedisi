@@ -2,336 +2,336 @@
  "sahneler": [
   {
    "id": "s0",
-   "sure": 3.901,
+   "sure": 3.808,
    "kelimeler": [
     {
      "metin": "Giyotinle",
-     "bas": 0.058,
+     "bas": 0.0,
      "son": 0.557
     },
     {
      "metin": "kesilen",
-     "bas": 0.604,
-     "son": 1.01
+     "bas": 0.615,
+     "son": 1.033
     },
     {
      "metin": "bir",
-     "bas": 1.057,
-     "son": 1.138
+     "bas": 1.091,
+     "son": 1.184
     },
     {
      "metin": "kafa,",
-     "bas": 1.173,
-     "son": 1.544
+     "bas": 1.219,
+     "son": 1.579
     },
     {
      "metin": "birkaç",
-     "bas": 1.579,
-     "son": 1.881
+     "bas": 1.614,
+     "son": 1.962
     },
     {
      "metin": "saniye",
-     "bas": 1.95,
-     "son": 2.287
+     "bas": 2.032,
+     "son": 2.322
     },
     {
      "metin": "daha",
-     "bas": 2.345,
-     "son": 2.554
+     "bas": 2.368,
+     "son": 2.531
     },
     {
      "metin": "seni",
-     "bas": 2.601,
-     "son": 2.821
+     "bas": 2.577,
+     "son": 2.786
     },
     {
      "metin": "görebilir",
-     "bas": 2.868,
-     "son": 3.379
+     "bas": 2.833,
+     "son": 3.309
     },
     {
      "metin": "mi?",
-     "bas": 3.471,
-     "son": 3.692
+     "bas": 3.39,
+     "son": 3.808
     }
    ]
   },
   {
    "id": "s1",
-   "sure": 5.433,
+   "sure": 5.062,
    "kelimeler": [
     {
      "metin": "Bazı",
-     "bas": 0.058,
-     "son": 0.395
+     "bas": 0.0,
+     "son": 0.348
     },
     {
      "metin": "tanıklara",
-     "bas": 0.453,
-     "son": 0.964
+     "bas": 0.395,
+     "son": 0.882
     },
     {
      "metin": "göre",
-     "bas": 1.01,
-     "son": 1.219
+     "bas": 0.929,
+     "son": 1.126
     },
     {
      "metin": "evet.",
-     "bas": 1.242,
-     "son": 1.683
+     "bas": 1.149,
+     "son": 1.544
     },
     {
      "metin": "Göz",
-     "bas": 1.962,
-     "son": 2.194
+     "bas": 1.753,
+     "son": 1.985
     },
     {
      "metin": "kırpmalar",
-     "bas": 2.276,
-     "son": 2.786
+     "bas": 2.055,
+     "son": 2.589
     },
     {
      "metin": "ve",
-     "bas": 2.833,
-     "son": 2.914
+     "bas": 2.647,
+     "son": 2.717
     },
     {
      "metin": "bakışlar",
-     "bas": 2.961,
-     "son": 3.471
+     "bas": 2.763,
+     "son": 3.239
     },
     {
      "metin": "beş",
-     "bas": 3.541,
-     "son": 3.715
+     "bas": 3.309,
+     "son": 3.518
     },
     {
      "metin": "ila",
-     "bas": 3.762,
-     "son": 3.924
+     "bas": 3.588,
+     "son": 3.878
     },
     {
      "metin": "on",
-     "bas": 4.005,
-     "son": 4.122
+     "bas": 3.948,
+     "son": 4.076
     },
     {
      "metin": "üç",
-     "bas": 4.168,
-     "son": 4.261
+     "bas": 4.134,
+     "son": 4.203
     },
     {
      "metin": "saniye",
-     "bas": 4.307,
-     "son": 4.714
+     "bas": 4.25,
+     "son": 4.633
     },
     {
      "metin": "sürmüş.",
-     "bas": 4.76,
-     "son": 5.224
+     "bas": 4.679,
+     "son": 5.062
     }
    ]
   },
   {
    "id": "s2",
-   "sure": 8.313,
+   "sure": 7.349,
    "kelimeler": [
     {
      "metin": "Bir",
-     "bas": 0.035,
-     "son": 0.244
+     "bas": 0.0,
+     "son": 0.209
     },
     {
      "metin": "de",
-     "bas": 0.302,
+     "bas": 0.267,
      "son": 0.441
     },
     {
      "metin": "giyotini",
-     "bas": 0.522,
-     "son": 1.161
+     "bas": 0.511,
+     "son": 1.034
     },
     {
      "metin": "Fransız",
-     "bas": 1.335,
-     "son": 1.8
+     "bas": 1.103,
+     "son": 1.544
     },
     {
      "metin": "icadı",
-     "bas": 1.916,
-     "son": 2.403
+     "bas": 1.614,
+     "son": 2.055
     },
     {
      "metin": "sanıyoruz.",
-     "bas": 2.45,
-     "son": 3.1
+     "bas": 2.113,
+     "son": 2.728
     },
     {
      "metin": "Oysa",
-     "bas": 3.146,
-     "son": 3.483
+     "bas": 2.786,
+     "son": 3.111
     },
     {
      "metin": "İngiltere'de,",
-     "bas": 3.727,
-     "son": 4.679
+     "bas": 3.181,
+     "son": 3.994
     },
     {
      "metin": "Halifax'ta",
-     "bas": 4.725,
-     "son": 5.584
+     "bas": 4.04,
+     "son": 4.841
     },
     {
      "metin": "yüzyıllar",
-     "bas": 5.828,
-     "son": 6.385
+     "bas": 4.911,
+     "son": 5.491
     },
     {
      "metin": "önce",
-     "bas": 6.455,
-     "son": 6.629
+     "bas": 5.561,
+     "son": 5.735
     },
     {
      "metin": "benzeri",
-     "bas": 6.699,
-     "son": 7.082
+     "bas": 5.805,
+     "son": 6.176
     },
     {
      "metin": "kullanılıyormuş.",
-     "bas": 7.117,
-     "son": 8.022
+     "bas": 6.211,
+     "son": 7.349
     }
    ]
   },
   {
    "id": "s3",
-   "sure": 5.851,
+   "sure": 5.655,
    "kelimeler": [
     {
      "metin": "Adını",
-     "bas": 0.058,
-     "son": 0.325
+     "bas": 0.0,
+     "son": 0.313
     },
     {
      "metin": "veren",
-     "bas": 0.36,
-     "son": 0.604
+     "bas": 0.348,
+     "son": 0.627
     },
     {
      "metin": "Doktor",
-     "bas": 0.65,
-     "son": 0.975
+     "bas": 0.685,
+     "son": 1.068
     },
     {
      "metin": "Guillotin",
-     "bas": 1.045,
-     "son": 1.683
+     "bas": 1.126,
+     "son": 1.695
     },
     {
      "metin": "ise",
-     "bas": 1.892,
-     "son": 2.113
+     "bas": 1.776,
+     "son": 2.078
     },
     {
      "metin": "giyotinle",
-     "bas": 2.171,
-     "son": 2.694
+     "bas": 2.148,
+     "son": 2.81
     },
     {
      "metin": "ölmedi.",
-     "bas": 2.775,
-     "son": 3.262
+     "bas": 2.88,
+     "son": 3.449
     },
     {
      "metin": "Omzundaki",
-     "bas": 3.437,
-     "son": 3.982
+     "bas": 3.6,
+     "son": 4.169
     },
     {
      "metin": "bir",
-     "bas": 4.029,
-     "son": 4.133
+     "bas": 4.227,
+     "son": 4.366
     },
     {
      "metin": "çıban",
-     "bas": 4.18,
-     "son": 4.505
+     "bas": 4.401,
+     "son": 4.703
     },
     {
      "metin": "yüzünden",
-     "bas": 4.551,
-     "son": 5.027
+     "bas": 4.749,
+     "son": 5.156
     },
     {
      "metin": "öldü.",
-     "bas": 5.143,
-     "son": 5.596
+     "bas": 5.237,
+     "son": 5.655
     }
    ]
   },
   {
    "id": "s4",
-   "sure": 4.923,
+   "sure": 5.507,
    "kelimeler": [
     {
      "metin": "Yani",
-     "bas": 0.046,
-     "son": 0.499
+     "bas": 0.0,
+     "son": 0.534
     },
     {
      "metin": "ne",
-     "bas": 0.673,
-     "son": 0.801
+     "bas": 0.604,
+     "son": 0.767
     },
     {
      "metin": "icat",
-     "bas": 0.859,
-     "son": 1.207
+     "bas": 0.848,
+     "son": 1.161
     },
     {
      "metin": "Fransız,",
-     "bas": 1.265,
-     "son": 1.73
-    },
-    {
-     "metin": "ne",
-     "bas": 1.765,
+     "bas": 1.243,
      "son": 1.846
     },
     {
+     "metin": "ne",
+     "bas": 1.963,
+     "son": 2.09
+    },
+    {
      "metin": "de",
-     "bas": 1.881,
-     "son": 1.95
+     "bas": 2.137,
+     "son": 2.206
     },
     {
      "metin": "mucidi",
-     "bas": 1.997,
-     "son": 2.403
+     "bas": 2.253,
+     "son": 2.706
     },
     {
      "metin": "kurban.",
-     "bas": 2.461,
-     "son": 2.902
+     "bas": 2.775,
+     "son": 3.263
     },
     {
      "metin": "Takip",
-     "bas": 3.03,
-     "son": 3.471
+     "bas": 3.379,
+     "son": 3.901
     },
     {
      "metin": "et,",
-     "bas": 3.541,
-     "son": 3.727
+     "bas": 3.983,
+     "son": 4.168
     },
     {
      "metin": "cahil",
-     "bas": 3.773,
-     "son": 4.18
+     "bas": 4.288,
+     "son": 4.752
     },
     {
      "metin": "kalma!",
-     "bas": 4.238,
-     "son": 4.772
+     "bas": 4.833,
+     "son": 5.507
     }
    ]
   }

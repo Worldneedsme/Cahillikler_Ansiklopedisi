@@ -4,3 +4,6 @@ __pycache__/
 .DS_Store
 .env
 .env.*
+.venv/
+kanal-sablonu/videolar/*/out/
+kanal-sablonu/videolar/*/kareler/

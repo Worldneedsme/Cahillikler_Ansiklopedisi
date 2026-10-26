@@ -1,19 +1,20 @@
-// Videoyu kare kare render eder ve GPU'da (NVENC) kodlar.
+// Videoyu kare kare render eder ve donanım kodlayıcıyla (Mac: VideoToolbox, NVIDIA: NVENC) kodlar.
 // node araclar/render.mjs <video_klasoru_adi> [--fps 30] [--workers 3]
 // Çıktı: videolar/<ad>/out/video.mp4 (sessiz) ve videolar/<ad>/out/olaylar.json (DUR, EV, VO)
 import puppeteer from 'puppeteer-core';
 import { spawn } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
+import { CHROME, FFMPEG, KOK, PORT, kodlayici, sunucu } from './ortam.mjs';
 
-const CHROME = 'C:/Program Files/Google/Chrome/Application/chrome.exe';
-const FFMPEG = 'C:/Users/Win10/tools/ffmpeg-8.1/bin/ffmpeg.exe';
 const args = process.argv.slice(2);
 const ad = args[0];
 const opt = (k, d) => { const i = args.indexOf(k); return i > 0 ? +args[i + 1] : d; };
 const FPS = opt('--fps', 30), WORKERS = opt('--workers', 3);
-const url = `http://localhost:8765/videolar/${ad}/index.html`;
-const out = path.join('videolar', ad, 'out');
+const url = `http://localhost:${PORT}/videolar/${ad}/index.html`;
+const out = path.join(KOK, 'videolar', ad, 'out');
+const srv = await sunucu();
+const KOD = kodlayici();
 fs.mkdirSync(out, { recursive: true });
 
 // Her worker kendi tarayıcısını açar: aynı tarayıcıdaki arka plan sekmeleri boyanmıyor.
@@ -33,11 +34,11 @@ const first = await openPage();
 const meta = await first.evaluate(() => ({ DUR: window.DUR, EV: window.EV, VO: window.VO }));
 fs.writeFileSync(path.join(out, 'olaylar.json'), JSON.stringify(meta, null, 1));
 const N = Math.round(meta.DUR * FPS);
-console.log(`${ad}: ${meta.DUR} sn, ${N} kare, ${WORKERS} worker, NVENC`);
+console.log(`${ad}: ${meta.DUR} sn, ${N} kare, ${WORKERS} worker, ${KOD.ad}`);
 
 function encoder(file) {
   const ff = spawn(FFMPEG, ['-hide_banner', '-loglevel', 'error', '-y', '-f', 'image2pipe', '-framerate', String(FPS), '-c:v', 'mjpeg', '-i', '-',
-    '-c:v', 'h264_nvenc', '-preset', 'p5', '-cq', '21', '-pix_fmt', 'yuv420p', '-r', String(FPS), file], { stdio: ['pipe', 'inherit', 'inherit'] });
+    ...KOD.args, '-pix_fmt', 'yuv420p', '-r', String(FPS), file], { stdio: ['pipe', 'inherit', 'inherit'] });
   return ff;
 }
 
@@ -62,6 +63,7 @@ await Promise.all(Array.from({ length: WORKERS }, async (_, w) => {
   await new Promise((r, j) => ff.on('close', (c) => (c ? j(new Error('ffmpeg ' + c)) : r())));
 }));
 await Promise.all(browsers.map((b) => b.close()));
+srv.kapat();
 
 const list = path.join(out, 'parcalar.txt');
 fs.writeFileSync(list, parts.filter(Boolean).map((p) => `file '${path.basename(p)}'`).join('\n'));

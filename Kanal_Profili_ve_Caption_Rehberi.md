@@ -1,16 +1,13 @@
-# Kanal Profili ve Caption Rehberi (TikTok + Instagram)
+# Kanal Profili ve Caption Rehberi: Cahillikler Ansiklopedisi (Instagram, TikTok)
 
-## 1. İsim önerileri
+## 1. İsim
 
-| Görünen ad | Kullanıcı adı | Not |
-|---|---|---|
-| **Yanlış Biliyorsun 🦤** *(önerim)* | `@yanlisbiliyorsun` | Kanca gibi bir isim, ne anlattığını tek bakışta söylüyor. Her videonun açılışıyla aynı cümle |
-| Kafası Kumda | `@kafasikumda` | Maskota gönderme yapıyor ve esprili |
-| Cahillikler Ansiklopedisi | `@cahillikler` | Kitaba en yakın isim ama daha uzun ve resmi |
-| Aslında Öyle Değil | `@aslindaoyledegil` | Videolardaki "aslında…" dönüşü |
+| Görünen ad | Kullanıcı adı |
+|---|---|
+| **Cahillikler Ansiklopedisi** | `@cahillikleransiklopedisi` *(hesaptaki gerçek kullanıcı adıyla değiştirin)* |
 
-> Kullanıcı adlarının boşta olup olmadığına ben bakamıyorum, hesabı açarken siz kontrol edin. İki platformda **aynı kullanıcı adını** almaya çalışın.
-> 🦤 emojisi aslında dodo kuşu; devekuşu emojisi yok. İsimde emoji istemezseniz çıkarın.
+- Ana platform **Instagram Reels**, günde 3 video. Aynı videolar TikTok'a da yüklenebilir; mümkünse orada da aynı kullanıcı adını alın.
+- Kapanış cümlesi sabit: "Takip et, cahil kalma!"
 
 ## 2. Bio
 
@@ -49,7 +46,7 @@ Yedek bio'lar:
 | Kaynağı 1 satırda belirtin | Güven veriyor, "uydurma" yorumlarını azaltıyor |
 | 3-5 hashtag: 2 genel + 2-3 konuya özel | Fazlası artık erişimi düşürüyor |
 
-**Sabit hashtag'ler:** `#yanlışbiliyorsun #bilgi`
+**Sabit hashtag'ler:** `#cahillikleransiklopedisi #bilgi`
 **Konuya göre:** `#hayvanlar #tarih #uzay #bilim #ilginçbilgiler #bunubiliyormuydun`
 
 ## 5. Örnek caption'lar
@@ -65,7 +62,7 @@ Yani 3 saniye değil, en az 3 ay. Bi’ dahakine balığa değil, bu efsaneyi ya
 Kaynak: Plymouth Üniversitesi, 2003
 
 Sen bunu kimden duymuştun? 👇
-#yanlışbiliyorsun #bilgi #hayvanlar #bunubiliyormuydun
+#cahillikleransiklopedisi #bilgi #hayvanlar #bunubiliyormuydun
 ```
 
 **Noel Baba (#184)**
@@ -79,7 +76,7 @@ Gerçek Noel Baba, yani Aziz Nikolaos, Antalya Demre’de yaşamış. Çocuklar�
 Kırmızı kıyafet, ren geyikleri ve Kuzey Kutbu ise yüzyıllar sonra şiirlerle ve reklamlarla eklenmiş.
 
 Bunu duyunca ne düşündün? 👇
-#yanlışbiliyorsun #tarih #noelbaba #ilginçbilgiler
+#cahillikleransiklopedisi #tarih #noelbaba #ilginçbilgiler
 ```
 
 **Kafasız horoz Mike (#8)**
@@ -93,7 +90,7 @@ Sahibi onu göz damlalığıyla besliyor, Mike ünlü oluyor, turnelere çıkıy
 Kaynak: Cahillikler Kitabı, Lloyd & Mitchinson
 
 En tuhaf kısım hangisi sence? 👇
-#yanlışbiliyorsun #bilgi #hayvanlar #ilginçbilgiler
+#cahillikleransiklopedisi #bilgi #hayvanlar #ilginçbilgiler
 ```
 
 ## 6. Kaçınılacaklar

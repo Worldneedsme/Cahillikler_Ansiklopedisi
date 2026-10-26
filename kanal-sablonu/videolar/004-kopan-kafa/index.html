@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>004 Kopan kafa</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; }
+  html, body { width: 1080px; height: 1920px; overflow: hidden; background: #14213D; }
+  #stage { width: 1080px; height: 1920px; display: block; }
+</style>
+</head>
+<body>
+<svg id="stage" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1920"></svg>
+<script src="../../maskot/devo.js"></script>
+<script src="../../sablon/kanal.js"></script>
+<script src="../../sablon/parcalar.js"></script>
+<script>
+// Hazır şablon: sahneler senaryo.json'dan çizilir, bu dosyaya dokunmadan video çıkar.
+// Her sahne: tip (kanca | ters-kose | aciklama | bonus | kapanis), vo, ekran ("satır 1 / satır 2"), ikon (emoji).
+// Özel çizim gerekirse ilgili sahne fonksiyonunu bu dosyada değiştirin (örnek: videolar/003-en-buyuk-penis).
+const { W, R, clamp, lerp, prog, E, pop, fade, devoAt, txt, esc } = K;
+
+// " / " ile ayrılan satırları ve uzun satırları ~18 karakterde böler
+function satirlar(s, max = 18) {
+  return (s || '').split(' / ').flatMap((p) => {
+    const out = []; let cur = '';
+    for (const k of p.trim().split(/\s+/)) {
+      if (cur && (cur + ' ' + k).length > max) { out.push(cur); cur = k; } else cur = cur ? cur + ' ' + k : k;
+    }
+    if (cur) out.push(cur);
+    return out;
+  });
+}
+function ikon(sym, x, y, size, k, lt) {
+  if (!sym || k <= 0) return '';
+  const nefes = 1 + 0.02 * Math.sin(lt * 3);
+  return `<g transform="translate(${x} ${y}) scale(${(k * nefes).toFixed(3)})"><circle r="${size * 0.72}" fill="#FFF" opacity=".06"/>` +
+    `<text y="${size * 0.35}" text-anchor="middle" font-size="${size}" font-family="'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif">${esc(sym)}</text></g>`;
+}
+
+const TIP = {
+  kanca: (sc, i, n) => ({
+    ciz: (t, lt) => {
+      const L = satirlar(sc.ekran);
+      let s = K.title(L.map(esc), lt, -0.6, 380, L.length > 2 ? 78 : 88);
+      s += ikon(sc.ikon, 600, 920, 300, pop(lt, w(i, 1), 0.45), lt);
+      if (lt > w(i, Math.floor(n / 2))) s += K.badge(880, 720, 64 * pop(lt, w(i, Math.floor(n / 2)), 0.3), lt, w(i, n - 1));
+      s += devoAt({ pose: 'sand', mark: '?' }, 190, 1340, 440);
+      return s;
+    },
+    olay: (at) => [{ t: at(i, w(i, 1)), type: 'pop' }, { t: at(i, w(i, Math.floor(n / 2))), type: 'ding' }, { t: at(i, w(i, n - 1) + 0.15), type: 'buzz' }],
+  }),
+  'ters-kose': (sc, i, n) => ({
+    ciz: (t, lt) => {
+      const [bas, ...dogru] = (sc.ekran || '').split(' / ');
+      const tv = w(i, Math.floor(n / 2));
+      let s = K.title(satirlar(bas).map(esc), lt, 0.1, 400, 86, R.bang);
+      s += ikon(sc.ikon, 540, 900, 240, pop(lt, 0.2, 0.45), lt);
+      if (dogru.length) s += K.stamp(W / 2, 640, esc(dogru.join(' ')), 92, R.ok, lt, tv, -6);
+      s += devoAt({ pose: 'stand', face: lt < tv ? 'confused' : 'aha' }, 170, 1340, 380);
+      return s;
+    },
+    olay: (at) => [{ t: at(i, 0.1), type: 'pop' }, { t: at(i, w(i, Math.floor(n / 2)) + 0.12), type: 'thump' }, { t: at(i, w(i, Math.floor(n / 2)) + 0.3), type: 'ding' }],
+  }),
+  aciklama: (sc, i, n) => ({
+    ciz: (t, lt) => {
+      const [bas, ...dogru] = (sc.ekran || '').split(' / ');
+      const L = satirlar(bas, 20), D = satirlar(dogru.join(' '), 20);
+      let s = K.title(L.map(esc), lt, 0.1, 390, 76);
+      if (D.length) s += K.title(D.map(esc), lt, w(i, Math.floor(n / 2)), 390 + L.length * 82, 76, R.ok);
+      const kc = pop(lt, w(i, 2), 0.45);
+      s += K.card(W / 2 + 60, 900, 520, 520, kc, R.panel);
+      s += ikon(sc.ikon, W / 2 + 60, 900, 280, kc, lt);
+      s += K.ring(W / 2 + 60, 900, lt, w(i, 2), 200, 420, R.q);
+      s += devoAt({ pose: 'stand', face: lt < w(i, Math.max(2, n - 3)) ? 'neutral' : 'aha' }, 150, 1340, 360);
+      return s;
+    },
+    olay: (at) => [{ t: at(i, 0.1), type: 'pop' }, { t: at(i, w(i, 2)), type: 'pop' }, { t: at(i, w(i, Math.max(2, n - 3))), type: 'plink' }],
+  }),
+  bonus: (sc, i, n) => ({
+    ciz: (t, lt) => {
+      const [bas, ...vurgu] = (sc.ekran || 'Asıl ilginci…').split(' / ');
+      const tv = w(i, Math.floor(n / 2));
+      let s = K.title(satirlar(bas).map(esc), lt, 0.1, 400, 86, R.lav);
+      s += ikon(sc.ikon, 600, 920, 280, pop(lt, w(i, 2), 0.45), lt);
+      if (vurgu.length) s += K.stamp(W / 2, 640, esc(vurgu.join(' ')), 80, R.q, lt, tv, -8);
+      s += devoAt({ pose: lt < tv ? 'stand' : 'jump', face: lt < tv ? 'neutral' : 'aha', mark: lt < tv ? '?' : '!' }, 170, 1340, 380);
+      return s;
+    },
+    olay: (at) => [{ t: at(i, 0.1), type: 'swish' }, { t: at(i, w(i, 2)), type: 'pop' }, { t: at(i, w(i, Math.floor(n / 2)) + 0.12), type: 'thump' }, { t: at(i, w(i, Math.floor(n / 2)) + 0.2), type: 'boing' }],
+  }),
+  kapanis: (sc, i, n) => ({
+    ciz: (t, lt) => {
+      const L = satirlar(sc.ekran, 20);
+      const tb = w(i, Math.max(0, n - 4));
+      let s = K.title(L.map(esc), lt, 0.1, 400, 76);
+      s += ikon(sc.ikon, 820, 860, 200, pop(lt, 0.4, 0.45), lt);
+      s += K.followButton(lt, tb, 1150);
+      s += devoAt({ pose: lt > tb ? 'point' : 'stand', face: 'happy' }, 180, 1340, 440);
+      return s;
+    },
+    olay: (at) => [{ t: at(i, 0.1), type: 'pop' }, { t: at(i, w(i, Math.max(0, n - 4))), type: 'ding' }],
+  }),
+};
+const BG = { kanca: R.navy, 'ters-kose': R.teal, aciklama: R.navy, bonus: R.purple, kapanis: R.purple };
+
+fetch('senaryo.json').then((r) => r.json()).then((sen) => {
+  const sz = sen.sahneler.map((sc, i) => (TIP[sc.tip] || TIP.aciklama)(sc, i, sc.vo.split(/\s+/).length));
+  K.video({
+    sahneler: sz.map((x) => x.ciz),
+    kelimeSayisi: sen.sahneler.map((sc) => sc.vo.split(/\s+/).length),
+    tail: sen.sahneler.map((sc, i) => (i === sen.sahneler.length - 1 ? 1.7 : 0.7)),
+    bg: sen.sahneler.map((sc) => BG[sc.tip] || R.navy),
+    olaylar: (w, at) => sz.flatMap((x) => x.olay(at)),
+  });
+});
+</script>
+</body>
+</html>

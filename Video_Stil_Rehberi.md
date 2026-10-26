@@ -66,7 +66,7 @@ Kurzgesagt'ın tek bir videosu 60 kişilik bir ekiple aylar sürüyor. Günde 3 
 4. **Haftalık ritim:** Pazartesi 21 senaryo yazılır, gün içinde toplu seslendirme yapılır, sonra her gün 3 render alınıp zamanlanır.
 
 ## 9. İçerik serileri (kanal düzeni için)
-- **"Yanlış Biliyorsun"**: Ana seri, kitaptaki soruların her biri bir bölüm
+- **"Cahillikler Ansiklopedisi"**: Ana seri, kitaptaki soruların her biri bir bölüm
 - **"Hayvanlar Alemi Garip"**: Hayvan bilgileri
 - **"Tarih Yalan Söyler"**: Tarih mitleri
 - **"Türkiye'de Bilinmeyenler"**: Kitabın Türkiye eki, Noel Baba, lale, hindi
